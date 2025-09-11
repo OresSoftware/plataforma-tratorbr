@@ -76,7 +76,7 @@ exports.loginAdmin = async (req, res) => {
     console.log(`Login bem-sucedido: ${username} do IP: ${clientIP}`);
 
     const token = jwt.sign(
-      { id: admin.id, username: admin.username, role: admin.role },
+      { id: admin.id, username: admin.username, role: admin.role, tipo: 'admin' },
       process.env.JWT_SECRET,
       { expiresIn: '2h' }
     );

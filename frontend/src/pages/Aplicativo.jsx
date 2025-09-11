@@ -9,13 +9,7 @@ import iphone01 from '/imagens-aplicativo/iphone15-01.png';
 import iphone02 from '/imagens-aplicativo/iphone15-02.png';
 import iphone03 from '/imagens-aplicativo/iphone-03.png';
 import imgApp from '/imagens-aplicativo/imagem-app.png';
-import ano from '/imagens-aplicativo/01.png';
-import avaliador from '/imagens-aplicativo/02.png';
-import checklist from '/imagens-aplicativo/03-1.png';
-import off from '/imagens-aplicativo/03.png';
-import img_um from '/imagens-aplicativo/img1.png';
-import img_dois from '/imagens-aplicativo/img2.png';
-import iph15 from '/imagens-aplicativo/iph15.png';
+
 
 
 const PlanosPage = () => {
@@ -38,10 +32,10 @@ const PlanosPage = () => {
 
   const handleEnviarWhatsApp = () => {
     if (!planoSelecionado) return;
-
+    
     const url = gerarUrlWhatsApp(planoSelecionado, dadosUsuario);
     window.open(url, '_blank');
-
+    
     // Fechar formulário após envio
     setMostrarFormulario(false);
     setDadosUsuario({ nome: '', email: '', telefone: '' });
@@ -90,27 +84,25 @@ const PlanosPage = () => {
   return (
     <div className="planos-page">
       <Header />
-
+      
       {/* Hero Section */}
-      <section className="section-trator">
-        <div className="text-content">
-          <div className="logo-container">
-            <img src={imgApp} alt="Logo Trator BR" />
-            <h1>TratorBR</h1>
+      <section className="hero-section">
+        <div className="hero-container">
+          <div className="hero-content">
+            <div className="hero-icon">
+              <img src= {imgApp} alt="TratorBR" className="hero-logo" />
+              <h2>TRATORBR</h2>
+            </div>
+            <h1 className="hero-title">CONECTANDO O CAMPO À TECNOLOGIA</h1>
+            <p className="hero-description">
+              Com o app TratorBR, agricultores e concessionários ganham uma nova
+              forma de se conectar, negociar, e gerenciar suas máquinas com
+              eficiência e agilidade. Tudo na palma da mão.
+            </p>
           </div>
-
-          <h2>Conectando o campo à tecnologia</h2>
-
-          <p>Com o app TratorBR, agricultores e concessionários ganham uma nova{" "}<br />forma de se conectar, negociar, e gerenciar suas máquinas com <br />eficiência e agilidade. Tudo na palma da mão.</p>
-
-          <div className='botoesApp'>
-          <button className='entrarGestor'><img src="" alt="" />Entrar</button>
-          <button className='suporteApp'>Suporte</button>
+          <div className="hero-phones">
+            <img src={iphone01} alt="App TratorBR" className="phone-image" />
           </div>
-        </div>
-
-        <div className="phones">
-          <img src={iph15} alt="Tela App TratorBR Web" />
         </div>
       </section>
 
@@ -127,18 +119,19 @@ const PlanosPage = () => {
               <img src={appAndroid} alt="Baixar na App Store" />
             </a>
           </div>
+          <div className="download-phone">
+            <img src={iphone02} alt="TratorBR App" className="phone-app-image" />
+          </div>
         </div>
       </section>
-      <img src={iphone02} alt="TratorBR App" className="phone-app-image" />
 
       {/* Recursos Section */}
       <section className="recursos-section">
         <div className="recursos-container">
           <h2 className="recursos-title">RECURSOS</h2>
-          <div className='divsoria'></div>
           <div className="recursos-grid">
             <div className="recurso-card recurso-dark">
-              <div className="recurso-icon"><img src={ano} alt="icon" /></div>
+              <div className="recurso-icon">📱</div>
               <p>
                 Descubra aquilo que sempre te gerou dúvida. "É uma solução para
                 você que não tem total certeza do ano do seu bem mais precioso, sua
@@ -147,7 +140,7 @@ const PlanosPage = () => {
               </p>
             </div>
             <div className="recurso-card recurso-light">
-              <div className="recurso-icon"><img src={avaliador} alt="icon" /></div>
+              <div className="recurso-icon">⚡</div>
               <p>
                 Qualidade e assertividade - "Tecnologia usada para
                 avaliar de forma eficiente o valor da sua máquina. Útil
@@ -157,8 +150,8 @@ const PlanosPage = () => {
                 seu maquinário com o devido valor que ele merece!"
               </p>
             </div>
-            <div className="recurso-card recurso-light-last">
-              <div className="recurso-icon"><img src={checklist} alt="icon" /></div>
+            <div className="recurso-card recurso-light">
+              <div className="recurso-icon">📊</div>
               <p>
                 "Nosso Banco de Dados é o maior e mais completo
                 do Brasil, contendo praticamente todas as marcas
@@ -166,7 +159,7 @@ const PlanosPage = () => {
               </p>
             </div>
             <div className="recurso-card recurso-dark">
-              <div className="recurso-icon"><img src={off} alt="icon" /></div>
+              <div className="recurso-icon">📡</div>
               <p>
                 Funciona até onde o sinal não chega - "Na lavoura,
                 conexão nem sempre é garantida. Por isso, o app da
@@ -199,7 +192,7 @@ const PlanosPage = () => {
                     <li key={index}>{caracteristica}</li>
                   ))}
                 </ul>
-                <button
+                <button 
                   className="plano-btn"
                   onClick={() => handleAssinarPlano(plano)}
                 >
@@ -216,20 +209,20 @@ const PlanosPage = () => {
         <div className="context-container">
           <div className="context-grid">
             <div className="context-item">
-              <img src={img_um} alt="Trator no campo" className="context-image" />
+              <img src="/tractor-field.jpg" alt="Trator no campo" className="context-image" />
               <div className="context-overlay">
                 <p>Conectamos o melhor preço e qualidade, gerencia suas análises
-                  de um só lugar e ainda te dá a certeza de todas as informações do seu estoque no
-                  campo.</p>
+                de um só lugar e ainda te dá a certeza de todas as informações do seu estoque no
+                campo.</p>
                 <button className="context-btn">Saiba mais</button>
               </div>
             </div>
             <div className="context-item">
-              <img src={img_dois} alt="Agricultor trabalhando" className="context-image" />
+              <img src="/farmer-work.jpg" alt="Agricultor trabalhando" className="context-image" />
               <div className="context-overlay">
                 <p>Venda suas máquinas no preço de mercado, encontre
-                  concessionários perto de você e negocie com segurança direto no
-                  app.</p>
+                concessionários perto de você e negocie com segurança direto no
+                app.</p>
                 <button className="context-btn">Saiba mais</button>
               </div>
             </div>
@@ -237,14 +230,14 @@ const PlanosPage = () => {
         </div>
       </section>
 
-      {/* FAQ Section - INTERATIVO COMO NAS IMAGENS */}
+ {/* FAQ Section - INTERATIVO COMO NAS IMAGENS */}
       <section className="faq-section animate-fade-in">
         <div className="faq-container">
           <h2 className="faq-title animate-slide-up">DÚVIDAS FREQUENTES</h2>
           <div className="faq-list">
             {faqData.map((item, index) => (
               <div key={index} className={`faq-item animate-slide-up-staggered-${index}`}>
-                <button
+                <button 
                   className={`faq-question ${faqAberto === index ? 'active' : ''}`}
                   onClick={() => toggleFaq(index)}
                 >
@@ -262,6 +255,44 @@ const PlanosPage = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>      
+
+    
+
+      {/* Contato Section */}
+      <section className="contato-section">
+        <div className="contato-container">
+          <div className="contato-content">
+            <h2 className="contato-title">CONTATO</h2>
+            <p className="contato-description">
+              Está com dúvidas, sugestões ou quer saber mais sobre o TratorBR?
+              Nosso time de especialistas está pronto para te atender.
+            </p>
+            <div className="contato-info">
+              <div className="contato-item">
+                <span className="contato-icon">📞</span>
+                <span>(43) 99999-9999</span>
+              </div>
+              <div className="contato-item">
+                <span className="contato-icon">📍</span>
+                <span>Rua Drongo, 1540 - Sala 1002, Centro, Arapongas, PR, 86.700-145</span>
+              </div>
+              <div className="contato-item">
+                <span className="contato-icon">✉️</span>
+                <span>contato@tratorbr.com</span>
+              </div>
+            </div>
+            <button className="whatsapp-btn">
+              <span className="whatsapp-icon">💬</span>
+              Chamar no WhatsApp
+            </button>
+          </div>
+          <div className="contato-map">
+            <div className="map-placeholder">
+              <p>Mapa de localização</p>
+            </div>
           </div>
         </div>
       </section>
@@ -291,7 +322,7 @@ const PlanosPage = () => {
           </div>
         </div>
       </section>
-
+      
       {/* Modal de Formulário */}
       {mostrarFormulario && (
         <div className="modal-overlay">
@@ -300,14 +331,14 @@ const PlanosPage = () => {
               <h3>Finalizar Assinatura</h3>
               <button className="modal-close" onClick={handleFecharFormulario}>×</button>
             </div>
-
+            
             {planoSelecionado && (
               <div className="plano-resumo">
                 <h4>Plano Selecionado: {planoSelecionado.titulo}</h4>
                 <p>Valor: R$ {planoSelecionado.preco} / {planoSelecionado.duracao}</p>
               </div>
             )}
-
+            
             <form className="formulario-dados" onSubmit={(e) => e.preventDefault()}>
               <div className="form-group">
                 <label htmlFor="nome">Nome Completo</label>
@@ -315,33 +346,33 @@ const PlanosPage = () => {
                   type="text"
                   id="nome"
                   value={dadosUsuario.nome}
-                  onChange={(e) => setDadosUsuario({ ...dadosUsuario, nome: e.target.value })}
+                  onChange={(e) => setDadosUsuario({...dadosUsuario, nome: e.target.value})}
                   placeholder="Seu nome completo"
                 />
               </div>
-
+              
               <div className="form-group">
                 <label htmlFor="email">Email</label>
                 <input
                   type="email"
                   id="email"
                   value={dadosUsuario.email}
-                  onChange={(e) => setDadosUsuario({ ...dadosUsuario, email: e.target.value })}
+                  onChange={(e) => setDadosUsuario({...dadosUsuario, email: e.target.value})}
                   placeholder="seu@email.com"
                 />
               </div>
-
+              
               <div className="form-group">
                 <label htmlFor="telefone">Telefone</label>
                 <input
                   type="tel"
                   id="telefone"
                   value={dadosUsuario.telefone}
-                  onChange={(e) => setDadosUsuario({ ...dadosUsuario, telefone: e.target.value })}
+                  onChange={(e) => setDadosUsuario({...dadosUsuario, telefone: e.target.value})}
                   placeholder="(43) 99999-9999"
                 />
               </div>
-
+              
               <div className="form-actions">
                 <button type="button" className="btn-cancelar" onClick={handleFecharFormulario}>
                   Cancelar
@@ -351,7 +382,7 @@ const PlanosPage = () => {
                   Continuar no WhatsApp
                 </button>
               </div>
-
+              
               <div className="form-info">
                 <p>Seus dados serão enviados via WhatsApp para finalizar a assinatura com nossa equipe.</p>
               </div>

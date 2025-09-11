@@ -1,0 +1,437 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+@font-face {
+  font-family: 'Ethnocentric';
+  src: url('fontes/ethnocentric.otf');
+  font-style: normal;
+  font-weight: normal;
+}
+
+.ajuda-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: white; /* Mantendo fundo branco como você tinha */
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.ajuda-content {
+  flex: 1;
+  padding: 4rem 1rem;
+}
+
+.ajuda-container {
+  margin: 0 auto;
+  padding: 0px 200px;
+}
+
+.ajuda-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.ajuda-header h1 {
+  font-style: normal;
+  font-size: 1.6em;
+  font-family: 'Ethnocentric', sans-serif;
+  letter-spacing: 0.02em;
+  color: var(--brand-dark);
+  margin: 0 0 10px 0;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+  font-weight: normal;
+}
+
+.divisoria{
+    height: 0.5px;
+  background-color: #409535;
+  width: 75px;
+  margin: auto;
+  margin-bottom: 5px;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+}
+
+/* Grid de FAQ Cards */
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.faq-card {
+  background: white;
+  border-radius: 12px;
+  /* Sombras mais suaves - MINHA MELHORIA */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(67, 67, 67, 0.08);
+  transform: translateY(20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+}
+
+.faq-card:hover {
+  transform: translateY(-2px);
+  /* Sombra hover mais suave - MINHA MELHORIA */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.faq-question {
+  width: 100%;
+  padding: 1.5rem;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: all 0.3s ease;
+  color: #15383E; /* Mantendo sua cor */
+  font-weight: 600;
+  line-height: 1.4;
+  font-family: 'Montserrat', sans-serif; /* Mantendo sua fonte */
+}
+
+.faq-question:hover {
+  background: rgba(21, 56, 62, 0.02); /* Usando sua cor base */
+}
+
+.faq-question.active {
+  background: rgba(21, 56, 62, 0.03); /* Usando sua cor base */
+}
+
+.faq-question-text {
+  flex: 1;
+  margin-right: 1rem;
+  text-align: left;
+}
+
+.faq-icon {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Animação mais suave - MINHA MELHORIA */
+  color: #25D366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(37, 211, 102, 0.1);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.faq-icon.rotated {
+  transform: rotate(180deg);
+  background: #25D366;
+  color: white;
+}
+
+/* Introdução - aparece quando fechado, desaparece quando aberto */
+.faq-intro {
+  background: rgba(21, 56, 62, 0.02);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.faq-intro.visible {
+  max-height: 200px;
+  opacity: 1;
+  transform: translateY(0);
+  padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+  border-top: 1px solid rgba(21, 56, 62, 0.06);
+}
+
+.faq-intro.hidden {
+  max-height: 0;
+  opacity: 0;
+  padding: 0;
+  transform: translateY(-10px);
+  border-top: none; /* REMOVENDO COMPLETAMENTE A BORDA */
+  border: none; /* GARANTINDO QUE NÃO HAJA NENHUMA BORDA */
+}
+
+.faq-intro p {
+  margin: 0;
+  line-height: 1.5;
+  color: #6b7280; /* Mantendo cor similar à sua */
+  font-size: 0.9rem;
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.3s ease;
+}
+
+/* Resposta detalhada - só aparece quando aberto */
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(21, 56, 62, 0.03);
+  opacity: 0;
+  /* SEM NENHUMA BORDA */
+  border: none;
+}
+
+.faq-answer.open {
+  max-height: 500px;
+  opacity: 1;
+  /* SEM NENHUMA BORDA */
+  border: none;
+}
+
+.faq-answer-content {
+  padding: 1.5rem;
+  /* Animação de entrada mais suave - MINHA MELHORIA */
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+
+.faq-answer-content p {
+  margin: 0;
+  line-height: 1.6;
+  color: #4b5563; /* Cor similar à sua paleta */
+  font-size: 0.95rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Animações */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Seção de Contato - SEM CAIXA */
+.contact-section {
+  /* REMOVIDO: background, padding, border-radius, box-shadow, border */
+  max-width: 900px; /* MAIS ESTREITO que os cards FAQ (1200px) */
+  margin: 0 auto;
+  padding: 2rem 0; /* Apenas padding vertical */
+  transform: translateY(20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+}
+
+/* Layout Horizontal - Texto + Botão */
+.contact-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.contact-text {
+  flex: 1;
+  text-align: left;
+}
+
+.contact-text h2 {
+  color: #15383E; /* Mantendo sua cor */
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+}
+
+.contact-text p {
+  color: #6b7280; /* Mantendo cor similar à sua */
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Botão WhatsApp */
+.whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: #15383E; /* Usando sua cor principal */
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Sombra mais suave - MINHA MELHORIA */
+  box-shadow: 0 3px 12px rgba(21, 56, 62, 0.2);
+  font-family: 'Montserrat', sans-serif;
+  flex-shrink: 0;
+}
+
+.whatsapp-btn:hover {
+  background: #0f2a2e; /* Tom mais escuro da sua cor */
+  transform: translateY(-2px);
+  /* Sombra hover mais suave - MINHA MELHORIA */
+  box-shadow: 0 6px 20px rgba(21, 56, 62, 0.25);
+  text-decoration: none;
+  color: white;
+}
+
+.whatsapp-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Responsividade */
+@media (max-width: 1100px) {
+  .ajuda-container {
+    padding: 0px 100px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .ajuda-content {
+    padding: 2rem 1rem;
+  }
+
+  .ajuda-container {
+    padding: 0px;
+  }
+
+  .ajuda-header h1 {
+    font-size: 2.2rem;
+  }
+
+  .faq-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .faq-question {
+    padding: 1.25rem;
+    font-size: 0.95rem;
+  }
+  
+  .faq-intro.visible {
+    padding: 0 1.25rem 1.25rem 1.25rem;
+  }
+  
+  .faq-answer-content {
+    padding: 1.25rem;
+  }
+
+  .contact-section {
+    max-width: 100%;
+    padding: 1.5rem 0;
+  }
+
+  /* Layout vertical em mobile */
+  .contact-horizontal {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .contact-text {
+    text-align: center;
+  }
+
+  .contact-text h2 {
+    font-size: 1.3rem;
+  }
+
+  .whatsapp-btn {
+    padding: 0.875rem 1.75rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ajuda-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .faq-question {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .faq-intro.visible {
+    padding: 0 1rem 1rem 1rem;
+  }
+
+  .faq-answer-content {
+    padding: 1rem;
+  }
+
+  .contact-text h2 {
+    font-size: 1.2rem;
+  }
+
+  .whatsapp-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .faq-grid {
+    gap: 2.5rem;
+  }
+  
+  .faq-card {
+    min-height: 160px;
+  }
+
+  .contact-horizontal {
+    gap: 3rem;
+  }
+
+  .contact-text h2 {
+    font-size: 1.6rem;
+  }
+
+  .contact-section {
+    max-width: 950px; /* Ainda mais estreito em telas grandes */
+  }
+}
+
+/* Melhorias adicionais para suavidade - MINHAS ADIÇÕES */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Transições suaves para todos os elementos interativos */
+.faq-card,
+.faq-question,
+.faq-icon,
+.whatsapp-btn {
+  will-change: transform;
+}
+
+/* Efeito de foco mais suave */
+.faq-question:focus {
+  outline: 2px solid rgba(37, 211, 102, 0.3);
+  outline-offset: 2px;
+}
+
+.whatsapp-btn:focus {
+  outline: 2px solid rgba(21, 56, 62, 0.3);
+  outline-offset: 2px;
+}
+

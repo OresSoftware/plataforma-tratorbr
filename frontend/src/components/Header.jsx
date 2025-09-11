@@ -68,8 +68,8 @@ const Header = () => {
               </span>
             </button>
             <div className="dropdown-menu">
-              <Link to="/admin/duvidas" className="dropdown-item">Dúvidas</Link>
-              <Link to="#" className="dropdown-item">Sobre Nós</Link>
+              <Link to="/ajuda" className="dropdown-item">Ajuda</Link>
+              <Link to="/sobre-nos" className="dropdown-item">Sobre Nós</Link>
             </div>
           </div>
           
@@ -106,7 +106,7 @@ const Header = () => {
             <div className="mobile-dropdown-item">
               <button className="mobile-dropdown-btn">Tratorbr</button>
               {/* O conteúdo do dropdown pode ser adicionado aqui, se necessário */}
-              <Link to="/admin/duvidas" className="mobile-nav-link" onClick={toggleMobileMenu}>Dúvidas</Link>
+              <Link to="/ajuda" className="mobile-nav-link" onClick={toggleMobileMenu}>Ajuda</Link>
             </div>
             <Link to="/contato" className="mobile-nav-link" onClick={toggleMobileMenu}>Contato</Link>
             

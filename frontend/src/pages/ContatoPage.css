@@ -185,6 +185,8 @@
   width: 140px;
   margin: auto;
   margin-bottom: 15px;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
 }
 
 .divsoria-dois{
