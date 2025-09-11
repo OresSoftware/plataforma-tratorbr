@@ -1,0 +1,414 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+@font-face {
+  font-family: 'Ethnocentric';
+  src: url('fontes/ethnocentric.otf');
+  font-style: normal;
+  font-weight: normal;
+}
+
+.excluir-conta-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.excluir-conta-content {
+  flex: 1;
+  padding: 4rem 1rem;
+}
+
+.excluir-conta-container {
+  margin: 0 auto;
+  padding: 0px 100px;
+}
+
+.excluir-conta-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.excluir-conta-header h1 {
+  font-style: normal;
+  font-size: 1.6em;
+  font-family: 'Ethnocentric', sans-serif;
+  letter-spacing: 0.02em;
+  color: var(--brand-dark);
+  margin: 0 0 10px 0;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+  font-weight: normal;
+}
+
+.divisoria {
+  height: 0.5px;
+  background-color: #409535;
+  width: 75px;
+  margin: auto;
+  margin-bottom: 5px;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+}
+
+/* Seção Principal */
+.excluir-conta-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  margin-bottom: 6rem;
+  align-items: center;
+}
+
+.excluir-conta-info h2 {
+  font-size: 2rem;
+  color: #15383E;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+}
+
+.excluir-conta-info p {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  font-family: 'Montserrat', sans-serif;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+}
+
+/* Formulário */
+.excluir-conta-form-container {
+  background: #E7EDF3;
+  padding: 3rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+}
+
+.excluir-conta-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.email-input {
+  padding: 1rem 1.5rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.3s ease;
+  background: white;
+  margin-bottom: -22px;
+}
+
+.email-input:focus {
+  outline: none;
+  border-color: #15383E;
+  box-shadow: 0 0 0 3px rgba(21, 56, 62, 0.1);
+}
+
+.email-input::placeholder {
+  color: #9ca3af;
+}
+
+.excluir-btn {
+  padding: 1rem 2rem;
+  background: #15383E;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 12px #15383e5d;
+}
+
+.excluir-btn:hover {
+  background: #0f2a2e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px #0f2a2e63;
+}
+
+/* reCAPTCHA */
+.recaptcha-container {
+  display: flex;
+  justify-content: center;
+}
+
+.recaptcha-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #374151;
+  min-width: 280px;
+}
+
+.recaptcha-placeholder input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.recaptcha-logo {
+  margin-left: auto;
+  text-align: right;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.recaptcha-logo span {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Seção de Vantagens */
+.vantagens-section {
+  text-align: center;
+  margin-top: 6rem;
+  padding-top: 3rem;
+  border-top: 1px solid #e5e7eb;
+  transform: translateY(20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+}
+
+.vantagens-section h2 {
+  font-size: 2rem;
+  color: #15383E;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.vantagens-section > p {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin-bottom: 3rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.vantagens-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.vantagem-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(67, 67, 67, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.vantagem-card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+/* Estilização de cards específicos (ids pares) */
+div#card-2{
+  background-color: #E7EDF3 !important;
+}
+
+div#card-4{
+  background-color: #E7EDF3 !important;
+}
+
+div#card-6{
+  background-color: #E7EDF3 !important;
+}
+
+.vantagem-icone {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+}
+
+.vantagem-icone svg {
+  width: 48px;
+  height: 48px;
+  color: #15383E;
+  transition: all 0.3s ease;
+}
+
+.vantagem-card:hover .vantagem-icone svg {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.vantagem-card h3 {
+  font-size: 1.25rem;
+  color: #15383E;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.vantagem-card p {
+  font-size: 0.95rem;
+  color: #6b7280;
+  line-height: 1.5;
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+}
+
+
+/* Animações */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .excluir-conta-content {
+    padding: 2rem 1rem;
+  }
+
+  .excluir-conta-main {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .excluir-conta-info h2 {
+    font-size: 1.5rem;
+  }
+
+  .excluir-conta-form-container {
+    padding: 2rem;
+  }
+
+  .vantagens-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .vantagens-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .manter-conta-section {
+    padding: 2rem 1.5rem;
+  }
+
+  .manter-conta-section h3 {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .excluir-conta-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .excluir-conta-info h2 {
+    font-size: 1.3rem;
+  }
+
+  .excluir-conta-form-container {
+    padding: 1.5rem;
+  }
+
+  .email-input {
+    padding: 0.875rem 1.25rem;
+  }
+
+  .excluir-btn {
+    padding: 0.875rem 1.5rem;
+  }
+
+  .recaptcha-placeholder {
+    min-width: 250px;
+    padding: 0.75rem;
+  }
+
+  .vantagem-card {
+    padding: 1.5rem;
+  }
+
+  .vantagem-icone {
+    font-size: 2.5rem;
+  }
+
+  .manter-conta-btn {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .vantagens-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+
+  .excluir-conta-main {
+    gap: 5rem;
+  }
+}
+
+/* Melhorias adicionais para suavidade */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.excluir-btn:focus,
+.manter-conta-btn:focus,
+.email-input:focus {
+  outline: 2px solid rgba(21, 56, 62, 0.3);
+  outline-offset: 2px;
+}
+

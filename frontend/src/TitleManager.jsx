@@ -6,15 +6,18 @@ const TitleManager = () => {
 
   useEffect(() => {
     const titles = {
-      '/': 'TratorBR - Sistema Simplificado',
-      '/aplicativo': 'Aplicativo - TratorBR',
-      '/contato': 'Contato - TratorBR',
-      '/politica-privacidade': 'Política de Privacidade - TratorBR',
-      '/termos-uso': 'Termos de Uso - TratorBR',
-      '/admin/duvidas': 'Dúvidas - TratorBR',
-      '/admin/login': 'Login Admin - TratorBR',
-      '/admin/dashboard': 'Dashboard Admin - TratorBR',
-      '/admin/ips': 'Gerenciar IPs - TratorBR'
+      '/': 'TratorBR - Início',
+      '/aplicativo': 'TratorBR - Aplicativo',
+      '/contato': 'TratorBR - Contato',
+      '/politica-privacidade': 'TratorBR - Política de Privacidade',
+      '/termos-uso': 'TratorBR - Termos de Uso',
+      '/juda': 'TratorBR - Dúvidas',
+      '/admin/login': 'TratorBR - Login Admin',
+      '/admin/dashboard': 'TratorBR - Dashboard Admin',
+      '/admin/ips': 'TratorBR - Gerenciar IPS Admin',
+      '/ajuda': 'TratorBR - Ajuda',
+      '/excluir-conta': 'TratorBR - Excluir Conta',
+      '/sobre-nos': 'TratorBR - Sobre Nos',
     };
 
     const title = titles[location.pathname] || 'TratorBR';

@@ -18,12 +18,9 @@
   margin: 0 auto;
   padding: 3rem 2rem;
 }
-.att{
-  font-style: italic;
 
-}
 .termos-uso-title {
-  font-weight: normal;
+  font-style: normal;
   font-size: 1.6em;
   font-family: 'Ethnocentric', sans-serif;
   letter-spacing: 0.02em;
@@ -35,6 +32,7 @@
   text-align: center;
   margin-bottom: 3rem;
   position: relative;
+  font-weight: normal;
 }
 
 .termos-uso-title::after {

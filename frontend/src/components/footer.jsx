@@ -11,18 +11,18 @@ const Footer = () => {
         {/* Left Section */}
         <div className="footer-section">
           <ul className="footer-links">
-            <li><Link to="/contato">Contato</Link></li>
-            <li><Link to="#">Área do Gestor</Link></li>
-            <li><Link to="/admin/duvidas">Central de ajuda</Link></li>
+            <li><Link to="/contato" onClick={() => window.scrollTo(0, 0)}>Contato</Link></li>
+            <li><Link to="#" onClick={() => window.scrollTo(0, 0)}>Área do Gestor</Link></li>
+            <li><Link to="/ajuda" onClick={() => window.scrollTo(0, 0)}>Central de ajuda</Link></li>
           </ul>
         </div>
 
         {/* Middle-Left Section */}
         <div className="footer-section-dois">
           <ul className="footer-links">
-            <li><Link to="/">APP</Link></li>
-            <li><Link to="/admin/duvidas">Dúvidas</Link></li>
-            <li><Link to="/">Sobre a TratorBR</Link></li>
+            <li><Link to="/" onClick={() => window.scrollTo(0, 0)}>APP</Link></li>
+            <li><Link to="/excluir-conta" onClick={() => window.scrollTo(0, 0)}>Excluir Conta</Link></li>
+            <li><Link to="/sobre-nos" onClick={() => window.scrollTo(0, 0)}>Sobre a TratorBR</Link></li>
           </ul>
         </div>
         
@@ -56,7 +56,9 @@ const Footer = () => {
       <div className="footer-bottom">
         <p>Copyright © 2025. Todos os direitos reservados para TratorBR</p>
         <span>•</span>
-        <Link to="/termos-uso">Termos de Uso - Politicas</Link>
+        <Link to="/politica-privacidade" onClick={() => window.scrollTo(0, 0)}>Privacidade</Link>
+        <span>•</span>
+        <Link to="/termos-uso" onClick={() => window.scrollTo(0, 0)}>Termos</Link>
       </div>
     </footer>
   );

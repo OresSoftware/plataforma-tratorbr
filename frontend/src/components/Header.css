@@ -8,13 +8,12 @@ body {
 }
 .header {
   background-color: #ffffff;
-  /* border-bottom: 1px solid #e5e7eb; */
-  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); */
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   z-index: 1000;
-  height: 90px;
-  padding: 10px; 
+  height: 80px; 
 }
 .header-container {
   margin: 0 auto;
@@ -203,7 +202,7 @@ body {
 /* --- Responsividade (Mobile) --- */
 @media (max-width: 1028px) {
   .header-container {
-    padding: 0.5rem 0rem;
+    padding: 0.5rem 1rem;
   }
   .nav-menu,
   .announce-btn {

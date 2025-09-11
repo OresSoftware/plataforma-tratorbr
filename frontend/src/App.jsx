@@ -1,15 +1,16 @@
 // src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import HomePage from './pages/HomePage';
 import Aplicativo from "./pages/Aplicativo";
 import ContatoPage from "./pages/ContatoPage";
-import DuvidasPage from "./pages/DuvidasPage";
+import AjudaPage from "./pages/AjudaPage";
 import PoliticaPrivacidadePage from "./pages/PoliticaPrivacidadePage";
 import TermosUsoPage from './pages/TermosUsoPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminIpsPage from './pages/AdminIpsPage';
+import ExcluirContaPage from './pages/ExcluirContaPage';
+import SobreNosPage from './pages/SobreNosPage';
 
 import TitleManager from "./TitleManager";
 
@@ -19,14 +20,13 @@ function App() {
       <TitleManager />
       <Routes>
         {/* Páginas Públicas */}
-        {/* <Route path="/" element={<HomePage />} /> */}
         <Route path="/" element={<Aplicativo />} />
         <Route path="/contato" element={<ContatoPage />} />
         <Route path="/politica-privacidade" element={<PoliticaPrivacidadePage />} />
         <Route path="/termos-uso" element={<TermosUsoPage />} />
-
-        {/* Páginas do TratorBR */}
-        <Route path="/admin/duvidas" element={<DuvidasPage />} />
+        <Route path="/ajuda" element={<AjudaPage />} />
+        <Route path="/excluir-conta" element={<ExcluirContaPage />} />
+        <Route path="/sobre-nos" element={<SobreNosPage />} />
 
         {/* Área Administrativa */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
