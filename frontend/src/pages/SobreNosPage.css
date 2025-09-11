@@ -114,16 +114,22 @@
 .historia-section,
 .diferenciais-section {
   padding: 80px 0;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
 }
 
 .valores-section {
   padding: 80px 0;
   background: #f8fafb;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
 }
 
 .cta-section {
   padding: 80px 0;
   background: linear-gradient(135deg, #15383E 0%, #0f2a2e 100%);
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
 }
 
 /* Grid de Conteúdo */
