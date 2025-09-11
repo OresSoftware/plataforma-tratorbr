@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+@font-face {
+  font-family: 'Ethnocentric';
+  src: url('/ethnocentric.otf');
+  font-style: normal;
+  font-weight: normal;
+}
+
+.termos-uso-container {
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.termos-uso-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+.att{
+  font-style: italic;
+
+}
+.termos-uso-title {
+  font-weight: normal;
+  font-size: 1.6em;
+  font-family: 'Ethnocentric', sans-serif;
+  letter-spacing: 0.02em;
+  color: var(--brand-dark);
+  margin: 0 0 10px 0;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.termos-uso-title::after {
+  content: '';
+  position: absolute;
+  bottom: -1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 0.5px;
+  background-color: #409535;
+  border-radius: 2px;
+}
+
+.termos-uso-content {
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 3rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  line-height: 1.8;
+}
+
+.termos-uso-content p {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  text-align: justify;
+}
+
+.termos-uso-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .termos-uso-main {
+    padding: 2rem 1rem;
+  }
+  
+  .termos-uso-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .termos-uso-content {
+    padding: 2rem 1.5rem;
+  }
+  
+  .termos-uso-content p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .termos-uso-main {
+    padding: 1.5rem 1rem;
+  }
+  
+  .termos-uso-title {
+    font-size: 1.75rem;
+  }
+  
+  .termos-uso-content {
+    padding: 1.5rem 1rem;
+  }
+}
+

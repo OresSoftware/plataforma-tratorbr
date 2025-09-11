@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+@font-face {
+  font-family: 'Ethnocentric';
+  src: url('/fontes/ethnocentric.otf') format('opentype');
+  font-style: normal;
+  font-weight: normal;
+}
+
+.admin-login-page {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  height: 100vh;
+  overflow: hidden;
+}
+
+.admin-login-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.admin-login-card {
+  background: #E7EDF3;
+  border-radius: 16px;
+  padding: 3rem 4rem;
+  max-width: 470px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  animation: slideInFromTop 0.4s ease-out;
+}
+
+.admin-login-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.admin-login-header h1 {
+  font-size: 1.8rem;
+  font-weight: 300;
+  color: #15383E;
+  margin: 0 0 0.75rem 0;
+  letter-spacing: -0.02em;
+  font-family: 'Ethnocentric', sans-serif;
+}
+
+.admin-login-header p {
+  color: #5a6c6d;
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 400;
+}
+
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group input {
+  padding: 1rem 1.25rem !important;
+  border: 2px solid #d1d9db !important;
+  border-radius: 12px !important;
+  font-size: 1rem !important;
+  font-family: 'Inter', sans-serif !important;
+  background-color: white !important;
+  transition: all 0.3s ease !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="number"] {
+  padding: 1rem 1.25rem !important;
+  border: 2px solid #d1d9db !important;
+  border-radius: 12px !important;
+  font-size: 1rem !important;
+  font-family: 'Inter', sans-serif !important;
+  background-color: white !important;
+  transition: all 0.3s ease !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+
+.form-group input:invalid {
+  border-color: #d1d9db !important;
+  box-shadow: none !important;
+}
+
+.form-group input:valid {
+  border-color: #d1d9db !important;
+  box-shadow: none !important;
+}
+
+.form-group input::placeholder {
+  color: #9ca3af !important;
+  font-weight: 400 !important;
+}
+
+.form-group input:focus {
+  outline: none !important;
+  border-color: #2c5f5f !important;
+  box-shadow: 0 0 0 3px rgba(44, 95, 95, 0.1) !important;
+}
+
+.error-message {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 0.875rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.admin-login-btn {
+  background-color: #15383E;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.admin-login-btn:hover:not(:disabled) {
+  background-color: #1e4444;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44, 95, 95, 0.3);
+}
+
+.admin-login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Animação de entrada melhorada - de cima para baixo */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .admin-login-container {
+    padding: 0.5rem;
+  }
+  
+  .admin-login-card {
+    padding: 4rem 1.8rem;
+    margin: 0.5rem;
+  }
+  
+  .admin-login-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .admin-login-header p {
+    font-size: 0.9rem;
+  }
+  
+  .form-group input {
+    padding: 0.875rem 1rem;
+  }
+}
+
