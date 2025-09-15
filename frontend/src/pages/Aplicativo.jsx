@@ -121,7 +121,7 @@ const PlanosPage = () => {
           <h2 className="download-title">BAIXE AGORA</h2>
           <p className="download-subtitle">Clique e baixe nas principais lojas.</p>
           <div className="download-buttons">
-            <a href="#" className="download-btn google-play">
+            <a href="https://play.google.com/store/apps/details?id=br.com.tratorbr.TratorBR&pcampaignid=web_share" className="download-btn google-play" target='_blank' rel='external'>
               <img src={appIphone} alt="Baixar no Google Play" />
             </a>
             <a href="#" className="download-btn app-store">

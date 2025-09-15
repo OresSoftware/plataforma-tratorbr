@@ -45,7 +45,7 @@ const Footer = () => {
             <a href="#ios-app" className="app-button">
               <img src= "/imagens-aplicativo/baixar-apple.png" alt="iOS" />
             </a>
-            <a href="#android-app" className="app-button">
+            <a href="https://play.google.com/store/apps/details?id=br.com.tratorbr.TratorBR&pcampaignid=web_share" className="app-button" target='_blank' rel='external'>
               <img src= "/imagens-aplicativo/baixar-android.png" alt="Android" />
             </a>
           </div>
