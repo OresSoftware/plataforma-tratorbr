@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
+import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import './TermosUsoPage.css';
 
 const TermosUsoPage = () => {
@@ -21,6 +22,7 @@ const TermosUsoPage = () => {
             <h2>Cadastro e Acesso</h2>
                 <p>Algumas funcionalidades requerem cadastro. O usuário compromete-se a: Fornecer dados verdadeiros e atualizados; Manter a confidencialidade de suas credenciais de acesso; Utilizar a plataforma com ética e respeito às normas. O uso indevido ou o fornecimento de informações falsas poderá resultar na suspensão ou exclusão da conta.</p>
         </div>
+          <WhatsappFlutuante />
       </main>
 
       <Footer />

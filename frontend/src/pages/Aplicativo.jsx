@@ -16,6 +16,7 @@ import off from '/imagens-aplicativo/03.png';
 import img_um from '/imagens-aplicativo/img1.png';
 import img_dois from '/imagens-aplicativo/img2.png';
 import iph15 from '/imagens-aplicativo/iph15.png';
+import WhatsappFlutuante from '../components/WhatsappFlutuante';
 
 
 const PlanosPage = () => {
@@ -358,7 +359,9 @@ const PlanosPage = () => {
             </form>
           </div>
         </div>
+        
       )}
+      <WhatsappFlutuante />
       <Footer />
     </div>
   );

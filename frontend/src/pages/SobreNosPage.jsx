@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
+import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import './SobreNosPage.css';
 
 const SobreNosPage = () => {
@@ -217,6 +218,7 @@ const SobreNosPage = () => {
           </div>
         </div>
       </section>
+      <WhatsappFlutuante />
 
       <Footer />
     </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
+import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import './PoliticaPrivacidadePage.css';
 
 const PoliticaPrivacidadePage = () => {
@@ -22,6 +23,7 @@ const PoliticaPrivacidadePage = () => {
             <h2>Segurança</h2>
                 <p>Adotamos medidas técnicas e administrativas adequadas para proteger seus dados contra acessos não autorizados, alterações, divulgação ou destruição. Você pode, a qualquer momento, solicitar a exclusão ou correção de suas informações pessoais por meio do canal de contato disponível na plataforma.</p>
         </div>
+        <WhatsappFlutuante />
       </main>
 
       <Footer />
