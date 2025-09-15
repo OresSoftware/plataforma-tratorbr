@@ -137,45 +137,79 @@ const PlanosPage = () => {
         <div className="recursos-container">
           <h2 className="recursos-title">RECURSOS</h2>
           <div className='divsoria'></div>
-          <div className="recursos-grid">
-            <div className="recurso-card recurso-dark">
-              <div className="recurso-icon"><img src={ano} alt="icon" /></div>
-              <p>
-                Descubra aquilo que sempre te gerou dúvida. "É uma solução para
-                você que não tem total certeza do ano do seu bem mais precioso, sua
-                máquina de trabalho, você que na hora de comercializar tem
-                dificuldade de saber a data exata da fabricação. Temos a solução para o seu problema!"
+          <div className="recursos-grid-figma">
+            <div className="recurso-card-figma">
+              <div className="recurso-icon-figma">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#15383E" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <h3 className="recurso-titulo-figma">Descubra o Ano</h3>
+              <p className="recurso-texto-figma">
+                A solução para quem tem dúvidas sobre o ano de fabricação da sua máquina de trabalho.
               </p>
             </div>
-            <div className="recurso-card recurso-light">
-              <div className="recurso-icon"><img src={avaliador} alt="icon" /></div>
-              <p>
-                Qualidade e assertividade - "Tecnologia usada para
-                avaliar de forma eficiente o valor da sua máquina. Útil
-                para o concessionário que precisa receber um usado
-                na venda de um novo, e útil para o produtor que
-                precisa comprar um maquinário novo. Avaliamos o
-                seu maquinário com o devido valor que ele merece!"
+
+            <div className="recurso-card-figma">
+              <div className="recurso-icon-figma">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 4L9 7V9C9 10.1 9.9 11 11 11V13H13V11C14.1 11 15 10.1 15 9H21ZM12 13.5C7 13.5 2.73 16.39 2 21H22C21.27 16.39 17 13.5 12 13.5Z" fill="#15383E"/>
+                </svg>
+              </div>
+              <h3 className="recurso-titulo-figma">Avaliações Precisas</h3>
+              <p className="recurso-texto-figma">
+                Tecnologia que avalia sua máquina com eficiência e o valor que ela merece.
               </p>
             </div>
-            <div className="recurso-card recurso-light-last">
-              <div className="recurso-icon"><img src={checklist} alt="icon" /></div>
-              <p>
-                "Nosso Banco de Dados é o maior e mais completo
-                do Brasil, contendo praticamente todas as marcas
-                e modelos de máquinas agrícolas comercializadas no Brasil."
+
+            <div className="recurso-card-figma">
+              <div className="recurso-icon-figma">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 3C7.58 3 4 4.79 4 7V17C4 19.21 7.58 21 12 21S20 19.21 20 17V7C20 4.79 16.42 3 12 3ZM18 17C18 17.5 15.87 19 12 19S6 17.5 6 17V14.77C7.61 15.55 9.72 16 12 16S16.39 15.55 18 14.77V17ZM18 12.45C16.7 13.4 14.42 14 12 14C9.58 14 7.3 13.4 6 12.45V9.64C7.47 10.47 9.61 11 12 11C14.39 11 16.53 10.47 18 9.64V12.45ZM12 9C8.13 9 6 7.5 6 7S8.13 5 12 5S18 6.5 18 7S15.87 9 12 9Z" fill="#15383E"/>
+                </svg>
+              </div>
+              <h3 className="recurso-titulo-figma">Maior Banco de Dados</h3>
+              <p className="recurso-texto-figma">
+                O maior e mais completo do Brasil, reunindo praticamente todas as marcas e modelos de máquinas agrícolas.
               </p>
             </div>
-            <div className="recurso-card recurso-dark">
-              <div className="recurso-icon"><img src={off} alt="icon" /></div>
-              <p>
-                Funciona até onde o sinal não chega - "Na lavoura,
-                conexão nem sempre é garantida. Por isso, o app da
-                TratorBR funciona também offline, permitindo que
-                você registre dados, acompanhe atividades e
-                gerencie sua operação mesmo sem internet. Quando o sinal voltar,
-                tudo se sincroniza automaticamente. Produtividade sem interrupções
-                — com ou sem Wi-Fi."
+
+            <div className="recurso-card-figma">
+              <div className="recurso-icon-figma">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 9L12 2L23 9L12 16L1 9Z" stroke="#15383E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M1 16L12 23L23 16" stroke="#15383E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M1 12L12 19L23 12" stroke="#15383E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <h3 className="recurso-titulo-figma">Maior Banco de Dados</h3>
+              <p className="recurso-texto-figma">
+                O maior e mais completo do Brasil, reunindo praticamente todas as marcas e modelos de máquinas agrícolas.
+              </p>
+            </div>
+
+            <div className="recurso-card-figma">
+              <div className="recurso-icon-figma">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#15383E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M9 12L11 14L15 10" stroke="#15383E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <h3 className="recurso-titulo-figma">Plataforma Segura</h3>
+              <p className="recurso-texto-figma">
+                Seus dados estão sempre protegidos com segurança e confiabilidade.
+              </p>
+            </div>
+
+            <div className="recurso-card-figma">
+              <div className="recurso-icon-figma">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M13 7C13 9.20914 11.2091 11 9 11C6.79086 11 5 9.20914 5 7C5 4.79086 6.79086 3 9 3C11.2091 3 13 4.79086 13 7ZM23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89317 18.7122 8.75608 18.1676 9.45768C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="#15383E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <h3 className="recurso-titulo-figma">Suporte Especializado</h3>
+              <p className="recurso-texto-figma">
+                Acesso a especialistas em máquinas agrícolas para tirar dúvidas e orientações.
               </p>
             </div>
           </div>
@@ -238,31 +272,54 @@ const PlanosPage = () => {
         </div>
       </section>
 
-      {/* FAQ Section - INTERATIVO COMO NAS IMAGENS */}
-      <section className="faq-section animate-fade-in">
+      {/* FAQ Section - IGUAL À PÁGINA DE AJUDA */}
+      <section className="faq-section">
         <div className="faq-container">
-          <h2 className="faq-title animate-slide-up">DÚVIDAS FREQUENTES</h2>
-          <div className="faq-list">
+          <h2 className="faq-title">DÚVIDAS FREQUENTES</h2>
+          <div className='divsoria'></div>
+          <div className="faq-grid-ajuda">
             {faqData.map((item, index) => (
-              <div key={index} className={`faq-item animate-slide-up-staggered-${index}`}>
-                <button
-                  className={`faq-question ${faqAberto === index ? 'active' : ''}`}
+              <div key={index} className="faq-card-ajuda">
+                <button 
+                  className={`faq-question-ajuda ${faqAberto === index ? 'active' : ''}`}
                   onClick={() => toggleFaq(index)}
                 >
-                  {item.pergunta}
-                  <span className={`faq-icon ${faqAberto === index ? 'rotated' : ''}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <span className="faq-question-text-ajuda">{item.pergunta}</span>
+                  <span className={`faq-icon-ajuda ${faqAberto === index ? 'rotated' : ''}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M6 9l6 6 6-6"></path>
                     </svg>
                   </span>
                 </button>
-                <div className={`faq-answer ${faqAberto === index ? 'open' : ''}`}>
-                  <div className="faq-answer-content">
+                
+                {/* Introdução - só aparece quando fechado */}
+                <div className={`faq-intro-ajuda ${faqAberto === index ? 'hidden' : 'visible'}`}>
+                  <p>{item.resposta.substring(0, 120)}...</p>
+                </div>
+                
+                {/* Resposta detalhada - só aparece quando aberto */}
+                <div className={`faq-answer-ajuda ${faqAberto === index ? 'open' : ''}`}>
+                  <div className="faq-answer-content-ajuda">
                     <p>{item.resposta}</p>
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="contact-section-ajuda">
+            <div className="contact-horizontal-ajuda">
+              <div className="contact-text-ajuda">
+                <h2>Você está com alguma dúvida que não foi sanada em cima?</h2>
+                <p>Nosso time de especialistas está pronto para te atender.</p>
+              </div>
+              <a href="https://wa.me/5543999999999" className="whatsapp-btn-ajuda" target="_blank" rel="noopener noreferrer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.63z"/>
+                </svg>
+                Fale com a gente
+              </a>
+            </div>
           </div>
         </div>
       </section>
