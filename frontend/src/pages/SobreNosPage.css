@@ -640,7 +640,7 @@
   .stats-grid {
     grid-template-columns: 1fr;
     gap: 15px;
-    padding: 0 25%;
+    padding: 0 2%;
   }
   
   .stat-card {

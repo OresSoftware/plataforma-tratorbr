@@ -9,6 +9,7 @@ const Footer = () => {
       <div className="footer-content">
         
         {/* Left Section */}
+        <div className='footer-left'>
         <div className="footer-section">
           <ul className="footer-links">
             <li><Link to="/contato" onClick={() => window.scrollTo(0, 0)}>Contato</Link></li>
@@ -25,6 +26,8 @@ const Footer = () => {
             <li><Link to="/sobre-nos" onClick={() => window.scrollTo(0, 0)}>Sobre a TratorBR</Link></li>
           </ul>
         </div>
+        </div>
+        
         
         {/* Center Section */}
         <div className="footer-center">
