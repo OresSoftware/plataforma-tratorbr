@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
+import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import './ExcluirContaPage.css';
 
 const ExcluirContaPage = () => {
@@ -171,10 +172,11 @@ const ExcluirContaPage = () => {
               ))}
             </div>
           </div>
-              <WhatsappFlutuante />
+              
         </div>
       </main>
-
+      <WhatsappFlutuante />
+      <VoltarAoTopoBtn />
       <Footer />
     </div>
   );

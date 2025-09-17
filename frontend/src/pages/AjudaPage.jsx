@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import Footer from '../components/footer';
 import './AjudaPage.css';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
+import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 
 const AjudaPage = () => {
   const [faqAberto, setFaqAberto] = useState(null);
@@ -100,6 +101,7 @@ const AjudaPage = () => {
             </div>
           </div>
               <WhatsappFlutuante />
+              <VoltarAoTopoBtn />
         </div>
       </main>
 

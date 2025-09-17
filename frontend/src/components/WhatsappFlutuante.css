@@ -6,7 +6,7 @@
     bottom: 40px;
     right: 30px;
     background-color: var(--brand-dark); 
-    border-radius: 50px;
+    border-radius: 15px;
     box-shadow: 2px 2px 3px #999;
     z-index: 1000;
     transition: all 0.3s ease; 

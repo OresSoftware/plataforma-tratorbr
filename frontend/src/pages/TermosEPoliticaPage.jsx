@@ -1,6 +1,8 @@
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
+import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
+import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import './TermosEPolitica.css';
 
 const TermosEPolitica = () => {
@@ -148,6 +150,8 @@ const TermosEPolitica = () => {
 
         </div>
       </main>
+      <WhatsappFlutuante />
+      <VoltarAoTopoBtn />
       <Footer />
     </div>
   );
