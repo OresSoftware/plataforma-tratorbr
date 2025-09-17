@@ -311,9 +311,34 @@ div#card-6{
 }
 
 /* Responsividade */
+@media (max-width: 1200px) {
+  .excluir-conta-container {
+    padding: 0px 60px;
+  }
+}
+
+@media (max-width: 992px) {
+  .excluir-conta-container {
+    padding: 0px 40px;
+  }
+  
+  .excluir-conta-main {
+    gap: 3rem;
+  }
+  
+  .vantagens-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+}
+
 @media (max-width: 768px) {
   .excluir-conta-content {
     padding: 2rem 1rem;
+  }
+  
+  .excluir-conta-container {
+    padding: 0px 20px;
   }
 
   .excluir-conta-main {
@@ -345,6 +370,44 @@ div#card-6{
 
   .manter-conta-section h3 {
     font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .excluir-conta-container {
+    padding: 0px 15px;
+  }
+  
+  .excluir-conta-content {
+    padding: 1.5rem 0.5rem;
+  }
+  
+  .excluir-conta-header h1 {
+    font-size: 1.3rem;
+  }
+  
+  .excluir-conta-info h2 {
+    font-size: 1.4rem;
+  }
+  
+  .excluir-conta-info p {
+    font-size: 0.95rem;
+  }
+  
+  .excluir-conta-form-container {
+    padding: 1.5rem;
+  }
+  
+  .recaptcha-placeholder {
+    min-width: 100%;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  
+  .recaptcha-logo {
+    margin-left: 0;
+    text-align: center;
   }
 }
 
