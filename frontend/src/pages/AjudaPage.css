@@ -24,7 +24,7 @@
 
 .ajuda-container {
   margin: 0 auto;
-  padding: 0px 60px;
+  padding: 0px 200px;
 }
 
 .ajuda-header {
@@ -114,7 +114,7 @@
 }
 
 .faq-icon {
-  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Curva suave profissional */
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Animação mais suave - MINHA MELHORIA */
   color: #25D366;
   display: flex;
   align-items: center;
@@ -135,19 +135,15 @@
 
 /* Introdução - aparece quando fechado, desaparece quando aberto */
 .faq-intro {
-
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-
   background: rgba(21, 56, 62, 0.02);
-
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: max-height, opacity;
 }
 
 .faq-intro.visible {
-  max-height: 120px;
+  max-height: 200px;
   opacity: 1;
+  transform: translateY(0);
   padding: 1.5rem 1.5rem 1.5rem 1.5rem;
   border-top: 1px solid rgba(21, 56, 62, 0.06);
 }
@@ -155,9 +151,10 @@
 .faq-intro.hidden {
   max-height: 0;
   opacity: 0;
-  padding: 0 1.5rem;
-  border-top: none;
-  border: none;
+  padding: 0;
+  transform: translateY(-10px);
+  border-top: none; /* REMOVENDO COMPLETAMENTE A BORDA */
+  border: none; /* GARANTINDO QUE NÃO HAJA NENHUMA BORDA */
 }
 
 .faq-intro p {
@@ -173,31 +170,24 @@
 .faq-answer {
   max-height: 0;
   overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   background: rgba(21, 56, 62, 0.03);
   opacity: 0;
+  /* SEM NENHUMA BORDA */
   border: none;
-  transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s;
-  will-change: max-height, opacity;
 }
 
 .faq-answer.open {
-  max-height: 600px;
+  max-height: 500px;
   opacity: 1;
+  /* SEM NENHUMA BORDA */
   border: none;
 }
 
 .faq-answer-content {
   padding: 1.5rem;
-  transform: translateY(8px);
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s,
-              opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s;
-  opacity: 0;
-}
-
-.faq-answer.open .faq-answer-content {
-  transform: translateY(0);
-  opacity: 1;
+  /* Animação de entrada mais suave - MINHA MELHORIA */
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
 }
 
 .faq-answer-content p {
@@ -420,32 +410,10 @@
   }
 }
 
-/* Melhorias adicionais para suavidade e performance profissional */
+/* Melhorias adicionais para suavidade - MINHAS ADIÇÕES */
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-/* Otimizações de performance para animações suaves */
-.faq-card {
-  will-change: transform, box-shadow;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-}
-
-.faq-question {
-  will-change: background-color;
-}
-
-.faq-icon {
-  will-change: transform, background-color, color;
-  backface-visibility: hidden;
-}
-
-.faq-intro,
-.faq-answer {
-  backface-visibility: hidden;
-  transform: translateZ(0);
 }
 
 /* Transições suaves para todos os elementos interativos */
@@ -453,19 +421,17 @@
 .faq-question,
 .faq-icon,
 .whatsapp-btn {
-  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
 }
 
-/* Efeito de foco mais suave e profissional */
+/* Efeito de foco mais suave */
 .faq-question:focus {
   outline: 2px solid rgba(37, 211, 102, 0.3);
   outline-offset: 2px;
-  transition: outline 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .whatsapp-btn:focus {
   outline: 2px solid rgba(21, 56, 62, 0.3);
   outline-offset: 2px;
-  transition: outline 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
