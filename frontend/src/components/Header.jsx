@@ -124,7 +124,7 @@ const Header = () => {
           </nav>
           <div className="mobile-menu-actions">
             <Link to="/admin/login" className="login-btn-mobile" onClick={toggleMobileMenu}>
-              Área Admin
+              Acessar Painel
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 6, verticalAlign: 'middle' }}>
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
                 <polyline points="10 17 15 12 10 7" />
