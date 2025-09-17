@@ -56,9 +56,7 @@ const Footer = () => {
       <div className="footer-bottom">
         <p>Copyright © 2025. Todos os direitos reservados para TratorBR</p>
         <span>•</span>
-        <Link to="/politica-privacidade" onClick={() => window.scrollTo(0, 0)}>Privacidade</Link>
-        <span>•</span>
-        <Link to="/termos-uso" onClick={() => window.scrollTo(0, 0)}>Termos</Link>
+        <Link to="/termos-e-politicas" onClick={() => window.scrollTo(0, 0)}>Termos e Políticas</Link>
       </div>
     </footer>
   );
