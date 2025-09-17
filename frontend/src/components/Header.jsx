@@ -80,8 +80,8 @@ const Header = () => {
 
         {/* Área de Usuário Simplificada */}
         <div className="user-area">
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><img src="/footer/instagram.png" alt="Instagram" /></a>
-          <a href="https://whatsapp.com" target="_blank" rel="noopener noreferrer"><img src="/footer/whatsapp.png" alt="WhatsApp" /></a>
+          <a href="https://www.instagram.com/tratorbr.oficial/" target="_blank" rel="noopener noreferrer"><img src="/footer/instagram.png" alt="Instagram" /></a>
+          <a href="https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar?" target="_blank" rel="noopener noreferrer"><img src="/footer/whatsapp.png" alt="WhatsApp" /></a>
           {/* <Link to="/admin/login" className="admin-btn">
             Área Admin
           </Link> */}
