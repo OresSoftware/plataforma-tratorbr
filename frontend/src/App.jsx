@@ -12,6 +12,9 @@ import ExcluirContaPage from './pages/ExcluirContaPage';
 import SobreNosPage from './pages/SobreNosPage';
 
 import TitleManager from "./TitleManager";
+import CookieConsent from "./components/CookieConsent";
+import Analytics from "./components/Analytics";
+
 
 function App() {
   return (
@@ -33,7 +36,10 @@ function App() {
 
         {/* Redirecionamentos */}
         <Route path="*" element={<Navigate to="/" replace />} />
+
       </Routes>
+      <CookieConsent />
+      <Analytics />
     </Router>
   );
 }
