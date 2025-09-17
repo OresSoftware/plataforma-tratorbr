@@ -7,8 +7,8 @@ import { apiContatos } from "../services/apiContatos";
 import { FaPhoneAlt, FaMapMarkerAlt, FaEnvelope,} from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
+import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 
-const WHATSAPP_NUM = import.meta.env.VITE_WHATSAPP_NUM || "5543999999999"; // e.g. 5543999999999
 const EMAIL_PUBLICO = import.meta.env.VITE_CONTATO_EMAIL || "contato@tratorbr.com.br";
 
 export default function ContatoPage() {
@@ -212,10 +212,11 @@ export default function ContatoPage() {
                 "Rua Drongo, 1540 - Sala 1002, Centro, Arapongas - PR"
               )}&output=embed`}
             />
-          </div>
-              <WhatsappFlutuante />
+          </div>  
         </div>
       </section>
+      <WhatsappFlutuante />
+      <VoltarAoTopoBtn />
       <Footer />
     </main>
   );

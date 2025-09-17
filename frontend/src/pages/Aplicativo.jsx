@@ -11,6 +11,7 @@ import img_um from '/imagens-aplicativo/img1.png';
 import img_dois from '/imagens-aplicativo/img2.png';
 import iph15 from '/imagens-aplicativo/iph15.png';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
+import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import { WifiOff } from "lucide-react";
 import iph03 from '/imagens-aplicativo/iphone-03.png';
 import qrcode from '/imagens-aplicativo/qr-code.png';
@@ -444,6 +445,7 @@ const PlanosPage = () => {
 
       )}
       <WhatsappFlutuante />
+      <VoltarAoTopoBtn />
       <Footer />
     </div>
   );
