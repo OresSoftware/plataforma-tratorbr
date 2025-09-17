@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
 import './AjudaPage.css';
+import WhatsappFlutuante from '../components/WhatsappFlutuante';
 
 const AjudaPage = () => {
   const [faqAberto, setFaqAberto] = useState(null);
@@ -98,6 +99,7 @@ const AjudaPage = () => {
               </a>
             </div>
           </div>
+              <WhatsappFlutuante />
         </div>
       </main>
 

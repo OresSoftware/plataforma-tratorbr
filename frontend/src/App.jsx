@@ -4,8 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Aplicativo from "./pages/Aplicativo";
 import ContatoPage from "./pages/ContatoPage";
 import AjudaPage from "./pages/AjudaPage";
-import PoliticaPrivacidadePage from "./pages/PoliticaPrivacidadePage";
-import TermosUsoPage from './pages/TermosUsoPage';
+import TermosEPolitica from './pages/TermosEPoliticaPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminIpsPage from './pages/AdminIpsPage';
@@ -13,6 +12,9 @@ import ExcluirContaPage from './pages/ExcluirContaPage';
 import SobreNosPage from './pages/SobreNosPage';
 
 import TitleManager from "./TitleManager";
+import CookieConsent from "./components/CookieConsent";
+import Analytics from "./components/Analytics";
+
 
 function App() {
   return (
@@ -22,8 +24,7 @@ function App() {
         {/* Páginas Públicas */}
         <Route path="/" element={<Aplicativo />} />
         <Route path="/contato" element={<ContatoPage />} />
-        <Route path="/politica-privacidade" element={<PoliticaPrivacidadePage />} />
-        <Route path="/termos-uso" element={<TermosUsoPage />} />
+        <Route path="/termos-e-politicas" element={<TermosEPolitica />} />
         <Route path="/ajuda" element={<AjudaPage />} />
         <Route path="/excluir-conta" element={<ExcluirContaPage />} />
         <Route path="/sobre-nos" element={<SobreNosPage />} />
@@ -35,7 +36,10 @@ function App() {
 
         {/* Redirecionamentos */}
         <Route path="*" element={<Navigate to="/" replace />} />
+
       </Routes>
+      <CookieConsent />
+      <Analytics />
     </Router>
   );
 }
