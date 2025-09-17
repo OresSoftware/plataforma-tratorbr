@@ -48,7 +48,7 @@ const Footer = () => {
             <a href="#ios-app" className="app-button">
               <img src= "/imagens-aplicativo/baixar-apple.png" alt="iOS" />
             </a>
-            <a href="#android-app" className="app-button">
+            <a href="https://play.google.com/store/apps/details?id=br.com.tratorbr.TratorBR&pcampaignid=web_share" className="app-button" target='_blank' rel='external'>
               <img src= "/imagens-aplicativo/baixar-android.png" alt="Android" />
             </a>
           </div>
@@ -59,9 +59,7 @@ const Footer = () => {
       <div className="footer-bottom">
         <p>Copyright © 2025. Todos os direitos reservados para TratorBR</p>
         <span>•</span>
-        <Link to="/politica-privacidade" onClick={() => window.scrollTo(0, 0)}>Privacidade</Link>
-        <span>•</span>
-        <Link to="/termos-uso" onClick={() => window.scrollTo(0, 0)}>Termos</Link>
+        <Link to="/termos-e-politicas" onClick={() => window.scrollTo(0, 0)}>Termos e Políticas</Link>
       </div>
     </footer>
   );
