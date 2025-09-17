@@ -58,8 +58,8 @@ const Header = () => {
 
         {/* Menu de Navegação (oculto em telas pequenas) */}
         <nav className="nav-menu">
-          <Link to="/" className={`nav-link ${isActive('/')}`}>Início</Link>
-          <Link to="/contato" className={`nav-link ${isActive('/contato')}`}>Contato</Link>
+          <Link to="/" className={`nav-link ${isActive('/')}`} onClick={() => window.scrollTo(0, 0)}>Início</Link>
+          <Link to="/contato" className={`nav-link ${isActive('/contato')}`} onClick={() => window.scrollTo(0, 0)}>Contato</Link>
           {/* <Link to="/aplicativo" className={`nav-link ${isActive('/aplicativo')}`}>Aplicativo</Link> */}
           {/* O menu dropdown Tratorbr */}
           <div className="nav-dropdown">
@@ -71,8 +71,8 @@ const Header = () => {
               </span>
             </button>
             <div className="dropdown-menu">
-              <Link to="/ajuda" className="dropdown-item">Ajuda</Link>
-              <Link to="/sobre-nos" className="dropdown-item">Sobre Nós</Link>
+              <Link to="/ajuda" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Ajuda</Link>
+              <Link to="/sobre-nos" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Sobre Nós</Link>
             </div>
           </div>
 
@@ -104,7 +104,7 @@ const Header = () => {
           </div>
 
           <nav className="mobile-nav-menu">
-            <Link to="/" className="mobile-nav-link" onClick={toggleMobileMenu}>Início</Link>
+            <Link to="/" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Início</Link>
 
             <div className={`mobile-dropdown-item ${open ? "active" : ""}`}>
               <button className="mobile-dropdown-btn" onClick={() => setOpen(!open)}>
@@ -116,14 +116,14 @@ const Header = () => {
                   </svg>
                 </span>
               </button>
-              <Link to="/ajuda" className="mobile-nav-link" onClick={toggleMobileMenu}>Ajuda</Link>
-              <Link to="/sobre-nos" className="mobile-nav-link" onClick={toggleMobileMenu}>Sobre Nós</Link>
+              <Link to="/ajuda" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Ajuda</Link>
+              <Link to="/sobre-nos" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Sobre Nós</Link>
             </div>
-            <Link to="/contato" className="mobile-nav-link" onClick={toggleMobileMenu}>Contato</Link>
+            <Link to="/contato" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Contato</Link>
 
           </nav>
           <div className="mobile-menu-actions">
-            <Link to="/admin/login" className="login-btn-mobile" onClick={toggleMobileMenu}>
+            <Link to="/admin/login" className="login-btn-mobile" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>
               Área Admin
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 6, verticalAlign: 'middle' }}>
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
