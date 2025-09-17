@@ -9,14 +9,15 @@ const TitleManager = () => {
       '/': 'TratorBR - Início',
       '/aplicativo': 'TratorBR - Aplicativo',
       '/contato': 'TratorBR - Contato',
-      '/termos-e-politicas': 'TratorBR - Termos e Políticas',
+      '/politica-privacidade': 'TratorBR - Política de Privacidade',
+      '/termos-uso': 'TratorBR - Termos de Uso',
       '/juda': 'TratorBR - Dúvidas',
       '/admin/login': 'TratorBR - Login Admin',
       '/admin/dashboard': 'TratorBR - Dashboard Admin',
       '/admin/ips': 'TratorBR - Gerenciar IPS Admin',
       '/ajuda': 'TratorBR - Ajuda',
       '/excluir-conta': 'TratorBR - Excluir Conta',
-      '/sobre-nos': 'TratorBR - Sobre Nós',
+      '/sobre-nos': 'TratorBR - Sobre Nos',
     };
 
     const title = titles[location.pathname] || 'TratorBR';

@@ -9,7 +9,6 @@ const Footer = () => {
       <div className="footer-content">
         
         {/* Left Section */}
-        <div className='footer-left'>
         <div className="footer-section">
           <ul className="footer-links">
             <li><Link to="/contato" onClick={() => window.scrollTo(0, 0)}>Contato</Link></li>
@@ -26,8 +25,6 @@ const Footer = () => {
             <li><Link to="/sobre-nos" onClick={() => window.scrollTo(0, 0)}>Sobre a TratorBR</Link></li>
           </ul>
         </div>
-        </div>
-        
         
         {/* Center Section */}
         <div className="footer-center">
@@ -48,7 +45,7 @@ const Footer = () => {
             <a href="#ios-app" className="app-button">
               <img src= "/imagens-aplicativo/baixar-apple.png" alt="iOS" />
             </a>
-            <a href="https://play.google.com/store/apps/details?id=br.com.tratorbr.TratorBR&pcampaignid=web_share" className="app-button" target='_blank' rel='external'>
+            <a href="#android-app" className="app-button">
               <img src= "/imagens-aplicativo/baixar-android.png" alt="Android" />
             </a>
           </div>
@@ -59,7 +56,9 @@ const Footer = () => {
       <div className="footer-bottom">
         <p>Copyright © 2025. Todos os direitos reservados para TratorBR</p>
         <span>•</span>
-        <Link to="/termos-e-politicas" onClick={() => window.scrollTo(0, 0)}>Termos e Políticas</Link>
+        <Link to="/politica-privacidade" onClick={() => window.scrollTo(0, 0)}>Privacidade</Link>
+        <span>•</span>
+        <Link to="/termos-uso" onClick={() => window.scrollTo(0, 0)}>Termos</Link>
       </div>
     </footer>
   );
