@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
+import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import './ExcluirContaPage.css';
 
 const ExcluirContaPage = () => {
@@ -170,6 +171,7 @@ const ExcluirContaPage = () => {
               ))}
             </div>
           </div>
+              <WhatsappFlutuante />
         </div>
       </main>
 
