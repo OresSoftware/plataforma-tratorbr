@@ -4,6 +4,7 @@ import './Header.css';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false); // Estado para o dropdown móvel
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -18,9 +19,9 @@ const Header = () => {
   // Função para lidar com o clique no botão "Quero Revender"
   const handleQueroRevender = (e) => {
     e.preventDefault(); // Impede o comportamento padrão do link
-    
+
     const token = localStorage.getItem('token');
-    
+
     if (token) {
       // Usuário logado - vai direto para cadastro
       navigate('/tornar-revendedor');
@@ -29,6 +30,8 @@ const Header = () => {
       navigate('/login?redirect=/tornar-revendedor');
     }
   };
+
+
 
   return (
     <header className="header">
@@ -72,13 +75,13 @@ const Header = () => {
               <Link to="/sobre-nos" className="dropdown-item">Sobre Nós</Link>
             </div>
           </div>
-          
+
         </nav>
 
         {/* Área de Usuário Simplificada */}
         <div className="user-area">
           <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><img src="/footer/instagram.png" alt="Instagram" /></a>
-            <a href="https://whatsapp.com" target="_blank" rel="noopener noreferrer"><img src="/footer/whatsapp.png" alt="WhatsApp" /></a>
+          <a href="https://whatsapp.com" target="_blank" rel="noopener noreferrer"><img src="/footer/whatsapp.png" alt="WhatsApp" /></a>
           {/* <Link to="/admin/login" className="admin-btn">
             Área Admin
           </Link> */}
@@ -102,24 +105,38 @@ const Header = () => {
 
           <nav className="mobile-nav-menu">
             <Link to="/" className="mobile-nav-link" onClick={toggleMobileMenu}>Início</Link>
-           
-            <div className="mobile-dropdown-item">
-              <button className="mobile-dropdown-btn">Tratorbr</button>
-              {/* O conteúdo do dropdown pode ser adicionado aqui, se necessário */}
+
+            <div className={`mobile-dropdown-item ${open ? "active" : ""}`}>
+              <button className="mobile-dropdown-btn" onClick={() => setOpen(!open)}>
+                Tratorbr
+
+                <span className={`arrow ${open ? "rotate" : ""}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 9l6 6 6-6"></path>
+                  </svg>
+                </span>
+              </button>
               <Link to="/ajuda" className="mobile-nav-link" onClick={toggleMobileMenu}>Ajuda</Link>
+              <Link to="/sobre-nos" className="mobile-nav-link" onClick={toggleMobileMenu}>Sobre Nós</Link>
             </div>
             <Link to="/contato" className="mobile-nav-link" onClick={toggleMobileMenu}>Contato</Link>
-            
+
           </nav>
           <div className="mobile-menu-actions">
-            <a href="https://wa.me/seunumerodetelefone" className="whatsapp-btn" target="_blank" rel="noopener noreferrer"> Fale com a gente
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <image href="/iconwhats.svg" x="2" y="2" height="20" width="20" />
-              </svg>
-            </a>
             <Link to="/admin/login" className="login-btn-mobile" onClick={toggleMobileMenu}>
               Área Admin
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 6, verticalAlign: 'middle' }}>
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                <polyline points="10 17 15 12 10 7" />
+                <line x1="15" y1="12" x2="3" y2="12" />
+              </svg>
             </Link>
+            <a href="https://wa.me/seunumerodetelefone" className="whatsapp-btn-header" target="_blank" rel="noopener noreferrer" style={{}}> Fale com a gente
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <image href="/iconwhats.svg" x="2" y="2" height="22" width="22" />
+              </svg>
+            </a>
+
           </div>
         </div>
         {/* Adiciona um overlay para fechar o menu ao clicar fora dele */}
