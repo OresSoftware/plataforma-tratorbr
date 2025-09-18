@@ -126,10 +126,24 @@ const SobreNosPage = () => {
         </div>
       </section>
 
-      {/* Diferenciais */}
+      {/* Diferenciais - ORDEM MODIFICADA PARA MOBILE */}
       <section className="diferenciais-section">
         <div className="container-sobre">
           <div className="content-grid-reverse">
+            {/* TEXTO MOVIDO PARA PRIMEIRO - aparecerá antes dos ícones no mobile */}
+            <div className="text-content">
+              <h2 className="section-title">Por que escolher a TratorBR?</h2>
+              <p className="section-description">
+                Nossa plataforma foi desenvolvida especificamente para atender 
+                as necessidades do produtor rural brasileiro, combinando 
+                funcionalidades avançadas com simplicidade de uso.
+              </p>
+              <p className="section-description">
+                Oferecemos suporte completo e treinamento para garantir que 
+                você aproveite ao máximo todas as funcionalidades disponíveis.
+              </p>
+            </div>
+            {/* ÍCONES AGORA VÊM DEPOIS NO HTML */}
             <div className="visual-content-diferenciais">
               <div className="feature-list">
                 <div className="feature-item">
@@ -182,18 +196,6 @@ const SobreNosPage = () => {
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="text-content">
-              <h2 className="section-title">Por que escolher a TratorBR?</h2>
-              <p className="section-description">
-                Nossa plataforma foi desenvolvida especificamente para atender 
-                as necessidades do produtor rural brasileiro, combinando 
-                funcionalidades avançadas com simplicidade de uso.
-              </p>
-              <p className="section-description">
-                Oferecemos suporte completo e treinamento para garantir que 
-                você aproveite ao máximo todas as funcionalidades disponíveis.
-              </p>
             </div>
           </div>
         </div>

@@ -16,9 +16,9 @@ const Header = () => {
   // Função para lidar com o clique no botão "Quero Revender"
   const handleQueroRevender = (e) => {
     e.preventDefault(); // Impede o comportamento padrão do link
-    
+
     const token = localStorage.getItem('token');
-    
+
     if (token) {
       // Usuário logado - vai direto para cadastro
       navigate('/tornar-revendedor');
@@ -27,6 +27,8 @@ const Header = () => {
       navigate('/login?redirect=/tornar-revendedor');
     }
   };
+
+
 
   return (
     <header className="header">
@@ -70,7 +72,7 @@ const Header = () => {
               <Link to="/sobre-nos" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Sobre Nós</Link>
             </div>
           </div>
-          
+
         </nav>
 
         {/* Área de Usuário Simplificada */}
@@ -128,12 +130,10 @@ const Header = () => {
             </Link>
             <a href="https://wa.me/seunumerodetelefone" className="whatsapp-btn-header" target="_blank" rel="noopener noreferrer" style={{}}> Fale com a gente
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <image href="/iconwhats.svg" x="2" y="2" height="20" width="20" />
+                <image href="/iconwhats.svg" x="2" y="2" height="22" width="22" />
               </svg>
             </a>
-            <Link to="/admin/login" className="login-btn-mobile" onClick={toggleMobileMenu}>
-              Área Admin
-            </Link>
+
           </div>
         </div>
         {/* Adiciona um overlay para fechar o menu ao clicar fora dele */}

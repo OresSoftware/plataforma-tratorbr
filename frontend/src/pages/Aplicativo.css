@@ -283,11 +283,17 @@
 }
 
 .planos-title {
-  font-size: 2.5rem;
-  font-weight: 700;
   text-align: center;
-  margin-bottom: 60px;
-  color: #15383E;
+  font-style: normal;
+  font-size: 1.6rem;
+  font-family: 'Ethnocentric', sans-serif;
+  letter-spacing: 0.02em;
+  color: var(--brand-dark);
+  margin: 0 0 18px 0;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+  font-weight: normal;
 }
 
 .planos-grid {
@@ -479,56 +485,10 @@ div#planos {
   color: white;
 }
 
-/* FAQ Section */
+/* FAQ Section - Igual à página de ajuda */
 .faq-section {
   padding: 100px 0;
   background: white;
-}
-
-.faq-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.faq-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 60px;
-  color: #15383E;
-}
-
-.faq-list {
-  space-y: 20px;
-}
-
-.faq-item {
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  margin-bottom: 15px;
-}
-
-.faq-question {
-  width: 100%;
-  padding: 20px;
-  background: none;
-  border: none;
-  text-align: left;
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background 0.3s ease;
-}
-
-.faq-question:hover {
-  background: #f8f9fa;
-}
-
-.faq-icon {
-  transition: transform 0.3s ease;
 }
 
 
@@ -620,67 +580,96 @@ div#planos {
   background: #15383E;
   color: white;
   padding: 80px 0;
+  position: relative;
+  overflow: hidden;
 }
 
 .footer-app-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
+  padding: 0 60px;
+  position: relative;
+}
+
+.footer-app-content {
+  max-width: 100%;
+  position: relative;
+  z-index: 2;
 }
 
 .footer-app-title {
   font-size: 2.5rem;
   font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.footer-app-description {
-  font-size: 1.1rem;
   margin-bottom: 40px;
-  opacity: 0.9;
+  color: white;
+  line-height: 1.2;
 }
 
-.footer-app-features {
+.qr-codes-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-bottom: 40px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 800px;
 }
 
-.feature-item {
-  font-size: 1rem;
+.qr-code-item {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
   display: flex;
   align-items: center;
-}
-
-.footer-app-buttons {
-  display: flex;
   gap: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.footer-btn {
-  padding: 12px 24px;
-  border: 2px solid white;
+.qr-code-placeholder {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  background: #000;
   border-radius: 8px;
-  background: transparent;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.footer-btn:hover {
-  background: white;
+.qr-code-info {
+  flex: 1;
   color: #15383E;
 }
 
+.qr-code-info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #15383E;
+}
+
+.qr-code-info p {
+  font-size: 0.9rem;
+  margin: 0;
+  color: #666;
+}
+
+.store-arrow {
+  font-size: 1.2rem;
+  color: #25D366;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.footer-app-phone {
+  position: absolute;
+  right: 150px;
+  top: -280px;
+  z-index: 3;
+}
+
 .footer-phone-image {
-  max-width: 100%;
+  max-width: 350px;
   height: auto;
+  position: relative;
+  z-index: 3;
 }
 
 /* Responsive Design */
@@ -692,6 +681,32 @@ div#planos {
     gap: 40px;
     text-align: center;
     display: flow;
+  }
+
+  .footer-app-container {
+    padding: 0 20px;
+  }
+
+  .footer-app-phone {
+    position: relative;
+    right: auto;
+    top: auto;
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .footer-app-title {
+    font-size: 2rem;
+  }
+
+  .qr-codes-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    max-width: 100%;
+  }
+
+  .footer-phone-image {
+    max-width: 250px;
   }
 
   .phone-image {

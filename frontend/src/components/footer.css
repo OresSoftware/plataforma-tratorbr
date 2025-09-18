@@ -44,13 +44,13 @@
   min-width: 150px;
   margin-bottom: 20px;
   margin-top: 22px;
-  margin-left: 30px;
 }
 
 .footer-links {
   list-style: none;
   padding: 0;
   margin: 0;
+  
 }
 
 .footer-links li {
@@ -80,7 +80,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-grow: 1;
   text-align: center;
   padding: 0 20px;
   margin-left: -140px;
@@ -170,6 +169,9 @@
   font-size: 12px;
   color: #929292;
 }
+.footer-left{
+  display: flex;
+}
 
 .footer-bottom p,
 .footer-bottom a {
@@ -204,6 +206,9 @@
 
   .footer-section-dois{
     margin-left: 0px;
+  }
+  .footer-left{
+    display: block;
   }
 }
 

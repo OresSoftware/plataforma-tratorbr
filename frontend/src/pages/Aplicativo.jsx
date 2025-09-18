@@ -234,6 +234,7 @@ const PlanosPage = () => {
       <section className="planos-section">
         <div className="planos-container">
           <h2 className="planos-title">PLANOS</h2>
+          <div className='divsoria' id='planos'></div>
           <div className="planos-grid">
             {planos.map((plano) => (
               <div key={plano.id} className={`plano-card ${plano.popular ? 'plano-popular' : ''}`}>
@@ -286,20 +287,21 @@ const PlanosPage = () => {
         </div>
       </section>
 
-      {/* FAQ Section - INTERATIVO COMO NAS IMAGENS */}
-      <section className="faq-section animate-fade-in">
+      {/* FAQ Section - IGUAL À PÁGINA DE AJUDA */}
+      <section className="faq-section">
         <div className="faq-container">
-          <h2 className="faq-title animate-slide-up">DÚVIDAS FREQUENTES</h2>
-          <div className="faq-list">
+          <h2 className="faq-title">DÚVIDAS FREQUENTES</h2>
+          <div className='divsoria'></div>
+          <div className="faq-grid-ajuda">
             {faqData.map((item, index) => (
               <div key={index} className="faq-card-ajuda">
                 <button
                   className={`faq-question-ajuda ${faqAberto === index ? 'active' : ''}`}
                   onClick={() => toggleFaq(index)}
                 >
-                  {item.pergunta}
-                  <span className={`faq-icon ${faqAberto === index ? 'rotated' : ''}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <span className="faq-question-text-ajuda">{item.pergunta}</span>
+                  <span className={`faq-icon-ajuda ${faqAberto === index ? 'rotated' : ''}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M6 9l6 6 6-6"></path>
                     </svg>
                   </span>
