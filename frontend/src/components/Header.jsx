@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useMobileMenu } from '../contexts/MobileMenuContext';
 import './Header.css';
 
 const Header = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isMobileMenuOpen, toggleMobileMenu } = useMobileMenu();
   const [open, setOpen] = useState(false); // Estado para o dropdown móvel
   const location = useLocation();
   const navigate = useNavigate();
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
 
   const isActive = (path) => {
     return location.pathname === path ? 'active' : '';

@@ -21,6 +21,13 @@
     transform: translateY(20px); /* leve movimento inicial para baixo */
 }
 
+/* Estado oculto pelo menu mobile */
+.voltar-ao-topo-btn.hidden-by-menu {
+    opacity: 0 !important;
+    transform: translateX(-100px) translateY(20px) !important;
+    pointer-events: none !important;
+}
+
 .voltar-ao-topo-btn.visible {
     opacity: 1;
     pointer-events: auto;
@@ -39,7 +46,7 @@
     height: 24px;
 }
 
-.voltar-ao-topo-btn:hover {
+.voltar-ao-topo-btn:hover:not(.hidden-by-menu) {
     transform: translateY(0) scale(1.1);
     box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
 }
