@@ -1,0 +1,58 @@
+.voltar-ao-topo-btn {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    bottom: 40px;
+    left: 30px;
+    background-color: #15383e21; 
+    border-radius: 15px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 1000;
+    rotate: 180deg;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* transição suave de visibilidade */
+    opacity: 0;
+    pointer-events: none;      /* evita clique quando invisível */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: translateY(20px); /* leve movimento inicial para baixo */
+}
+
+/* Estado oculto pelo menu mobile */
+.voltar-ao-topo-btn.hidden-by-menu {
+    opacity: 0 !important;
+    transform: translateX(-100px) translateY(20px) !important;
+    pointer-events: none !important;
+}
+
+.voltar-ao-topo-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);   /* volta para posição normal */
+}
+
+.voltar-ao-topo-btn.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+}
+
+.voltar-ao-topo-btn svg {
+    color: var(--brand-dark);
+    width: 24px;
+    height: 24px;
+}
+
+.voltar-ao-topo-btn:hover:not(.hidden-by-menu) {
+    transform: translateY(0) scale(1.1);
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 768px) {
+    .voltar-ao-topo-btn {
+        bottom: 15px;
+    }
+}

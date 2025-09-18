@@ -200,7 +200,7 @@
 
 /* Recursos Section */
 .recursos-section {
-  padding: 100px 0px 0px 0px;
+  padding: 0px;
 }
 
 .recursos-container {
@@ -278,7 +278,6 @@
 }
 
 .planos-container {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
@@ -301,12 +300,12 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
-  max-width: 1000px;
+  max-width: 1250px;
   margin: 0 auto;
   margin-top: 60px;
 }
 
-div#planos{
+div#planos {
   width: 100px;
 }
 
@@ -674,7 +673,7 @@ div#planos{
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1027px) {
 
   .hero-container,
   .contato-container,
@@ -986,7 +985,7 @@ div#planos{
 }
 
 /* Responsive Modal */
-@media (max-width: 768px) {
+@media (max-width: 1027px) {
   .modal-overlay {
     padding: 10px;
   }
@@ -1186,12 +1185,13 @@ div#planos{
   width: 100%;
 }
 
-.botoesApp{
+.botoesApp {
   display: flex;
   gap: 15px;
 }
+
 .entrarGestor {
-  padding: 0.8rem 3.3rem;
+  padding: 1rem 3.3rem;
   color: white;
   background-color: #15383E;
   border: 0.5px solid #15383E;
@@ -1240,7 +1240,7 @@ div#planos{
   height: 100%;
   background: linear-gradient(90deg, transparent, #15383e7e, transparent);
   transition: left 0.9s ease;
-  
+
 }
 
 .suporteApp:hover::before {
@@ -1251,7 +1251,7 @@ div#planos{
 
 
 /* Responsivo */
-@media (max-width: 1028px) {
+@media (max-width: 1027px) {
   .section-trator {
     padding-left: 20px;
     padding-right: 20px;
@@ -1294,6 +1294,11 @@ div#planos{
     width: 400px;
   }
 
+  .botoesApp {
+    flex-direction: column;
+    margin: 0 30px
+  }
+
 }
 
 @media (max-width: 1027px) {
@@ -1314,28 +1319,28 @@ div#planos{
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
   margin-top: 60px;
+  color: #15383E;
 }
 
 .recurso-card-figma {
   background: white;
   padding: 40px 25px;
   border-radius: 20px;
-  border: 1px solid rgba(67, 67, 67, 0.11);
   text-align: center;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 /* Estilização de cards específicos (ids pares) */
-div#recurso-card-2{
+div#recurso-card-2 {
   background-color: #E7EDF3 !important;
 }
 
-div#recurso-card-4{
+div#recurso-card-4 {
   background-color: #E7EDF3 !important;
 }
 
-div#recurso-card-6{
+div#recurso-card-6 {
   background-color: #E7EDF3 !important;
 }
 
@@ -1372,7 +1377,7 @@ div#recurso-card-6{
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .recurso-card-figma {
     padding: 30px 20px;
   }
@@ -1380,7 +1385,7 @@ div#recurso-card-6{
 
 @media (max-width: 1024px) {
   .recursos-grid-figma {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 
@@ -1397,7 +1402,7 @@ div#recurso-card-6{
 
 /* Estilos para FAQ igual à página de ajuda */
 .faq-container {
-  max-width: 1200px;
+  /* max-width: 1350px; */
   margin: 0 auto;
   padding: 0 60px;
 }
@@ -1421,6 +1426,7 @@ div#recurso-card-6{
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
   margin-bottom: 4rem;
+  margin-top: 40px;
 }
 
 .faq-card-ajuda {
@@ -1472,7 +1478,8 @@ div#recurso-card-6{
 }
 
 .faq-icon-ajuda {
-  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Curva suave profissional */
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Curva suave profissional */
   color: #25D366;
   display: flex;
   align-items: center;
@@ -1492,7 +1499,6 @@ div#recurso-card-6{
 }
 
 .faq-intro-ajuda {
-  background: rgba(21, 56, 62, 0.02);
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   will-change: max-height, opacity;
@@ -1529,7 +1535,7 @@ div#recurso-card-6{
   opacity: 0;
   border: none;
   transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s;
+    opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s;
   will-change: max-height, opacity;
 }
 
@@ -1543,7 +1549,7 @@ div#recurso-card-6{
   padding: 1.5rem;
   transform: translateY(8px);
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s,
-              opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s;
+    opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s;
   opacity: 0;
 }
 
@@ -1633,31 +1639,32 @@ div#recurso-card-6{
     opacity: 0;
     transform: translateY(15px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1027px) {
   .faq-container {
-    padding: 0 20px;
+    padding: 10px 20px;
   }
 
   .faq-grid-ajuda {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .faq-question-ajuda {
     padding: 1.25rem;
     font-size: 0.95rem;
   }
-  
+
   .faq-intro-ajuda.visible {
-    padding: 0 1.25rem 1.25rem 1.25rem;
+    padding: 1 1.25rem 1.25rem 1.25rem;
   }
-  
+
   .faq-answer-content-ajuda {
     padding: 1.25rem;
   }
@@ -1666,6 +1673,7 @@ div#recurso-card-6{
     flex-direction: column;
     text-align: center;
     gap: 1.5rem;
+    margin-bottom: 40px;
   }
 
   .contact-text-ajuda {
@@ -1727,3 +1735,208 @@ div#recurso-card-6{
   transition: outline 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
+/* FUNDO LOJA */
+.fundoloja {
+  background-color: #15383E;
+  /* width: 100%; */
+  height: 260px;
+  text-align: center;
+  color: white;
+  margin-left: 60px;
+  margin-right: 60px;
+  border-radius: 40px;
+  margin-bottom: 280px;
+}
+
+.fundoloja h1 {
+  color: white;
+  font-size: 26px;
+  margin-top: 10px;
+  padding-top: 15px;
+  font-weight: normal;
+  font-family: 'Ethnocentric', sans-serif;
+  margin-bottom: -15px;
+
+}
+
+.fundoloja p {
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+.imgsloja {
+  height: auto;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+
+}
+
+.imgsloja img {
+  width: 190px;
+}
+
+.iphoneloja {
+  width: 800px;
+  margin-top: 20px;
+}
+
+@media (max-width: 1027px) {
+  .fundoloja {
+    margin-left: 30px;
+    margin-right: 30px;
+    border-radius: 40px;
+    margin-bottom: 200px;
+    height: 230px;
+  }
+
+  .fundoloja h1 {
+    font-size: 22px;
+  }
+
+  .fundoloja p {
+    font-size: 14px;
+  }
+
+  .imgsloja {
+    height: auto;
+    display: block;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+    flex-direction: column;
+
+  }
+
+  .iphoneloja {
+    width: 80%;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 790px) {
+  .fundoloja {
+    margin-left: 30px;
+    margin-right: 30px;
+    border-radius: 40px;
+    margin-bottom: 120px;
+  }
+
+  .iphoneloja {
+    width: 80%;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 490px) {
+  .fundoloja {
+    margin-left: 30px;
+    margin-right: 30px;
+    border-radius: 40px;
+    margin-bottom: 50px;
+    height: 260px;
+  }
+
+  .iphoneloja {
+    width: 100%;
+    margin-top: 20px;
+  }
+}
+
+.download-section-dois {
+  padding: 40px;
+  background-color: #15383E;
+  text-align: center;
+  position: relative;
+}
+
+.download-container-dois {
+  max-width: 1000px;
+  margin: 0 auto;
+  color: white;
+}
+
+.title {
+  margin-left: 33px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: start;
+  font-family: 'montserrat', sans-serif;
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #fff;
+  padding: 0px 10px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+  min-width: 300px;
+  width: 450px;
+  height: 140px;
+}
+
+.qr-code {
+  width: 115px;
+  height: 115px;
+}
+
+.card h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  color: #000;
+}
+
+.card p {
+  font-size: 14px;
+  color: #666;
+  margin: 5px 0 0;
+}
+
+.arrow {
+  margin-left: auto;
+  font-size: 22px;
+  font-weight: bold;
+  color: #000;
+}
+
+.ipho03 {
+  position: absolute;
+  right: 150px;
+  bottom: 210px;
+  z-index: 1;
+  width: 320px;
+  height: auto;
+}
+
+@media (max-width: 1027px) {
+  .ipho03{
+    right: 9%;
+    bottom: 92%;
+    width: 280px;
+  }
+  .title{
+    text-align: center;
+    margin: 20px 0;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .card h3{
+    font-size: 14px;
+  }
+
+}
