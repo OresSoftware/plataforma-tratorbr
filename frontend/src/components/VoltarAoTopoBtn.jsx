@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useMobileMenu } from '../contexts/MobileMenuContext';
 import './VoltarAoTopoBtn.css';
 
 const VoltarAoTopoBtn = () => {
   const [showBtn, setShowBtn] = useState(false);
+  const { isMobileMenuOpen } = useMobileMenu();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,7 +25,7 @@ const VoltarAoTopoBtn = () => {
 
   return (
     <div
-      className={`voltar-ao-topo-btn ${showBtn ? 'visible' : 'hidden'}`}
+      className={`voltar-ao-topo-btn ${showBtn ? 'visible' : 'hidden'} ${isMobileMenuOpen ? 'hidden-by-menu' : ''}`}
       onClick={scrollToTop}
     >
       <svg
