@@ -135,7 +135,6 @@
 
 /* Introdução - aparece quando fechado, desaparece quando aberto */
 .faq-intro {
-  background: rgba(21, 56, 62, 0.02);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }

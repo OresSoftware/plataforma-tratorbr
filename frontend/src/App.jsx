@@ -13,30 +13,38 @@ import ExcluirContaPage from './pages/ExcluirContaPage';
 import SobreNosPage from './pages/SobreNosPage';
 
 import TitleManager from "./TitleManager";
+import CookieConsent from "./components/CookieConsent";
+import Analytics from "./components/Analytics";
+import { MobileMenuProvider } from "./contexts/MobileMenuContext";
+
 
 function App() {
   return (
-    <Router>
-      <TitleManager />
-      <Routes>
-        {/* Páginas Públicas */}
-        <Route path="/" element={<Aplicativo />} />
-        <Route path="/contato" element={<ContatoPage />} />
-        <Route path="/politica-privacidade" element={<PoliticaPrivacidadePage />} />
-        <Route path="/termos-uso" element={<TermosUsoPage />} />
-        <Route path="/ajuda" element={<AjudaPage />} />
-        <Route path="/excluir-conta" element={<ExcluirContaPage />} />
-        <Route path="/sobre-nos" element={<SobreNosPage />} />
+    <MobileMenuProvider>
+      <Router>
+        <TitleManager />
+        <Routes>
+          {/* Páginas Públicas */}
+          <Route path="/" element={<Aplicativo />} />
+          <Route path="/contato" element={<ContatoPage />} />
+          <Route path="/termos-e-politicas" element={<TermosEPolitica />} />
+          <Route path="/ajuda" element={<AjudaPage />} />
+          <Route path="/excluir-conta" element={<ExcluirContaPage />} />
+          <Route path="/sobre-nos" element={<SobreNosPage />} />
 
-        {/* Área Administrativa */}
-        <Route path="/admin/login" element={<AdminLoginPage />} />
-        <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-        <Route path="/admin/ips" element={<AdminIpsPage />} />
+          {/* Área Administrativa */}
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/ips" element={<AdminIpsPage />} />
 
-        {/* Redirecionamentos */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+          {/* Redirecionamentos */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+
+        </Routes>
+        <CookieConsent />
+        <Analytics />
+      </Router>
+    </MobileMenuProvider>
   );
 }
 

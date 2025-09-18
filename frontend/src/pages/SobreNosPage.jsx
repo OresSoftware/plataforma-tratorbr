@@ -1,6 +1,8 @@
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
+import WhatsappFlutuante from '../components/WhatsappFlutuante';
+import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import './SobreNosPage.css';
 
 const SobreNosPage = () => {
@@ -217,7 +219,8 @@ const SobreNosPage = () => {
           </div>
         </div>
       </section>
-
+      <WhatsappFlutuante />
+      <VoltarAoTopoBtn />
       <Footer />
     </div>
   );
