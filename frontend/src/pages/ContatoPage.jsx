@@ -193,7 +193,7 @@ export default function ContatoPage() {
             </div>
 
             <a
-              className="btn-whats"
+              className="whatsapp-btn-ajuda"
               href={'https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar?'}
               target="_blank"
               rel="noreferrer"

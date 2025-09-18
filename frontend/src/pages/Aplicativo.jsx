@@ -362,12 +362,12 @@ const PlanosPage = () => {
 
             <div className="card">
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/5/5f/QR_Code_example.png"
-                alt="QR Code Parceiro"
+                src={qrcode}
+                alt="aplle store"
                 className="qr-code"
               />
               <div>
-                <h3>Baixe o app de parceiro</h3>
+                <h3>Baixe o app na Apple Store</h3>
                 <p>Escaneie para baixar</p>
               </div>
               <span className="arrow">→</span>

@@ -200,7 +200,7 @@
 
 /* Recursos Section */
 .recursos-section {
-  padding: 100px 0px 0px 0px;
+  padding: 0px;
 }
 
 .recursos-container {
@@ -278,7 +278,6 @@
 }
 
 .planos-container {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
@@ -301,7 +300,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
-  max-width: 1000px;
+  max-width: 1250px;
   margin: 0 auto;
   margin-top: 60px;
 }
@@ -674,7 +673,7 @@ div#planos {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1027px) {
 
   .hero-container,
   .contato-container,
@@ -986,7 +985,7 @@ div#planos {
 }
 
 /* Responsive Modal */
-@media (max-width: 768px) {
+@media (max-width: 1027px) {
   .modal-overlay {
     padding: 10px;
   }
@@ -1252,7 +1251,7 @@ div#planos {
 
 
 /* Responsivo */
-@media (max-width: 1028px) {
+@media (max-width: 1027px) {
   .section-trator {
     padding-left: 20px;
     padding-right: 20px;
@@ -1403,7 +1402,7 @@ div#recurso-card-6 {
 
 /* Estilos para FAQ igual à página de ajuda */
 .faq-container {
-  max-width: 1200px;
+  /* max-width: 1350px; */
   margin: 0 auto;
   padding: 0 60px;
 }
@@ -1427,6 +1426,7 @@ div#recurso-card-6 {
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
   margin-bottom: 4rem;
+  margin-top: 40px;
 }
 
 .faq-card-ajuda {
@@ -1646,9 +1646,9 @@ div#recurso-card-6 {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1027px) {
   .faq-container {
-    padding: 0 20px;
+    padding: 10px 20px;
   }
 
   .faq-grid-ajuda {
@@ -1662,7 +1662,7 @@ div#recurso-card-6 {
   }
 
   .faq-intro-ajuda.visible {
-    padding: 0 1.25rem 1.25rem 1.25rem;
+    padding: 1 1.25rem 1.25rem 1.25rem;
   }
 
   .faq-answer-content-ajuda {
@@ -1754,6 +1754,8 @@ div#recurso-card-6 {
   margin-top: 10px;
   padding-top: 15px;
   font-weight: normal;
+  font-family: 'Ethnocentric', sans-serif;
+  margin-bottom: -15px;
 
 }
 
@@ -1772,7 +1774,7 @@ div#recurso-card-6 {
 }
 
 .imgsloja img {
-  width: 170px;
+  width: 190px;
 }
 
 .iphoneloja {
@@ -1780,7 +1782,7 @@ div#recurso-card-6 {
   margin-top: 20px;
 }
 
-@media (max-width: 1028px) {
+@media (max-width: 1027px) {
   .fundoloja {
     margin-left: 30px;
     margin-right: 30px;
@@ -1832,7 +1834,8 @@ div#recurso-card-6 {
     margin-left: 30px;
     margin-right: 30px;
     border-radius: 40px;
-    margin-bottom: 120px;
+    margin-bottom: 50px;
+    height: 260px;
   }
 
   .iphoneloja {
@@ -1875,15 +1878,17 @@ div#recurso-card-6 {
   align-items: center;
   gap: 20px;
   background: #fff;
-  padding: 15px 15px;
+  padding: 0px 10px;
   border-radius: 10px;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
   min-width: 300px;
+  width: 450px;
+  height: 140px;
 }
 
 .qr-code {
-  width: 100px;
-  height: 100px;
+  width: 115px;
+  height: 115px;
 }
 
 .card h3 {
@@ -1915,10 +1920,23 @@ div#recurso-card-6 {
   height: auto;
 }
 
-@media (max-width: 790px) {
+@media (max-width: 1027px) {
   .ipho03{
     right: 9%;
     bottom: 92%;
     width: 280px;
   }
+  .title{
+    text-align: center;
+    margin: 20px 0;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .card h3{
+    font-size: 14px;
+  }
+
 }
