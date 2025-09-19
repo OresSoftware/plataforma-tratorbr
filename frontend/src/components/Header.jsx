@@ -108,7 +108,7 @@ const Header = () => {
                 Tratorbr
 
                 <span className={`arrow ${open ? "rotate" : ""}`}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" color='#15383E'>
                     <path d="M6 9l6 6 6-6"></path>
                   </svg>
                 </span>
