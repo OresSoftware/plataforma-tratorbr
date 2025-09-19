@@ -222,14 +222,13 @@ export default function AdminIpsPage() {
         <div className="sidebar-header"><h1>TRATOR BR</h1><p>Sistema Interno</p></div>
         <nav className="sidebar-nav">
           <button className={`nav-item ${isActive("/admin/dashboard") ? "active" : ""}`} onClick={() => navigate("/admin/dashboard")}><LayoutDashboard className="nav-icon" size={22} />Dashboard</button>
-          <button className={`nav-item ${isActive("/admin/usuarios") ? "active" : ""}`} onClick={() => navigate("/admin/usuarios")}><Users className="nav-icon" size={22} />Usuários</button>
           {isMaster && (
             <button className={`nav-item ${isActive("/admin/ips") ? "active" : ""}`} onClick={() => navigate("/admin/ips")}><MapPin className="nav-icon" size={22} />IP de Acesso</button>
           )}
           {isMaster && (
             <button
-              className={`nav-item ${isActive('/admin/duvidas') ? 'active' : ''}`}
-              onClick={() => navigate('/admin/duvidas')}
+              className={`nav-item ${isActive('/admin/contato') ? 'active' : ''}`}
+              onClick={() => navigate('/admin/contato')}
             >
               <MessageCircleQuestion className="nav-icon" size={22} />
               Contatos

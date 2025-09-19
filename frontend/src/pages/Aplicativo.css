@@ -13,6 +13,11 @@
   color: #333;
 }
 
+.content{
+  transform: translateY(-20px);
+  animation: fadeInDown 0.8s ease-out forwards;
+}
+
 /* Hero Section */
 .hero-section {
   padding: 60px 0;

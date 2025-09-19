@@ -1,12 +1,12 @@
+// src/pages/AdminDashboardPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './AdminDashboardPage.css';
-import { Menu, X, LayoutDashboard, MapPin, LogOut, MessageCircle, Mail } from "lucide-react";
+import { Menu, X, LayoutDashboard, Users, MapPin, LogOut, MessageCircleQuestion } from "lucide-react";
 
 function AdminDashboardPage() {
   const [metricas, setMetricas] = useState({});
-  const [pendencias, setPendencias] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -38,172 +38,136 @@ function AdminDashboardPage() {
         headers: { Authorization: `Bearer ${token}` }
       };
 
-      const [metricasRes, pendenciasRes] = await Promise.all([
-        axios.get('http://localhost:3001/api/admin/dashboard/metricas', config),
-        axios.get('http://localhost:3001/api/admin/dashboard/pendencias', config)
-      ]);
-
+      const metricasRes = await axios.get('http://localhost:3001/api/admin/dashboard/metricas', config);
       setMetricas(metricasRes.data);
-      setPendencias(pendenciasRes.data);
       setError('');
 
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-      if (error.response?.status === 401) {
+    } catch (err) {
+      if (err.response?.status === 401) {
         localStorage.removeItem('adminToken');
         localStorage.removeItem('adminData');
         navigate('/admin/login');
       } else {
-        setError('Erro ao carregar dados do dashboard');
+        setError('Erro ao carregar dados');
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogout = () => {
+  const logout = () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminData');
     navigate('/admin/login');
   };
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
-
   if (loading) {
     return (
-      <div className="admin-dashboard">
-        <div className="loading">Carregando...</div>
+      <div className="admin-loading">
+        <div className="loading-spinner"></div>
+        <p>Carregando...</p>
       </div>
     );
   }
 
   return (
     <div className="admin-dashboard">
-      {/* Header */}
-      <header className="admin-header">
-        <div className="header-left">
-          <button className="menu-toggle" onClick={toggleMenu}>
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-          <h1>TratorBR - Admin</h1>
-        </div>
-        <div className="header-right">
-          <span className="admin-name">Olá, {admin.username}</span>
-          <button className="logout-btn" onClick={handleLogout}>
-            <LogOut size={20} />
-            Sair
-          </button>
-        </div>
-      </header>
+      {/* Botão hamburger (mobile) */}
+      <button
+        className="hamburger-btn"
+        aria-label="Abrir menu"
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen(true)}
+      >
+        <Menu size={24} />
+      </button>
 
-      <div className="admin-content">
-        {/* Sidebar */}
-        <nav className={`admin-sidebar ${menuOpen ? 'open' : ''}`}>
-          <ul className="nav-menu">
-            <li className={isActive('/admin/dashboard') ? 'active' : ''}>
-              <button onClick={() => navigate('/admin/dashboard')}>
-                <LayoutDashboard size={20} />
-                Dashboard
-              </button>
-            </li>
-            
-            {isMaster && (
-              <li className={isActive('/admin/ips') ? 'active' : ''}>
-                <button onClick={() => navigate('/admin/ips')}>
-                  <MapPin size={20} />
-                  Gerenciar IPs
-                </button>
-              </li>
-            )}
-            
-            <li className={isActive('/admin/contatos') ? 'active' : ''}>
-              <button onClick={() => navigate('/admin/contatos')}>
-                <Mail size={20} />
-                Contatos
-              </button>
-            </li>
-          </ul>
+      {/* Sidebar (fixa no desktop; off-canvas no mobile) */}
+      <aside className={`admin-sidebar ${menuOpen ? 'is-open' : ''}`}>
+        {/* Fechar (mobile) */}
+        <button
+          className="close-sidebar"
+          aria-label="Fechar menu"
+          onClick={() => setMenuOpen(false)}
+        >
+          <X size={22} />
+        </button>
+
+        <div className="sidebar-header">
+          <h1>TRATOR BR</h1>
+          <p>Sistema Interno</p>
+        </div>
+
+        <nav className="sidebar-nav">
+          <button
+            className={`nav-item ${isActive('/admin/dashboard') ? 'active' : ''}`}
+            onClick={() => navigate('/admin/dashboard')}
+          >
+            <LayoutDashboard className="nav-icon" size={22} />
+            Dashboard
+          </button>
+
+          {isMaster && (
+            <button
+              className={`nav-item ${isActive('/admin/ips') ? 'active' : ''}`}
+              onClick={() => navigate('/admin/ips')}
+            >
+              <MapPin className="nav-icon" size={22} />
+              IP de Acesso
+            </button>
+          )}
+
+          <button
+            className={`nav-item ${isActive('/admin/contato') ? 'active' : ''}`}
+            onClick={() => navigate('/admin/contato')}
+          >
+            <MessageCircleQuestion className="nav-icon" size={22} />
+            Contatos
+          </button>
         </nav>
 
-        {/* Main Content */}
-        <main className="dashboard-main">
-          {error && <div className="error-message">{error}</div>}
-          
-          <div className="dashboard-grid">
-            {/* Métricas Principais */}
-            <div className="metrics-section">
-              <h2>Métricas do Sistema</h2>
-              <div className="metrics-grid">
-                <div className="metric-card">
-                  <div className="metric-icon">
-                    <Mail size={24} />
-                  </div>
-                  <div className="metric-info">
-                    <h3>Total de Contatos</h3>
-                    <p className="metric-value">{metricas.totalContatos || 0}</p>
-                  </div>
-                </div>
+        <button className="sidebar-logout" onClick={logout}>
+          <LogOut className="nav-icon" size={22} />
+          Sair
+        </button>
+      </aside>
 
-                <div className="metric-card">
-                  <div className="metric-icon">
-                    <MapPin size={24} />
-                  </div>
-                  <div className="metric-info">
-                    <h3>IPs Autorizados</h3>
-                    <p className="metric-value">{metricas.totalIpsAutorizados || 0}</p>
-                  </div>
-                </div>
+      {/* Main Content */}
+      <main className="admin-main">
+        <div className="admin-content">
+          <h1>Dashboard</h1>
 
-                <div className="metric-card">
-                  <div className="metric-icon">
-                    <MessageCircle size={24} />
-                  </div>
-                  <div className="metric-info">
-                    <h3>Contatos Recentes</h3>
-                    <p className="metric-value">{metricas.contatosRecentes || 0}</p>
-                    <small>Últimos 7 dias</small>
-                  </div>
-                </div>
-              </div>
+          {error && (
+            <div className="error-banner">
+              {error}
+              <button onClick={carregarDados}>Tentar novamente</button>
+            </div>
+          )}
+
+          {/* Métricas Simplificadas */}
+          <div className="metricas-grid-simple">
+            <div className="metrica-card">
+              <h3>Admins Cadastrados</h3>
+              <div className="metrica-valor">{metricas.adminsIpsCadastrados || 0}</div>
+              <p className="metrica-desc">IPs cadastrados</p>
             </div>
 
-            {/* Pendências */}
-            <div className="pendencias-section">
-              <h2>Pendências</h2>
-              <div className="pendencias-grid">
-                <div className="pendencia-card">
-                  <div className="pendencia-info">
-                    <h3>Contatos Não Lidos</h3>
-                    <p className="pendencia-count">{pendencias.contatos || 0}</p>
-                  </div>
-                  {pendencias.contatos > 0 && (
-                    <button 
-                      className="action-btn"
-                      onClick={() => navigate('/admin/contatos')}
-                    >
-                      Ver Contatos
-                    </button>
-                  )}
-                </div>
-              </div>
+            <div className="metrica-card">
+              <h3>Admins Online</h3>
+              <div className="metrica-valor">{metricas.adminsOnline || 0}</div>
+              <p className="metrica-desc">Últimas 24h</p>
             </div>
 
-            {/* Status do Sistema */}
-            <div className="status-section">
-              <h2>Status do Sistema</h2>
-              <div className="status-card">
-                <div className="status-indicator active"></div>
-                <p>{metricas.status || 'Sistema Ativo'}</p>
-              </div>
+            <div className="metrica-card">
+              <h3>Contatos Pendentes</h3>
+              <div className="metrica-valor">{metricas.contatosPendentes || 0}</div>
+              <p className="metrica-desc">Aguardando resposta</p>
             </div>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
 
 export default AdminDashboardPage;
-
