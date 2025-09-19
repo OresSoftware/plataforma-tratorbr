@@ -16,13 +16,31 @@ import CookieConsent from "./components/CookieConsent";
 import Analytics from "./components/Analytics";
 import { MobileMenuProvider } from "./contexts/MobileMenuContext";
 import AdminContatoPage from './pages/AdminContatoPage';
+import { useLocation, useNavigationType } from 'react-router-dom';
+import { useEffect } from 'react';
 
+
+function ScrollToHashElement() {
+  const { hash } = useLocation();
+  const action = useNavigationType(); // 'PUSH' | 'REPLACE' | 'POP' (reload/back/forward)
+
+  useEffect(() => {
+    // Só rola ao hash quando a navegação foi por Link/navigate (PUSH/REPLACE).
+    if (hash && (action === 'PUSH' || action === 'REPLACE')) {
+      const el = document.querySelector(hash);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [hash, action]);
+
+  return null;
+}
 
 function App() {
   return (
     <MobileMenuProvider>
       <Router>
         <TitleManager />
+        <ScrollToHashElement />
         <Routes>
           {/* Páginas Públicas */}
           <Route path="/" element={<Aplicativo />} />

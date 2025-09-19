@@ -156,7 +156,7 @@ const PlanosPage = () => {
         </section>
         {/* Recursos Section */}
         <section className="recursos-section">
-          <div className="recursos-container">
+          <div className="recursos-container" id='recursos'>
             <h2 className="recursos-title">RECURSOS</h2>
             <div className='divsoria'></div>
             <div className="recursos-grid-figma">
@@ -259,9 +259,9 @@ const PlanosPage = () => {
                   <p>Conectamos o melhor preço e qualidade, gerencia suas análises
                     de um só lugar e ainda te dá a certeza de todas as informações do seu estoque no
                     campo.</p>
-                  <Link to="/sobre-nos" onClick={() => window.scrollTo(0, 0)}>
-                    <button className="context-btn">Saiba mais</button>
-                  </Link>
+                <Link to="/sobre-nos" onClick={() => window.scrollTo(0, 0)}>
+                  <button className="context-btn">Saiba mais</button>
+                </Link>
                 </div>
               </div>
               <div className="context-item">

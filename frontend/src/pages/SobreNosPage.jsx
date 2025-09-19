@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
+import { Link } from 'react-router-dom';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import './SobreNosPage.css';
@@ -202,9 +203,9 @@ const SobreNosPage = () => {
               sua gestão com a TratorBR.
             </p>
             <div className="cta-buttons">
-              <a href="/" className="btn-primary">
-                Conhecer o App
-              </a>
+              <Link to="/#recursos" className='btn-primary'>
+                Conhecer APP
+              </Link>
               <a href="/contato" className="btn-secondary">
                 Falar Conosco
               </a>
