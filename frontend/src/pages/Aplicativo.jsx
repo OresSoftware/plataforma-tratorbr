@@ -258,7 +258,9 @@ const PlanosPage = () => {
                   <p>Conectamos o melhor preço e qualidade, gerencia suas análises
                     de um só lugar e ainda te dá a certeza de todas as informações do seu estoque no
                     campo.</p>
-                  <button className="context-btn">Saiba mais</button>
+                  <Link to="/sobre-nos" onClick={() => window.scrollTo(0, 0)}>
+                    <button className="context-btn">Saiba mais</button>
+                  </Link>
                 </div>
               </div>
               <div className="context-item">
@@ -267,7 +269,9 @@ const PlanosPage = () => {
                   <p>Venda suas máquinas no preço de mercado, encontre
                     concessionários perto de você e negocie com segurança direto no
                     app.</p>
-                  <button className="context-btn">Saiba mais</button>
+                  <Link to="/sobre-nos" onClick={() => window.scrollTo(0, 0)}>
+                    <button className="context-btn">Saiba mais</button>
+                  </Link>
                 </div>
               </div>
             </div>
