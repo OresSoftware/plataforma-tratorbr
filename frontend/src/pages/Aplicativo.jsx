@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import Footer from '../components/footer';
 import { obterPlanos, gerarUrlWhatsApp, prepararDadosPagamento } from '../services/planosService';
 import './Aplicativo.css';
+import { Link } from 'react-router-dom';
 import appIphone from '/imagens-aplicativo/baixar-android.png';
 import appAndroid from '/imagens-aplicativo/baixar-apple.png';
 import iphone02 from '/imagens-aplicativo/iphone15-02.png';
