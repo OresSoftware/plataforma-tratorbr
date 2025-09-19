@@ -11,25 +11,36 @@ async function safeCount(sql, params = []) {
   }
 }
 
-// Dashboard - Obter métricas básicas
+// Dashboard - Obter métricas simplificadas
 exports.obterMetricasDashboard = async (_req, res) => {
   try {
-    // Métricas básicas para o sistema simplificado
-    const totalContatos = await safeCount(`SELECT COUNT(*) AS total FROM contatos`);
-    const totalIpsAutorizados = await safeCount(`SELECT COUNT(*) AS total FROM ips_autorizados WHERE ativo = 1`);
+    // 1. Admins Cadastrados (IPs cadastrados)
+    const adminsIpsCadastrados = await safeCount(`
+      SELECT COUNT(DISTINCT admin_id) AS total 
+      FROM admin_ips 
+      WHERE ativo = 1
+    `);
     
-    // Contatos recentes (últimos 7 dias)
-    const contatosRecentes = await safeCount(`
-      SELECT COUNT(*) AS total FROM contatos 
-      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+    // 2. Admins Online (IPs que fizeram login nas últimas 24 horas)
+    const adminsOnline = await safeCount(`
+      SELECT COUNT(DISTINCT admin_id) AS total 
+      FROM admin_ips 
+      WHERE ativo = 1 
+      AND last_seen_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+    `);
+    
+    // 3. Contatos Pendentes
+    const contatosPendentes = await safeCount(`
+      SELECT COUNT(*) AS total 
+      FROM contatos 
+      WHERE status = 'pendente' 
+      AND deleted_at IS NULL
     `);
 
     return res.json({
-      totalContatos,
-      totalIpsAutorizados,
-      contatosRecentes,
-      visitantesSite: 0, // placeholder
-      status: 'Sistema Simplificado Ativo'
+      adminsIpsCadastrados,
+      adminsOnline,
+      contatosPendentes
     });
   } catch (error) {
     console.error('Erro em obterMetricasDashboard:', error);
@@ -37,23 +48,23 @@ exports.obterMetricasDashboard = async (_req, res) => {
   }
 };
 
-// Dashboard - Obter pendências básicas
+// Dashboard - Obter pendências (mantido para compatibilidade, mas simplificado)
 exports.obterPendencias = async (_req, res) => {
   try {
-    // Contatos não lidos (assumindo que há uma coluna 'lido')
-    const contatosNaoLidos = await safeCount(`
-      SELECT COUNT(*) AS total FROM contatos 
-      WHERE lido = 0 OR lido IS NULL
+    // Apenas contatos pendentes
+    const contatosPendentes = await safeCount(`
+      SELECT COUNT(*) AS total 
+      FROM contatos 
+      WHERE status = 'pendente' 
+      AND deleted_at IS NULL
     `);
 
     return res.json({
-      contatos: contatosNaoLidos,
-      ips: 0, // sem pendências de IP por enquanto
-      total: contatosNaoLidos
+      contatos: contatosPendentes,
+      total: contatosPendentes
     });
   } catch (error) {
     console.error('Erro em obterPendencias:', error);
     return res.status(500).json({ message: 'Erro ao carregar pendências.' });
   }
 };
-
