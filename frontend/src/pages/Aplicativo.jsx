@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
 import { obterPlanos, gerarUrlWhatsApp, prepararDadosPagamento } from '../services/planosService';
 import './Aplicativo.css';
-import { Link } from 'react-router-dom';
 import appIphone from '/imagens-aplicativo/baixar-android.png';
 import appAndroid from '/imagens-aplicativo/baixar-apple.png';
 import iphone02 from '/imagens-aplicativo/iphone15-02.png';
@@ -29,7 +28,21 @@ const PlanosPage = () => {
   const [faqAberto, setFaqAberto] = useState(null);
 
 
+
   const planos = obterPlanos();
+
+  // Bloquear scroll do fundo
+  useEffect(() => {
+    if (mostrarFormulario) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mostrarFormulario]);
 
   const handleAssinarPlano = (plano) => {
     setPlanoSelecionado(plano);
@@ -156,7 +169,7 @@ const PlanosPage = () => {
         </section>
         {/* Recursos Section */}
         <section className="recursos-section">
-          <div className="recursos-container" id='recursos'>
+          <div className="recursos-container">
             <h2 className="recursos-title">RECURSOS</h2>
             <div className='divsoria'></div>
             <div className="recursos-grid-figma">
@@ -259,9 +272,7 @@ const PlanosPage = () => {
                   <p>Conectamos o melhor preço e qualidade, gerencia suas análises
                     de um só lugar e ainda te dá a certeza de todas as informações do seu estoque no
                     campo.</p>
-                <Link to="/sobre-nos" onClick={() => window.scrollTo(0, 0)}>
                   <button className="context-btn">Saiba mais</button>
-                </Link>
                 </div>
               </div>
               <div className="context-item">
@@ -270,9 +281,7 @@ const PlanosPage = () => {
                   <p>Venda suas máquinas no preço de mercado, encontre
                     concessionários perto de você e negocie com segurança direto no
                     app.</p>
-                  <Link to="/sobre-nos" onClick={() => window.scrollTo(0, 0)}>
-                    <button className="context-btn">Saiba mais</button>
-                  </Link>
+                  <button className="context-btn">Saiba mais</button>
                 </div>
               </div>
             </div>
@@ -361,8 +370,8 @@ const PlanosPage = () => {
         </section>
         {/* Modal de Formulário */}
         {mostrarFormulario && (
-          <div className="modal-overlay">
-            <div className="modal-content">
+          <div className="modal-overlay" onClick={handleFecharFormulario}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h3>Finalizar Assinatura</h3>
                 <button className="modal-close" onClick={handleFecharFormulario}>×</button>
