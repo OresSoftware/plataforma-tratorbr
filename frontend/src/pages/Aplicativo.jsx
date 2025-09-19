@@ -4,7 +4,6 @@ import Header from '../components/Header';
 import Footer from '../components/footer';
 import { obterPlanos, gerarUrlWhatsApp, prepararDadosPagamento } from '../services/planosService';
 import './Aplicativo.css';
-import { Link } from 'react-router-dom';
 import appIphone from '/imagens-aplicativo/baixar-android.png';
 import appAndroid from '/imagens-aplicativo/baixar-apple.png';
 import iphone02 from '/imagens-aplicativo/iphone15-02.png';
@@ -334,30 +333,26 @@ const PlanosPage = () => {
           <div className='download-container-dois'>
             <h2 className="title">Escaneie ou clique para baixar</h2>
             <div className="cards">
+              <a href="https://play.google.com/store/apps/details?id=br.com.tratorbr.TratorBR&pcampaignid=web_share" target="_blank" rel="external" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="card">
-                <img
-                  src= {qrcode}
-                  alt="play store"
-                  className="qr-code"
-                />
+                <img src= {qrcode} alt="play store" className="qr-code"/> 
                 <div>
                   <h3>Baixe o app na Play Store</h3>
                   <p>Escaneie para baixar</p>
                 </div>
-                <span className="arrow">→</span>
+                <span className="arrow-s">→</span>
               </div>
+               </a>
+               <a href="" target="_blank" rel="external" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="card">
-                <img
-                  src={qrcode}
-                  alt="QR Code Parceiro"
-                  className="qr-code"
-                />
+                <img src={qrcode} alt="QR Code Parceiro" className="qr-code"/>
                 <div>
                   <h3>Baixe o app na Apple Store</h3>
                   <p>Escaneie para baixar</p>
                 </div>
-                <span className="arrow">→</span>
+                <span className="arrow-s">→</span>
               </div>
+              </a>
             </div>
           </div>
         </section>

@@ -13,7 +13,7 @@
   color: #333;
 }
 
-.content{
+.content {
   transform: translateY(-20px);
   animation: fadeInDown 0.8s ease-out forwards;
 }
@@ -1889,6 +1889,7 @@ div#recurso-card-6 {
   min-width: 300px;
   width: 450px;
   height: 140px;
+  cursor: pointer;
 }
 
 .qr-code {
@@ -1909,11 +1910,18 @@ div#recurso-card-6 {
   margin: 5px 0 0;
 }
 
-.arrow {
+.arrow-s {
   margin-left: auto;
   font-size: 22px;
   font-weight: bold;
   color: #000;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  display: inline-block;
+}
+
+.card:hover .arrow-s {
+  transform: translateX(8px) scale(1.1);
+  opacity: 0.8;
 }
 
 .ipho03 {
@@ -1926,12 +1934,13 @@ div#recurso-card-6 {
 }
 
 @media (max-width: 1027px) {
-  .ipho03{
+  .ipho03 {
     right: 9%;
     bottom: 92%;
     width: 280px;
   }
-  .title{
+
+  .title {
     text-align: center;
     margin: 20px 0;
   }
@@ -1940,7 +1949,7 @@ div#recurso-card-6 {
 
 @media (max-width: 480px) {
 
-  .card h3{
+  .card h3 {
     font-size: 14px;
   }
 
