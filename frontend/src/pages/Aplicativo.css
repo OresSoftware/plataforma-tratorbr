@@ -1234,6 +1234,7 @@ div#planos {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  height: 50px;
 }
 
 .suporteApp::before {

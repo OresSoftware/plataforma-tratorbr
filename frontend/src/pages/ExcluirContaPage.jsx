@@ -4,6 +4,7 @@ import Footer from '../components/footer';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import './ExcluirContaPage.css';
+import { WifiOff } from "lucide-react";
 
 const ExcluirContaPage = () => {
   const [email, setEmail] = useState('');
@@ -158,20 +159,70 @@ const ExcluirContaPage = () => {
             </div>
           </div>
 
-          <div className="vantagens-section">
-            <h2>Vantagens de manter sua conta</h2>
-            <p>Veja tudo que você vai perder ao excluir sua conta:</p>
-            
-            <div className="vantagens-grid">
-              {vantagens.map((vantagem) => (
-                <div key={vantagem.id} id={vantagem.id} className="vantagem-card">
-                  <div className="vantagem-icone">{vantagem.icone}</div>
-                  <h3>{vantagem.titulo}</h3>
-                  <p>{vantagem.descricao}</p>
+        <section className="recursos-section" >
+          <div className="recursos-container" style={{padding:"0"}}>
+            <h2 className="recursos-title">RECURSOS</h2>
+            <div className='divsoria'></div>
+            <div className="recursos-grid-figma">
+              <div className="recurso-card-figma" id='recurso-card-1'>
+                <div className="recurso-icon-figma">
+                  <SearchIcon />
                 </div>
-              ))}
+                <h3 className="recurso-titulo-figma">Descubra o Ano</h3>
+                <p className="recurso-texto-figma">
+                  A solução para quem tem dúvidas sobre o ano de fabricação da sua máquina de trabalho.
+                </p>
+              </div>
+              <div className="recurso-card-figma" id='recurso-card-2'>
+                <div className="recurso-icon-figma">
+                  <MoneyIcon />
+                </div>
+                <h3 className="recurso-titulo-figma">Avaliações Precisas</h3>
+                <p className="recurso-texto-figma">
+                  Tecnologia que avalia sua máquina com eficiência e o valor que ela merece.
+                </p>
+              </div>
+              <div className="recurso-card-figma" id='recurso-card-3'>
+                <div className="recurso-icon-figma">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3C7.58 3 4 4.79 4 7V17C4 19.21 7.58 21 12 21S20 19.21 20 17V7C20 4.79 16.42 3 12 3ZM18 17C18 17.5 15.87 19 12 19S6 17.5 6 17V14.77C7.61 15.55 9.72 16 12 16S16.39 15.55 18 14.77V17ZM18 12.45C16.7 13.4 14.42 14 12 14C9.58 14 7.3 13.4 6 12.45V9.64C7.47 10.47 9.61 11 12 11C14.39 11 16.53 10.47 18 9.64V12.45ZM12 9C8.13 9 6 7.5 6 7S8.13 5 12 5S18 6.5 18 7S15.87 9 12 9Z" fill="#15383E" />
+                  </svg>
+                </div>
+                <h3 className="recurso-titulo-figma">Maior Banco de Dados</h3>
+                <p className="recurso-texto-figma">
+                  O maior e mais completo do Brasil, reunindo praticamente todas as marcas e modelos de máquinas agrícolas.
+                </p>
+              </div>
+              <div className="recurso-card-figma" id='recurso-card-4'>
+                <div className="recurso-icon-figma">
+                  <WifiOff size={46} />
+                </div>
+                <h3 className="recurso-titulo-figma">On e Off</h3>
+                <p className="recurso-texto-figma">
+                  O app da TratorBR funciona também offline, garantindo produtividade mesmo sem internet.
+                </p>
+              </div>
+              <div className="recurso-card-figma" id='recurso-card-5'>
+                <div className="recurso-icon-figma">
+                  <ShieldIcon />
+                </div>
+                <h3 className="recurso-titulo-figma">Plataforma Segura</h3>
+                <p className="recurso-texto-figma">
+                  Seus dados estão sempre protegidos com segurança e confiabilidade.
+                </p>
+              </div>
+              <div className="recurso-card-figma" id='recurso-card-6'>
+                <div className="recurso-icon-figma">
+                  <SupportIcon />
+                </div>
+                <h3 className="recurso-titulo-figma">Suporte Especializado</h3>
+                <p className="recurso-texto-figma">
+                  Acesso a especialistas em máquinas agrícolas para tirar dúvidas e orientações.
+                </p>
+              </div>
             </div>
           </div>
+        </section>
               
         </div>
       </main>
