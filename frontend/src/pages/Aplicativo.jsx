@@ -402,6 +402,7 @@ const PlanosPage = () => {
                   onChange={(e) => setDadosUsuario({ ...dadosUsuario, nome: e.target.value })}
                   placeholder="Seu nome completo"
                 />
+
               </div>
 
               <div className="form-group">
@@ -413,6 +414,23 @@ const PlanosPage = () => {
                   onChange={(e) => setDadosUsuario({ ...dadosUsuario, email: e.target.value })}
                   placeholder="seu@email.com"
                 />
+                <div>
+                  <h3>Baixe o app na Google Play</h3>
+                  <p>Escaneie para baixar</p>
+                </div>
+                <span className="arrow">→</span>
+              </div>
+              <div className="card">
+                <img
+                  src={qrcode}
+                  alt="QR Code Apple Store"
+                  className="qr-code"
+                />
+                <div>
+                  <h3>Baixe o app na Apple Store</h3>
+                  <p>Escaneie para baixar</p>
+                </div>
+                <span className="arrow">→</span>
               </div>
 
               <div className="form-group">
