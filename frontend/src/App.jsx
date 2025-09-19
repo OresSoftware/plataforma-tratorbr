@@ -15,6 +15,7 @@ import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
 import Analytics from "./components/Analytics";
 import { MobileMenuProvider } from "./contexts/MobileMenuContext";
+import AdminContatoPage from './pages/AdminContatoPage';
 
 
 function App() {
@@ -32,9 +33,12 @@ function App() {
           <Route path="/sobre-nos" element={<SobreNosPage />} />
 
           {/* Área Administrativa */}
+          <Route path="/admin" element={<AdminDashboardPage />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           <Route path="/admin/ips" element={<AdminIpsPage />} />
+          <Route path="/admin/contato" element={<AdminContatoPage />} />
+          
 
           {/* Redirecionamentos */}
           <Route path="*" element={<Navigate to="/" replace />} />

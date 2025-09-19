@@ -10,20 +10,7 @@ const router = express.Router();
 
 // As rotas de contatos já são protegidas pelo adminRoutes.js
 // que aplica verificarAdmin antes de chegar aqui.
-// Aqui só precisamos verificar se é master.
-
-const exigirMaster = (req, res, next) => {
-  if (req.admin?.role !== 'master') {
-    return res.status(403).json({ 
-      message: 'Acesso restrito a administradores master.',
-      requireMaster: true 
-    });
-  }
-  next();
-};
-
-// Aplicar verificação de master em todas as rotas
-router.use(exigirMaster);
+// Todos os admins autenticados podem visualizar contatos.
 
 // GET /api/admin/contatos?status=pendente&page=1&pageSize=20
 router.get("/", listarContatos);
