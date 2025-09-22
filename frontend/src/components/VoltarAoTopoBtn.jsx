@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useMobileMenu } from '../contexts/MobileMenuContext';
-import './VoltarAoTopoBtn.css';
+import './style/VoltarAoTopoBtn.css';
 
 const VoltarAoTopoBtn = () => {
   const [showBtn, setShowBtn] = useState(false);
