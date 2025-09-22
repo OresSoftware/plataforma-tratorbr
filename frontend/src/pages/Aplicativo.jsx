@@ -426,11 +426,12 @@ const PlanosPage = () => {
             </div>
           </div>
         )}
-        <WhatsappFlutuante />
-        <VoltarAoTopoBtn />
-        <Footer />
-            </div>
+          </div>
+          <WhatsappFlutuante />
+          <VoltarAoTopoBtn />
+          <Footer />
       </div>
+
   );
 };
 

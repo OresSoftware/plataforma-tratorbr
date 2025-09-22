@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useMobileMenu } from '../contexts/MobileMenuContext';
-import './WhatsappFlutuante.css';
+import './style/WhatsappFlutuante.css';
 
 const WhatsappFlutuante = () => {
   const { isMobileMenuOpen } = useMobileMenu();
