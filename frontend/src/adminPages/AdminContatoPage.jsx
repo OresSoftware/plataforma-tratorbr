@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { apiAdminContatos } from "../services/apiAdminContatos";
 import { Menu, X, LayoutDashboard, Users, MapPin, LogOut, MessageCircleQuestion } from "lucide-react";
-import "./AdminContatoPage.css";
+import "../adminStyle/AdminContatoPage.css";
 
 function soDigitos(v) {
   return String(v || "").replace(/\D/g, "");

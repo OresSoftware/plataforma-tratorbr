@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import Footer from '../components/footer';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
-import './TermosEPolitica.css';
+import '../style/TermosEPolitica.css';
 
 const TermosEPolitica = () => {
   return (

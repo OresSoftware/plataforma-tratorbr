@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import './AdminDashboardPage.css';
 import { Menu, X, LayoutDashboard, Users, MapPin, LogOut, MessageCircleQuestion } from "lucide-react";
+import '../adminStyle/AdminDashboardPage.css';
 
 function AdminDashboardPage() {
   const [metricas, setMetricas] = useState({});

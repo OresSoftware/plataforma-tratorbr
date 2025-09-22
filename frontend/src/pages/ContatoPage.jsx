@@ -1,13 +1,13 @@
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
-import './ContatoPage.css';
 import { useMemo, useState } from "react";
 import { apiContatos } from "../services/apiContatos";
 import { FaPhoneAlt, FaMapMarkerAlt, FaEnvelope,} from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
+import '../style/ContatoPage.css';
 
 const EMAIL_PUBLICO = import.meta.env.VITE_CONTATO_EMAIL || "contato@tratorbr.com.br";
 

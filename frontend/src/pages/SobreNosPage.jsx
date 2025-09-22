@@ -4,7 +4,7 @@ import Footer from '../components/footer';
 import { Link } from 'react-router-dom';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
-import './SobreNosPage.css';
+import '../style/SobreNosPage.css';
 
 const SobreNosPage = () => {
   return (
