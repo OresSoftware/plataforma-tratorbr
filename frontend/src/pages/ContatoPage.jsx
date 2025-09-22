@@ -7,7 +7,7 @@ import { FaPhoneAlt, FaMapMarkerAlt, FaEnvelope,} from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
-import '../style/ContatoPage.css';
+import './style/ContatoPage.css';
 
 const EMAIL_PUBLICO = import.meta.env.VITE_CONTATO_EMAIL || "contato@tratorbr.com.br";
 

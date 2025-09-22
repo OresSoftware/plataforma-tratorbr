@@ -14,7 +14,7 @@ import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import { WifiOff } from "lucide-react";
 import iph03 from '/imagens-aplicativo/iphone-03.png';
 import qrcode from '/imagens-aplicativo/qr-code.png';
-import '../style/Aplicativo.css';
+import './style/Aplicativo.css';
 
 
 const PlanosPage = () => {
