@@ -88,8 +88,7 @@ const SobreNosPage = () => {
               </div>
               <h3 className="valor-title">Missão</h3>
               <p className="valor-description">
-                Democratizar o acesso à tecnologia no agronegócio, oferecendo
-                ferramentas simples e eficazes para otimizar a gestão rural.
+                Desenvolver tecnologias confiáveis que auxiliam o acesso à informação no agronegócio, oferecendo soluções simples, eficazes e seguras para impulsionar a gestão e os negócios rurais.
               </p>
             </div>
             <div className="valor-card">
@@ -101,8 +100,7 @@ const SobreNosPage = () => {
               </div>
               <h3 className="valor-title">Visão</h3>
               <p className="valor-description">
-                Ser a principal plataforma de gestão agrícola do Brasil,
-                conectando tecnologia e tradição rural.
+                Ser a principal plataforma tecnológica de negócios agrícolas no Brasil, conectando marcas, pessoas e dados para viabilizar oportunidades e fortalecer toda a cadeia do agronegócio.
               </p>
             </div>
             <div className="valor-card">
@@ -113,8 +111,7 @@ const SobreNosPage = () => {
               </div>
               <h3 className="valor-title">Valores</h3>
               <p className="valor-description">
-                Inovação, simplicidade, confiabilidade e compromisso com
-                o desenvolvimento sustentável do agronegócio brasileiro.
+                Inovação, simplicidade, confiabilidade e compromisso, aliados à conectividade e criatividade, para promover o desenvolvimento sustentável e gerar valor real para clientes e parceiros.
               </p>
             </div>
           </div>
