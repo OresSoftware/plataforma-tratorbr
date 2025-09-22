@@ -3,8 +3,8 @@ import Header from '../components/Header';
 import Footer from '../components/footer';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
-import './ExcluirContaPage.css';
 import { WifiOff } from "lucide-react";
+import './style/ExcluirContaPage.css';
 
 const ExcluirContaPage = () => {
   const [email, setEmail] = useState('');

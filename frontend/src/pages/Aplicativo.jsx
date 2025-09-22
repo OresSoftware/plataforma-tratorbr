@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
 import { obterPlanos, gerarUrlWhatsApp, prepararDadosPagamento } from '../services/planosService';
-import './Aplicativo.css';
 import appIphone from '/imagens-aplicativo/baixar-android.png';
 import appAndroid from '/imagens-aplicativo/baixar-apple.png';
 import iphone02 from '/imagens-aplicativo/iphone15-02.png';
@@ -15,6 +14,7 @@ import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import { WifiOff } from "lucide-react";
 import iph03 from '/imagens-aplicativo/iphone-03.png';
 import qrcode from '/imagens-aplicativo/qr-code.png';
+import './style/Aplicativo.css';
 
 
 const PlanosPage = () => {
@@ -425,11 +425,12 @@ const PlanosPage = () => {
             </div>
           </div>
         )}
-        <WhatsappFlutuante />
-        <VoltarAoTopoBtn />
-        <Footer />
+          </div>
+          <WhatsappFlutuante />
+          <VoltarAoTopoBtn />
+          <Footer />
       </div>
-    </div>
+
   );
 };
 
