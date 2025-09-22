@@ -5,9 +5,9 @@ import Aplicativo from "./pages/Aplicativo";
 import ContatoPage from "./pages/ContatoPage";
 import AjudaPage from "./pages/AjudaPage";
 import TermosEPolitica from './pages/TermosEPoliticaPage';
-import AdminLoginPage from './adminPages/AdminLoginPage';
-import AdminDashboardPage from './adminPages/AdminDashboardPage';
-import AdminIpsPage from './adminPages/AdminIpsPage';
+import AdminLoginPage from './admin-gestao/AdminLoginPage';
+import AdminDashboardPage from './admin-gestao/AdminDashboardPage';
+import AdminIpsPage from './admin-gestao/AdminIpsPage';
 import ExcluirContaPage from './pages/ExcluirContaPage';
 import SobreNosPage from './pages/SobreNosPage';
 
@@ -15,7 +15,7 @@ import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
 import Analytics from "./components/Analytics";
 import { MobileMenuProvider } from "./contexts/MobileMenuContext";
-import AdminContatoPage from './adminPages/AdminContatoPage';
+import AdminContatoPage from './admin-gestao/AdminContatoPage';
 import { useLocation, useNavigationType } from 'react-router-dom';
 import { useEffect } from 'react';
 
