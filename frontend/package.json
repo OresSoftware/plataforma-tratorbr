@@ -10,16 +10,30 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@babel/runtime": "^7.28.4",
+    "ajv": "^8.17.1",
     "axios": "^1.11.0",
+    "body-parser": "^2.2.0",
+    "cookie": "^1.0.2",
+    "datasette": "^1.0.1",
+    "express": "^5.1.0",
+    "express-jwt": "^8.5.1",
+    "flaschenpost": "^5.1.1",
     "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.542.0",
+    "moment": "^2.30.1",
+    "path-to-regexp": "^8.3.0",
     "qrcode": "^1.5.4",
+    "qs": "^6.14.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-google-recaptcha": "^3.1.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.8.0",
-    "tailwind": "^4.0.0"
+    "send": "^1.2.0",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
@@ -34,5 +48,10 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13",
     "vite": "^7.1.0"
+  },
+  "overrides": {
+    "lodash": "^4.17.21",
+    "keypather": "1.10.1",
+    "101": "1.1.0"
   }
 }
