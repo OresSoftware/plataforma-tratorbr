@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Menu, X, LayoutDashboard, Users, MapPin, LogOut, Plus, Trash2, RefreshCw, MessageCircleQuestion } from "lucide-react";
-import "../adminStyle/AdminDashboardPage.css";
-import "../adminStyle/AdminIpsPage.css";
+import "./style/AdminDashboardPage.css";
+import "./style/AdminIpsPage.css";
 
 function isPrivateIp(ip) {
   if (!ip) return true;
