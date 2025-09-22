@@ -4,6 +4,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './AdminDashboardPage.css';
 import { Menu, X, LayoutDashboard, Users, MapPin, LogOut, MessageCircleQuestion } from "lucide-react";
+<<<<<<< Updated upstream:frontend/src/pages/AdminDashboardPage.jsx
+=======
+import './Style/AdminDashboardPage.css';
+>>>>>>> Stashed changes:frontend/src/adminPages/AdminDashboardPage.jsx
 
 function AdminDashboardPage() {
   const [metricas, setMetricas] = useState({});

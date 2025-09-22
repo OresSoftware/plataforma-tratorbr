@@ -2,7 +2,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+<<<<<<< Updated upstream:frontend/src/pages/AdminLoginPage.jsx
 import './AdminLoginPage.css';
+=======
+import './Style/AdminLoginPage.css';
+>>>>>>> Stashed changes:frontend/src/adminPages/AdminLoginPage.jsx
 
 const AdminLoginPage = () => {
   const [formData, setFormData] = useState({

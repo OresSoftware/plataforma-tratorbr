@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { apiAdminContatos } from "../services/apiAdminContatos";
 import { Menu, X, LayoutDashboard, Users, MapPin, LogOut, MessageCircleQuestion } from "lucide-react";
+<<<<<<< Updated upstream:frontend/src/pages/AdminContatoPage.jsx
 import "./AdminContatoPage.css";
+=======
+import "./style/AdminContatoPage.css";
+>>>>>>> Stashed changes:frontend/src/adminPages/AdminContatoPage.jsx
 
 function soDigitos(v) {
   return String(v || "").replace(/\D/g, "");
