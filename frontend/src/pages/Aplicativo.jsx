@@ -227,7 +227,7 @@ const PlanosPage = () => {
           </div>
         </section>
         {/* Planos Section */}
-        <section className="planos-section">
+        {/* <section className="planos-section">
           <div className="planos-container">
             <h2 className="planos-title">PLANOS</h2>
             <div className='divsoria' id='planos'></div>
@@ -255,7 +255,7 @@ const PlanosPage = () => {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
         {/* Context Images Section */}
         <section className="context-section">
           <div className="context-container">
