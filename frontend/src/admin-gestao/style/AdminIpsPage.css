@@ -1,11 +1,5 @@
 /* AdminIpsPage.css - Versão com Cards para Mobile e Modal Melhorado */
 
-.admin-ips-page {
-  display: flex;
-  min-height: 100vh;
-  background-color: #f8fafc;
-}
-
 /* Header da página */
 .page-header {
   margin-bottom: 2rem;
@@ -498,7 +492,6 @@
 }
 
 .form-group label {
-  font-weight: 600;
   color: #374151;
   font-size: 0.875rem;
   margin-bottom: 0.25rem;
@@ -715,8 +708,13 @@
   color: white;
   font-weight: 500;
   z-index: 1001;
-  animation: slideIn 0.3s ease-out;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  /* tempo total visível antes de começar a sumir */
+  --toast-visible: 1500ms; /* ajuste aqui se quiser mais/menos */
+  /* mantém o slide-in curto e só faz o fade-out após --toast-visible */
+  animation:
+    toast-in 140ms ease-out,
+    toast-out 260ms ease-in var(--toast-visible) forwards;
 }
 
 .toast-success {
@@ -727,15 +725,60 @@
   background: #dc2626;
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+/* Mantém posição/estilo já existentes; só controlamos as animações */
+@keyframes toast-in {
+  from { transform: translateY(-6px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes toast-out {
+  to   { transform: translateY(-6px); opacity: 0; }
+}
+
+/* Melhorias para localização com botão refresh */
+.loc-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loc-text {
+  line-height: 1.25rem;
+  flex: 1;
+}
+
+.loc-refresh-btn {
+  --size: 26px;
+  height: var(--size);
+  width: var(--size);
+  display: inline-grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;        /* slate-200 */
+  background: #ffffff;
+  color: #64748b;                    /* slate-500 */
+  transition: background .15s ease, border-color .15s ease, color .15s ease, transform .05s ease;
+  cursor: pointer;
+}
+
+.loc-refresh-btn:hover:not(:disabled) {
+  background: #f8fafc;               /* slate-50 */
+  border-color: #dbeafe;             /* blue-100 */
+  color: #0f172a;                    /* slate-900 */
+}
+
+.loc-refresh-btn:active:not(:disabled) { transform: translateY(1px); }
+
+.loc-refresh-btn:disabled {
+  background: #f1f5f9;               /* slate-100 */
+  border-color: #e2e8f0;             /* slate-200 */
+  color: #cbd5e1;                    /* slate-300 */
+  cursor: not-allowed;
+}
+
+/* animação do ícone enquanto atualiza (um pouco mais lenta) */
+.loc-refresh-btn .spin {
+  animation: spin 1s linear infinite; /* antes 0.8s */
 }
 
 /* ===== RESPONSIVIDADE MELHORADA ===== */
@@ -877,43 +920,3 @@
     height: 140px;
   }
 }
-
-/* Melhorias para localização com botão refresh */
-.loc-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.loc-text {
-  flex: 1;
-}
-
-.loc-refresh-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  background: #f3f4f6;
-  border: none;
-  border-radius: 4px;
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.loc-refresh-btn:hover:not(:disabled) {
-  background: #e5e7eb;
-  color: #374151;
-}
-
-.loc-refresh-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.loc-refresh-btn .spin {
-  animation: spin 1s linear infinite;
-}
-

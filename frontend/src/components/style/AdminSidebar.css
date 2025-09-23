@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+@font-face {
+  font-family: 'Ethnocentric';
+  src: url('/fontes/ethnocentric.otf') format('opentype');
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* Botão hamburger - inicialmente oculto */
+.hamburger-btn {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  background: #15383E;
+  color: white;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.hamburger-btn:hover {
+  background: #1a4147;
+  transform: scale(1.05);
+}
+
+/* Backdrop para mobile */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+
+/* Sidebar */
+.admin-sidebar {
+  width: 280px;
+  background-color: #15383E;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+.close-sidebar {
+  display: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.close-sidebar:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-header {
+  padding: 2rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h1 {
+  font-size: 1.3rem;
+  font-weight: 300;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: 0.5px;
+  font-family: 'Ethnocentric', sans-serif;
+  font-style: normal !important;
+}
+
+.sidebar-header p {
+  font-size: 0.9rem;
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 1.5rem 0;
+}
+
+.nav-item {
+  width: 100%;
+  background: none;
+  border: none;
+  color: white;
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding-left: 2rem;
+}
+
+.nav-item.active {
+  background-color: #409535;
+  color: white;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar-logout {
+  background: none;
+  border: none;
+  color: white;
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.sidebar-logout:hover {
+  background-color: white;
+  color: #15383E;
+  transition: all 0.5s ease-out;
+}
+
+/* Tablet/iPad - 1024px e abaixo */
+@media (max-width: 1024px) {
+  /* Mostrar botão hamburger */
+  .hamburger-btn {
+    display: flex;
+  }
+  
+  /* Mostrar backdrop quando menu aberto */
+  .sidebar-backdrop {
+    display: block;
+  }
+  
+  /* Sidebar off-canvas */
+  .admin-sidebar {
+    transform: translateX(-100%);
+    width: min(280px, 85vw);
+    box-shadow: none;
+  }
+  
+  .admin-sidebar.is-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Mostrar botão de fechar */
+  .close-sidebar {
+    display: flex;
+  }
+  
+  /* Esconder botão hamburger quando menu está aberto */
+  .hamburger-btn.menu-open {
+    display: none;
+  }
+}
+
+/* Animações suaves */
+@media (prefers-reduced-motion: no-preference) {
+  .nav-item {
+    transition: all 0.3s ease;
+  }
+  
+  .hamburger-btn {
+    transition: all 0.2s ease;
+  }
+  
+  .admin-sidebar {
+    transition: transform 0.3s ease;
+  }
+}

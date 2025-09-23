@@ -1,0 +1,123 @@
+import React, { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Menu, X, LayoutDashboard, MapPin, LogOut, MessageCircleQuestion } from "lucide-react";
+import './style/AdminSidebar.css';
+
+const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // dados do admin salvos no login
+  const admin = JSON.parse(localStorage.getItem('adminData') || '{}');
+  const isMaster = admin?.role === 'master';
+
+  // helper para destacar o item atual do menu
+  const isActive = (path) => location.pathname.startsWith(path);
+
+  // Fechar menu ao clicar fora (backdrop)
+  useEffect(() => {
+    const handleBackdropClick = () => {
+      if (menuOpen) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener('click', handleBackdropClick);
+      document.body.style.overflow = 'hidden'; // Prevenir scroll do body
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('click', handleBackdropClick);
+      document.body.style.overflow = 'unset';
+    };
+  }, [menuOpen, setMenuOpen]);
+
+  const logout = () => {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminData');
+    navigate('/admin/login');
+  };
+
+  const handleMenuItemClick = (path) => {
+    navigate(path);
+    setMenuOpen(false); // Fechar menu após navegação
+  };
+
+  return (
+    <>
+      {/* Botão hamburger (mobile) */}
+      <button
+        className={`hamburger-btn ${menuOpen ? 'menu-open' : ''}`}
+        aria-label="Abrir menu"
+        aria-expanded={menuOpen}
+        onClick={(e) => {
+          e.stopPropagation();
+          setMenuOpen(true);
+        }}
+      >
+        <Menu size={24} />
+      </button>
+
+      {/* Backdrop para mobile */}
+      {menuOpen && <div className="sidebar-backdrop" onClick={() => setMenuOpen(false)} />}
+
+      {/* Sidebar (fixa no desktop; off-canvas no mobile) */}
+      <aside 
+        className={`admin-sidebar ${menuOpen ? 'is-open' : ''}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Fechar (mobile) */}
+        <button
+          className="close-sidebar"
+          aria-label="Fechar menu"
+          onClick={() => setMenuOpen(false)}
+        >
+          <X size={22} />
+        </button>
+
+        <div className="sidebar-header">
+          <h1>TRATOR BR</h1>
+          <p>Sistema Interno</p>
+        </div>
+
+        <nav className="sidebar-nav">
+          <button
+            className={`nav-item ${isActive('/admin/dashboard') ? 'active' : ''}`}
+            onClick={() => handleMenuItemClick('/admin/dashboard')}
+          >
+            <LayoutDashboard className="nav-icon" size={22} />
+            Dashboard
+          </button>
+
+          {isMaster && (
+            <button
+              className={`nav-item ${isActive('/admin/ips') ? 'active' : ''}`}
+              onClick={() => handleMenuItemClick('/admin/ips')}
+            >
+              <MapPin className="nav-icon" size={22} />
+              IP de Acesso
+            </button>
+          )}
+
+          <button
+            className={`nav-item ${isActive('/admin/contato') ? 'active' : ''}`}
+            onClick={() => handleMenuItemClick('/admin/contato')}
+          >
+            <MessageCircleQuestion className="nav-icon" size={22} />
+            Contatos
+          </button>
+        </nav>
+
+        <button className="sidebar-logout" onClick={logout}>
+          <LogOut className="nav-icon" size={22} />
+          Sair
+        </button>
+      </aside>
+    </>
+  );
+};
+
+export default AdminSidebar;

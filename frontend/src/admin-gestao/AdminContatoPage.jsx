@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from 'react-router-dom';
 import { apiAdminContatos } from "../services/apiAdminContatos";
-import { Menu, X, LayoutDashboard, Users, MapPin, LogOut, MessageCircleQuestion } from "lucide-react";
+import AdminLayout from '../components/AdminLayout';
 import "./style/AdminContatoPage.css";
 
 function soDigitos(v) {
@@ -20,17 +19,6 @@ export default function AdminContatoPage() {
   const [status, setStatus] = useState("pendente");
   const [modalAberto, setModalAberto] = useState(false);
   const [contatoSelecionado, setContatoSelecionado] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  // dados do admin salvos no login
-  const admin = JSON.parse(localStorage.getItem('adminData') || '{}');
-  const isMaster = admin?.role === 'master';
-
-  // helper para destacar o item atual do menu
-  const isActive = (path) => location.pathname.startsWith(path);
 
   async function carregar() {
     setLoading(true);
@@ -102,210 +90,141 @@ export default function AdminContatoPage() {
     setContatoSelecionado(null);
   }
 
-  const logout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminData');
-    navigate('/admin/login');
-  };
-
   return (
-    <div className="admin-dashboard">
-      {/* Botão hamburger (mobile) */}
-      <button
-        className="hamburger-btn"
-        aria-label="Abrir menu"
-        aria-expanded={menuOpen}
-        onClick={() => setMenuOpen(true)}
-      >
-        <Menu size={24} />
-      </button>
+    <AdminLayout>
+      <div className="duvidas-wrap">
+        <header className="duvidas-header">
+          <h1>Contatos</h1>
 
-      {/* Sidebar */}
-      <aside className={`admin-sidebar ${menuOpen ? 'is-open' : ''}`}>
-        {/* Fechar (mobile) */}
-        <button
-          className="close-sidebar"
-          aria-label="Fechar menu"
-          onClick={() => setMenuOpen(false)}
-        >
-          <X size={22} />
-        </button>
-
-        <div className="sidebar-header">
-          <h1>TRATOR BR</h1>
-          <p>Sistema Interno</p>
-        </div>
-
-        <nav className="sidebar-nav">
-          <button
-            className={`nav-item ${isActive('/admin/dashboard') ? 'active' : ''}`}
-            onClick={() => navigate('/admin/dashboard')}
-          >
-            <LayoutDashboard className="nav-icon" size={22} />
-            Dashboard
-          </button>
-
-          {isMaster && (
-            <button
-              className={`nav-item ${isActive('/admin/ips') ? 'active' : ''}`}
-              onClick={() => navigate('/admin/ips')}
-            >
-              <MapPin className="nav-icon" size={22} />
-              IP de Acesso
-            </button>
-          )}
-
-          <button
-            className={`nav-item ${isActive('/admin/contato') ? 'active' : ''}`}
-            onClick={() => navigate('/admin/contato')}
-          >
-            <MessageCircleQuestion className="nav-icon" size={22} />
-            Contatos
-          </button>
-        </nav>
-
-        <button className="sidebar-logout" onClick={logout}>
-          <LogOut className="nav-icon" size={22} />
-          Sair
-        </button>
-      </aside>
-
-      {/* Main Content */}
-      <main className="admin-main">
-        <div className="duvidas-wrap">
-          <header className="duvidas-header">
-            <h1>Contatos</h1>
-
-            <div className="duvidas-actions">
-              <div className="badge">
-                <p className="ped">Pendentes</p>
-                <span className="count">{contador}</span>
-              </div>
-            </div>
-          </header>
-
-          <div className="duvidas-card">
-            {/* Tabela para desktop */}
-            <div className="table-container">
-              <table className="duvidas-table">
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>Email</th>
-                    <th>Número</th>
-                    <th>Mensagem</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loading ? (
-                    <tr>
-                      <td colSpan={5} className="center">
-                        Carregando…
-                      </td>
-                    </tr>
-                  ) : itens.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="center">
-                        Nenhum registro encontrado
-                      </td>
-                    </tr>
-                  ) : (
-                    itens.map((c) => (
-                      <tr key={c.id} className="table-row" onClick={() => abrirModal(c)}>
-                        <td className="nome-cell">{c.nome}</td>
-                        <td className="email-cell">{c.email}</td>
-                        <td className="telefone-cell">{c.telefone}</td>
-                        <td className="duvida-cell">{truncarTexto(c.mensagem, 30)}</td>
-                        <td className="acoes-cell">
-                          <div className="acoes">
-                            <a
-                              className="btn btn-whats"
-                              href={linkWhatsApp(c.nome, c.telefone)}
-                              target="_blank"
-                              rel="noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              WhatsApp
-                            </a>
-                            <a 
-                              className="btn btn-mail" 
-                              href={linkEmail(c.email, c.nome)}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              Email
-                            </a>
-                            {c.status !== "respondido" && (
-                              <button
-                                className="btn btn-ok"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleRespondido(c.id, c.nome);
-                                }}
-                              >
-                                Respondido
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Cards para mobile */}
-            <div className="cards-container">
-              {loading ? (
-                <div className="center">Carregando…</div>
-              ) : itens.length === 0 ? (
-                <div className="center">Nenhum registro encontrado</div>
-              ) : (
-                itens.map((c) => (
-                  <div key={c.id} className="contato-card" onClick={() => abrirModal(c)}>
-                    <div className="card-header">
-                      <h3>{c.nome}</h3>
-                      <span className="card-telefone">{c.telefone}</span>
-                    </div>
-                    <div className="card-email">{c.email}</div>
-                    <div className="card-duvida">{truncarTexto(c.mensagem, 50)}</div>
-                    <div className="card-acoes">
-                      <a
-                        className="btn btn-whats"
-                        href={linkWhatsApp(c.nome, c.telefone)}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        WhatsApp
-                      </a>
-                      <a 
-                        className="btn btn-mail" 
-                        href={linkEmail(c.email, c.nome)}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Email
-                      </a>
-                      {c.status !== "respondido" && (
-                        <button
-                          className="btn btn-ok"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRespondido(c.id, c.nome);
-                          }}
-                        >
-                          Respondido
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
+          <div className="duvidas-actions">
+            <div className="badge">
+              <p className="ped">Pendentes</p>
+              <span className="count">{contador}</span>
             </div>
           </div>
+        </header>
+
+        <div className="duvidas-card">
+          {/* Tabela para desktop */}
+          <div className="table-container">
+            <table className="duvidas-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Número</th>
+                  <th>Mensagem</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan={5} className="center">
+                      Carregando…
+                    </td>
+                  </tr>
+                ) : itens.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="center">
+                      Nenhum registro encontrado
+                    </td>
+                  </tr>
+                ) : (
+                  itens.map((c) => (
+                    <tr key={c.id} className="table-row" onClick={() => abrirModal(c)}>
+                      <td className="nome-cell">{c.nome}</td>
+                      <td className="email-cell">{c.email}</td>
+                      <td className="telefone-cell">{c.telefone}</td>
+                      <td className="duvida-cell">{truncarTexto(c.mensagem, 30)}</td>
+                      <td className="acoes-cell">
+                        <div className="acoes">
+                          <a
+                            className="btn btn-whats"
+                            href={linkWhatsApp(c.nome, c.telefone)}
+                            target="_blank"
+                            rel="noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            WhatsApp
+                          </a>
+                          <a 
+                            className="btn btn-mail" 
+                            href={linkEmail(c.email, c.nome)}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Email
+                          </a>
+                          {c.status !== "respondido" && (
+                            <button
+                              className="btn btn-ok"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRespondido(c.id, c.nome);
+                              }}
+                            >
+                              Respondido
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Cards para mobile */}
+          <div className="cards-container">
+            {loading ? (
+              <div className="center">Carregando…</div>
+            ) : itens.length === 0 ? (
+              <div className="center">Nenhum registro encontrado</div>
+            ) : (
+              itens.map((c) => (
+                <div key={c.id} className="contato-card" onClick={() => abrirModal(c)}>
+                  <div className="card-header">
+                    <h3>{c.nome}</h3>
+                    <span className="card-telefone">{c.telefone}</span>
+                  </div>
+                  <div className="card-email">{c.email}</div>
+                  <div className="card-duvida">{truncarTexto(c.mensagem, 50)}</div>
+                  <div className="card-acoes">
+                    <a
+                      className="btn btn-whats"
+                      href={linkWhatsApp(c.nome, c.telefone)}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      WhatsApp
+                    </a>
+                    <a 
+                      className="btn btn-mail" 
+                      href={linkEmail(c.email, c.nome)}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Email
+                    </a>
+                    {c.status !== "respondido" && (
+                      <button
+                        className="btn btn-ok"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRespondido(c.id, c.nome);
+                        }}
+                      >
+                        Respondido
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
-      </main>
+      </div>
 
       {/* Modal */}
       {modalAberto && contatoSelecionado && (
@@ -365,6 +284,6 @@ export default function AdminContatoPage() {
           </div>
         </div>
       )}
-    </div>
+    </AdminLayout>
   );
 }

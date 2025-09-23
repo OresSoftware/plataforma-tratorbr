@@ -1,12 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-@font-face {
-  font-family: 'Ethnocentric';
-  src: url('fontes/ethnocentric.otf') format('opentype');
-  font-style: normal;
-  font-weight: normal;
-}
-
 :root {
   --card: #ffffff;
   --muted: #6b7d7d;
@@ -18,157 +11,11 @@
   --del: #b42318;
   --radius: 12px;
   --primary: #15383E;
-  --sidebar-width: 280px;
 }
 
-/* IMPEDIR SCROLL HORIZONTAL EM TODA A APLICAÇÃO */
-* {
-  box-sizing: border-box;
-}
-
-html, body {
-  overflow-x: hidden;
-  max-width: 100vw;
-}
-
-/* Layout Principal */
-.admin-dashboard {
-  display: flex;
-  min-height: 100vh;
-  font-family: 'Inter', sans-serif;
-  background-color: #f8fafc;
-  overflow-x: hidden;
-  max-width: 100vw;
-}
-
-/* Botão Hamburger (Mobile) */
-
-
-
-
-/* Sidebar */
-.admin-sidebar {
-  width: var(--sidebar-width);
-  background-color: var(--primary);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  height: 100vh;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  transition: transform 0.3s ease;
-}
-
-.close-sidebar {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 4px;
-  display: none;
-  transition: background-color 0.2s ease;
-}
-
-.close-sidebar:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-header {
-  padding: 2rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-header h1 {
-  font-size: 1.3rem;
-  font-weight: 300;
-  letter-spacing: 0.5px;
-  font-family: 'Ethnocentric', sans-serif;
-}
-
-.sidebar-header p {
-  font-size: 0.9rem;
-  font-family: 'Montserrat', sans-serif;
-  margin: 0;
-  opacity: 0.8;
-  font-weight: 400;
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: 1.5rem 0;
-}
-
-.nav-item {
-  width: 100%;
-  background: none;
-  border: none;
-  color: white;
-  padding: 1rem 1.5rem;
-  text-align: left;
-  font-size: 1.05rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-weight: 700;
-  font-family: 'Montserrat', sans-serif;
-}
-
-.nav-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  padding-left: 2rem;
-}
-
-.nav-item.active {
-  border-right: 4px solid #1d8f5a;
-}
-
-.nav-icon {
-  flex-shrink: 0;
-}
-
-.sidebar-logout {
-  margin-top: auto;
-  width: 100%;
-  background: none;
-  border: none;
-  color: white;
-  padding: 1rem 1.5rem;
-  text-align: left;
-  font-size: 1.05rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-weight: 700;
-  font-family: 'Montserrat', sans-serif;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-
-
-/* Main Content */
-.admin-main {
-  flex: 1;
-  margin-left: var(--sidebar-width);
-  min-height: 100vh;
-  background: #f8fafc;
-  overflow-x: hidden;
-  max-width: calc(100vw - var(--sidebar-width));
-}
-
-/* Conteúdo da Página de Dúvidas */
+/* Conteúdo da Página de Contatos */
 .duvidas-wrap {
-  /* padding: 2rem;
-  max-width: 100%; */
+  max-width: 100%;
   overflow-x: hidden;
 }
 
@@ -186,7 +33,6 @@ html, body {
   color: #1f2937;
   margin: 0;
   font-weight: 700;
-
 }
 
 .duvidas-actions {
@@ -200,18 +46,21 @@ html, body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0rem 1rem;
+  padding: 0.5rem 1rem;
   border: 1px solid #fbbf24;
   border-radius: 50px;
   background: #fef3c7;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
-.ped{
+
+.ped {
   color: #d97706;
+  margin: 0;
+  font-weight: 600;
 }
 
 .badge .count {
-  background:  #d97706;
+  background: #d97706;
   color: #fff;
   border-radius: 50px;
   padding: 0.25rem 0.75rem;
@@ -229,17 +78,17 @@ html, body {
   width: 100%;
 }
 
-/* Tabela Desktop - SEM SCROLL HORIZONTAL */
+/* Tabela Desktop */
 .table-container {
   width: 100%;
-  overflow: hidden; /* REMOVIDO overflow-x: auto */
+  overflow-x: auto;
 }
 
 .duvidas-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  table-layout: fixed; /* FORÇAR LARGURAS FIXAS */
+  min-width: 800px;
 }
 
 .duvidas-table th {
@@ -251,32 +100,7 @@ html, body {
   border-bottom: 1px solid var(--border);
   font-size: 14px;
   font-family: 'Montserrat', sans-serif;
-}
-
-/* LARGURAS FIXAS PARA CADA COLUNA */
-.duvidas-table th:nth-child(1), /* Nome */
-.duvidas-table td:nth-child(1) {
-  width: 15%;
-}
-
-.duvidas-table th:nth-child(2), /* Email */
-.duvidas-table td:nth-child(2) {
-  width: 25%;
-}
-
-.duvidas-table th:nth-child(3), /* Número */
-.duvidas-table td:nth-child(3) {
-  width: 15%;
-}
-
-.duvidas-table th:nth-child(4), /* Dúvida */
-.duvidas-table td:nth-child(4) {
-  width: 15%;
-}
-
-.duvidas-table th:nth-child(5), /* Ações */
-.duvidas-table td:nth-child(5) {
-  width: 30%;
+  white-space: nowrap;
 }
 
 .duvidas-table th:last-child {
@@ -288,9 +112,6 @@ html, body {
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
   font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap; /* IMPEDIR QUEBRA DE LINHA */
 }
 
 .table-row {
@@ -305,6 +126,7 @@ html, body {
 .nome-cell {
   font-weight: 600;
   color: var(--primary);
+  max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -312,6 +134,7 @@ html, body {
 
 .email-cell {
   color: var(--muted);
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -319,21 +142,20 @@ html, body {
 
 .telefone-cell {
   font-family: monospace;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .duvida-cell {
   color: #333;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap; /* DÚVIDA EM UMA LINHA SÓ */
+  white-space: nowrap;
 }
 
 .acoes-cell {
   text-align: center;
-  overflow: visible; /* Permitir que botões sejam visíveis */
+  min-width: 200px;
 }
 
 .center {
@@ -387,27 +209,17 @@ html, body {
 }
 
 .btn-ok {
-  background: var(--ok);
-  color: #fff;
-  background-color: white;
+  background: white;
   color: #b42318;
   border: 1px solid #b42318;
 }
 
-
-
-.btn-del {
-  background: #fff;
-  color: var(--del);
-  border: 1px solid #f2c5c5;
-}
-
-.btn-del:hover {
+.btn-ok:hover {
   background: #fef2f2;
-  border-color: var(--del);
+  border-color: #b42318;
 }
 
-/* Cards Mobile */
+/* Cards Mobile - inicialmente ocultos */
 .cards-container {
   display: none;
   gap: 1rem;
@@ -452,6 +264,7 @@ html, body {
   color: var(--muted);
   font-size: 0.9rem;
   margin-bottom: 0.75rem;
+  word-break: break-word;
 }
 
 .card-duvida {
@@ -565,6 +378,7 @@ html, body {
 .modal-field span {
   color: #333;
   font-size: 1rem;
+  word-break: break-word;
 }
 
 .modal-mensagem {
@@ -595,17 +409,6 @@ html, body {
 }
 
 /* Responsividade */
-@media (max-width: 1200px) {
-  .admin-main {
-    margin-left: var(--sidebar-width);
-    max-width: calc(100vw - var(--sidebar-width));
-  }
-  
-  /* .duvidas-wrap {
-    padding: 1.5rem;
-  } */
-}
-
 @media (max-width: 1024px) {
   .acoes {
     flex-direction: column;
@@ -618,37 +421,8 @@ html, body {
   }
 }
 
+/* Mobile - 768px e abaixo */
 @media (max-width: 768px) {
-  /* Mostrar botão hamburger */
-  .hamburger-btn {
-    display: block;
-  }
-  
-  /* Sidebar off-canvas */
-  .admin-sidebar {
-    transform: translateX(-100%);
-  }
-  
-  .admin-sidebar.is-open {
-    transform: translateX(0);
-  }
-  
-  .close-sidebar {
-    display: block;
-  }
-  
-  /* Main content ocupa toda largura */
-  .admin-main {
-    margin-left: 0;
-    width: 100vw;
-    max-width: 100vw;
-  }
-  
-  /* .duvidas-wrap {
-    padding: 1rem;
-    padding-top: 4rem; 
-  } */
-  
   .duvidas-header {
     flex-direction: column;
     align-items: stretch;
@@ -673,6 +447,7 @@ html, body {
   .cards-container {
     display: flex;
     flex-direction: column;
+    padding: 0;
   }
   
   .modal-content {
@@ -701,20 +476,36 @@ html, body {
   }
 }
 
+/* Mobile pequeno - 480px e abaixo */
 @media (max-width: 480px) {
-  /* .duvidas-wrap {
-    padding: 0.75rem;
-    padding-top: 4rem;
-  } */
-  
-  .duvidas-actions {
-    flex-direction: column;
-    align-items: stretch;
+  .duvidas-header h1 {
+    font-size: 1.25rem;
   }
   
   .badge {
     justify-content: center;
-    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .contato-card {
+    padding: 1rem;
+  }
+  
+  .card-header h3 {
+    font-size: 1rem;
+  }
+  
+  .card-telefone {
+    font-size: 0.8rem;
+  }
+  
+  .card-email {
+    font-size: 0.8rem;
+  }
+  
+  .card-duvida {
+    font-size: 0.85rem;
+    padding: 0.5rem;
   }
   
   .card-acoes {
@@ -762,192 +553,3 @@ html, body {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-
-/* Responsividade */
-@media (max-width: 1200px) {
-  .admin-main {
-    margin-left: var(--sidebar-width);
-    max-width: calc(100vw - var(--sidebar-width));
-  }
-  
-  /* .duvidas-wrap {
-    padding: 1.5rem;
-  } */
-}
-
-@media (max-width: 1024px) {
-  .acoes {
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  
-  .btn {
-    font-size: 11px;
-    padding: 0.4rem 0.6rem;
-  }
-}
-
-@media (max-width: 768px) {
-  /* Mostrar botão hamburger */
-  .hamburger-btn {
-    display: block;
-  }
-  
-  /* Sidebar off-canvas */
-  .admin-sidebar {
-    transform: translateX(-100%);
-  }
-  
-  .admin-sidebar.is-open {
-    transform: translateX(0);
-  }
-  
-  .close-sidebar {
-    display: block;
-  }
-  
-  /* Main content ocupa toda largura */
-  .admin-main {
-    margin-left: 0;
-    width: 100vw;
-    max-width: 100vw;
-  }
-  
-  .duvidas-wrap {
-    /* padding: 1rem;
-    padding-top: 4rem; */
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-  
-  /* TÍTULO NO CANTO SUPERIOR DIREITO */
-  .duvidas-header {
-    position: relative;
-    margin-bottom: 1rem;
-    padding-top: 0.5rem;
-  }
-  
-  .duvidas-header h1 {
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 1.2rem;
-    text-align: right;
-    margin: 0;
-    color: var(--primary);
-    font-weight: 600;
-  }
-  
-  .duvidas-actions {
-    justify-content: center;
-    margin-top: 2.5rem;
-  }
-  
-  /* Esconder tabela no mobile */
-  .table-container {
-    display: none;
-  }
-  
-  /* Mostrar cards no mobile */
-  .cards-container {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    margin-top: 1rem;
-  }
-  
-  .modal-content {
-    margin: 0.5rem;
-    max-height: calc(100vh - 1rem);
-  }
-  
-  .modal-header {
-    padding: 1.25rem 1.5rem;
-  }
-  
-  .modal-body {
-    padding: 1.5rem;
-  }
-  
-  .modal-actions {
-    padding: 1.25rem 1.5rem;
-    flex-direction: column;
-  }
-  
-  .modal-actions .btn {
-    width: 100%;
-    text-align: center;
-    padding: 1rem;
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  /* .duvidas-wrap {
-    padding: 0.75rem;
-  } */
-  
-  .duvidas-header h1 {
-    font-size: 1.5rem;
-  }
-  
-  
-  .contato-card {
-    padding: 0.75rem;
-  }
-  
-  .card-header h3 {
-    font-size: 1rem;
-  }
-  
-  .card-telefone {
-    font-size: 0.8rem;
-  }
-  
-  .card-email {
-    font-size: 0.8rem;
-  }
-  
-  .card-duvida {
-    font-size: 0.85rem;
-    padding: 0.5rem;
-  }
-  
-  .modal-content {
-    margin: 0.25rem;
-    border-radius: 12px;
-  }
-}
-
-/* Animações */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.contato-card {
-  animation: fadeIn 0.4s ease;
-}
-
-.table-row {
-  animation: fadeIn 0.3s ease;
-}
-
-/* Loading spinner */
-.loading-spinner {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid var(--primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-
-

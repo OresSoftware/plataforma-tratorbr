@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import axios from "axios";
-import { Menu, X, LayoutDashboard, Users, MapPin, LogOut, Plus, Trash2, RefreshCw, MessageCircleQuestion } from "lucide-react";
-import "./style/AdminDashboardPage.css";
+import { Plus, Trash2, RefreshCw, X, MapPin } from "lucide-react";
+import AdminLayout from '../components/AdminLayout';
 import "./style/AdminIpsPage.css";
 
 function isPrivateIp(ip) {
@@ -28,12 +28,6 @@ export default function AdminIpsPage() {
   if (!token) return <Navigate to="/admin/login" replace />;
   if (admin?.role !== "master") return <Navigate to="/admin/dashboard" replace />;
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const isActive = (path) => location.pathname.startsWith(path);
-  const isMaster = admin?.role === 'master';
-
   const [lista, setLista] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
@@ -50,7 +44,7 @@ export default function AdminIpsPage() {
 
   // tempos
   const MIN_SPIN_MS = 1200;     // giro mínimo do botão
-  const TOAST_MS = 4500;        // ⬅️ tempo de exibição do toast
+  const TOAST_MS = 4500;        // tempo de exibição do toast
 
   const api = axios.create({ baseURL: "http://localhost:3001/api" });
   api.interceptors.request.use((cfg) => {
@@ -198,12 +192,6 @@ export default function AdminIpsPage() {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("adminToken");
-    localStorage.removeItem("adminData");
-    navigate("/admin/login");
-  };
-
   const fecharModal = () => {
     setModalAberto(false);
     setQr(null);
@@ -212,168 +200,141 @@ export default function AdminIpsPage() {
   };
 
   return (
-    <div className="admin-dashboard">
-      <button className="hamburger-btn" aria-label="Abrir menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>
-        <Menu size={24} />
-      </button>
+    <AdminLayout>
+      <div className="admin-content">
+        <h1 className="page-title">IP de Acesso</h1>
 
-      <aside className={`admin-sidebar ${menuOpen ? "is-open" : ""}`}>
-        <button className="close-sidebar" aria-label="Fechar menu" onClick={() => setMenuOpen(false)}><X size={22} /></button>
-        <div className="sidebar-header"><h1>TRATOR BR</h1><p>Sistema Interno</p></div>
-        <nav className="sidebar-nav">
-          <button className={`nav-item ${isActive("/admin/dashboard") ? "active" : ""}`} onClick={() => navigate("/admin/dashboard")}><LayoutDashboard className="nav-icon" size={22} />Dashboard</button>
-          {isMaster && (
-            <button className={`nav-item ${isActive("/admin/ips") ? "active" : ""}`} onClick={() => navigate("/admin/ips")}><MapPin className="nav-icon" size={22} />IP de Acesso</button>
-          )}
-          {isMaster && (
-            <button
-              className={`nav-item ${isActive('/admin/contato') ? 'active' : ''}`}
-              onClick={() => navigate('/admin/contato')}
-            >
-              <MessageCircleQuestion className="nav-icon" size={22} />
-              Contatos
-            </button>
-          )}
-        </nav>
-        <button className="sidebar-logout" onClick={logout}><LogOut className="nav-icon" size={22} />Sair</button>
-      </aside>
-
-      <main className="admin-main">
-        <div className="admin-content">
-          <h1 className="page-title">IP de Acesso</h1>
-
-          <div className="ip-header">
-            <div className="ip-stats-card">
-              <div className="ip-stats-icon"><MapPin size={20} /></div>
-              <div className="ip-stats-content">
-                <span className="ip-stats-label">Locais de Acesso</span>
-                <span className="ip-stats-value">{lista.length}</span>
-              </div>
+        <div className="ip-header">
+          <div className="ip-stats-card">
+            <div className="ip-stats-icon"><MapPin size={20} /></div>
+            <div className="ip-stats-content">
+              <span className="ip-stats-label">Locais de Acesso</span>
+              <span className="ip-stats-value">{lista.length}</span>
             </div>
-            <button className="ip-add-button" onClick={() => { setModalAberto(true); setQr(null); setErro(""); }}>
-              <Plus size={20} /> Adicionar novo IP
-            </button>
           </div>
+          <button className="ip-add-button" onClick={() => { setModalAberto(true); setQr(null); setErro(""); }}>
+            <Plus size={20} /> Adicionar novo IP
+          </button>
+        </div>
 
-          {loading ? (
-            <div className="loading-container"><div className="loading-spinner"></div><p>Carregando IPs...</p></div>
-          ) : erro ? (
-            <div className="error-container">
-              <p className="error-message">{erro}</p>
-              <button className="retry-button" onClick={carregar}>Tentar novamente</button>
-            </div>
-          ) : (
-            <div className="ip-table-container">
-              <table className="ip-table">
-                <thead>
-                  <tr>
-                    <th>IP</th>
-                    <th>Administrador</th>
-                    <th>Descrição</th>
-                    <th className="local-header">
-                      <div className="local-header-content">
-                        <span>Local</span>
-                        <button
-                          className="refresh-all-btn"
-                          onClick={atualizarTodosLocais}
-                          disabled={refreshingAll || lista.filter(item => !isPrivateIp(item.ip)).length === 0}
-                          title="Atualizar todas as localizações públicas"
-                        >
-                          <RefreshCw size={14} className={refreshingAll ? "spin" : ""} />
-                        </button>
-                      </div>
-                    </th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {lista.map((item) => {
-                    const disableRefresh = isPrivateIp(item.ip);
-                    return (
-                      <tr key={item.id}>
-                        <td className="ip-cell-highlight">{item.ip}</td>
-                        <td className="admin-cell">{item.role === "master" ? "Master" : "Gestor"}</td>
-                        <td className="description-cell">{item.descricao || "—"}</td>
-                        <td className="location-cell">
-                          <div className="loc-cell">
-                            <span className="loc-text">{item.local || "—"}</span>
-                            <button
-                              className="loc-refresh-btn"
-                              onClick={() => atualizarLocal(item.id)}
-                              aria-label="Atualizar localização"
-                              title={disableRefresh ? "IP privado/localhost não geolocalizável" : "Atualizar localização"}
-                              disabled={disableRefresh || refreshingId === item.id}
-                            >
-                              <RefreshCw size={14} className={refreshingId === item.id ? "spin" : ""} />
-                            </button>
-                          </div>
-                        </td>
-                        <td className="status-cell">
-                          <span className={`status-badge ${item.online ? "online" : "offline"}`}>{item.online ? "Online" : "Offline"}</span>
-                        </td>
-                        <td className="actions-cell">
-                          <button className="delete-button" onClick={() => remover(item.id)} title="Remover IP"><Trash2 size={16} /></button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                  {lista.length === 0 && <tr><td colSpan={6} className="empty-state">Nenhum IP cadastrado</td></tr>}
-                </tbody>
-              </table>
-
-              <div className="ip-cards-container">
+        {loading ? (
+          <div className="loading-container"><div className="loading-spinner"></div><p>Carregando IPs...</p></div>
+        ) : erro ? (
+          <div className="error-container">
+            <p className="error-message">{erro}</p>
+            <button className="retry-button" onClick={carregar}>Tentar novamente</button>
+          </div>
+        ) : (
+          <div className="ip-table-container">
+            <table className="ip-table">
+              <thead>
+                <tr>
+                  <th>IP</th>
+                  <th>Administrador</th>
+                  <th>Descrição</th>
+                  <th className="local-header">
+                    <div className="local-header-content">
+                      <span>Local</span>
+                      <button
+                        className="refresh-all-btn"
+                        onClick={atualizarTodosLocais}
+                        disabled={refreshingAll || lista.filter(item => !isPrivateIp(item.ip)).length === 0}
+                        title="Atualizar todas as localizações públicas"
+                      >
+                        <RefreshCw size={14} className={refreshingAll ? "spin" : ""} />
+                      </button>
+                    </div>
+                  </th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
                 {lista.map((item) => {
                   const disableRefresh = isPrivateIp(item.ip);
                   return (
-                    <div key={item.id} className="ip-card">
-                      <div className="ip-card-header">
-                        <div className="ip-card-ip">{item.ip}</div>
-                        <div className="ip-card-status">
-                          <span className={`status-badge ${item.online ? "online" : "offline"}`}>{item.online ? "Online" : "Offline"}</span>
+                    <tr key={item.id}>
+                      <td className="ip-cell-highlight">{item.ip}</td>
+                      <td className="admin-cell">{item.role === "master" ? "Master" : "Gestor"}</td>
+                      <td className="description-cell">{item.descricao || "—"}</td>
+                      <td className="location-cell">
+                        <div className="loc-cell">
+                          <span className="loc-text">{item.local || "—"}</span>
+                          <button
+                            className="loc-refresh-btn"
+                            onClick={() => atualizarLocal(item.id)}
+                            aria-label="Atualizar localização"
+                            title={disableRefresh ? "IP privado/localhost não geolocalizável" : "Atualizar localização"}
+                            disabled={disableRefresh || refreshingId === item.id}
+                          >
+                            <RefreshCw size={14} className={refreshingId === item.id ? "spin" : ""} />
+                          </button>
                         </div>
-                      </div>
-
-                      <div className="ip-card-body">
-                        <div className="ip-card-field">
-                          <span className="ip-card-label">Administrador</span>
-                          <span className="ip-card-value">{item.role === "master" ? "Master" : "Gestor"}</span>
-                        </div>
-
-                        <div className="ip-card-field">
-                          <span className="ip-card-label">Local</span>
-                          <div className="loc-cell">
-                            <span className="ip-card-value">{item.local || "—"}</span>
-                            <button
-                              className="loc-refresh-btn"
-                              onClick={() => atualizarLocal(item.id)}
-                              aria-label="Atualizar localização"
-                              title={disableRefresh ? "IP privado/localhost não geolocalizável" : "Atualizar localização"}
-                              disabled={disableRefresh || refreshingId === item.id}
-                            >
-                              <RefreshCw size={14} className={refreshingId === item.id ? "spin" : ""} />
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="ip-card-field" style={{ gridColumn: "1 / -1" }}>
-                          <span className="ip-card-label">Descrição</span>
-                          <span className="ip-card-value ip-card-description">{item.descricao || "—"}</span>
-                        </div>
-                      </div>
-
-                      <div className="ip-card-actions">
+                      </td>
+                      <td className="status-cell">
+                        <span className={`status-badge ${item.online ? "online" : "offline"}`}>{item.online ? "Online" : "Offline"}</span>
+                      </td>
+                      <td className="actions-cell">
                         <button className="delete-button" onClick={() => remover(item.id)} title="Remover IP"><Trash2 size={16} /></button>
-                      </div>
-                    </div>
+                      </td>
+                    </tr>
                   );
                 })}
-                {lista.length === 0 && <div className="empty-state">Nenhum IP cadastrado</div>}
-              </div>
+                {lista.length === 0 && <tr><td colSpan={6} className="empty-state">Nenhum IP cadastrado</td></tr>}
+              </tbody>
+            </table>
+
+            <div className="ip-cards-container">
+              {lista.map((item) => {
+                const disableRefresh = isPrivateIp(item.ip);
+                return (
+                  <div key={item.id} className="ip-card">
+                    <div className="ip-card-header">
+                      <div className="ip-card-ip">{item.ip}</div>
+                      <div className="ip-card-status">
+                        <span className={`status-badge ${item.online ? "online" : "offline"}`}>{item.online ? "Online" : "Offline"}</span>
+                      </div>
+                    </div>
+
+                    <div className="ip-card-body">
+                      <div className="ip-card-field">
+                        <span className="ip-card-label">Administrador</span>
+                        <span className="ip-card-value">{item.role === "master" ? "Master" : "Gestor"}</span>
+                      </div>
+
+                      <div className="ip-card-field">
+                        <span className="ip-card-label">Local</span>
+                        <div className="loc-cell">
+                          <span className="ip-card-value">{item.local || "—"}</span>
+                          <button
+                            className="loc-refresh-btn"
+                            onClick={() => atualizarLocal(item.id)}
+                            aria-label="Atualizar localização"
+                            title={disableRefresh ? "IP privado/localhost não geolocalizável" : "Atualizar localização"}
+                            disabled={disableRefresh || refreshingId === item.id}
+                          >
+                            <RefreshCw size={14} className={refreshingId === item.id ? "spin" : ""} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="ip-card-field" style={{ gridColumn: "1 / -1" }}>
+                        <span className="ip-card-label">Descrição</span>
+                        <span className="ip-card-value ip-card-description">{item.descricao || "—"}</span>
+                      </div>
+                    </div>
+
+                    <div className="ip-card-actions">
+                      <button className="delete-button" onClick={() => remover(item.id)} title="Remover IP"><Trash2 size={16} /></button>
+                    </div>
+                  </div>
+                );
+              })}
+              {lista.length === 0 && <div className="empty-state">Nenhum IP cadastrado</div>}
             </div>
-          )}
-        </div>
-      </main>
+          </div>
+        )}
+      </div>
 
       {toast && (
         <div className={`toast toast-${toast.type}`}>{toast.msg}</div>
@@ -469,7 +430,6 @@ export default function AdminIpsPage() {
           </div>
         </div>
       )}
-    </div>
+    </AdminLayout>
   );
 }
-
