@@ -1,15 +1,16 @@
 /* src/pages/AdminDashboardPage.css */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-/* Loading */
-.admin-loading {
-  min-height: 100vh;
+/* Loading inline */
+.loading-message {
+  grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  background-color: #f8fafc;
+  padding: 2rem;
+  text-align: center;
 }
 
 .loading-spinner {

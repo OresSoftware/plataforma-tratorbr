@@ -46,15 +46,6 @@ function AdminDashboardPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="admin-loading">
-        <div className="loading-spinner"></div>
-        <p>Carregando...</p>
-      </div>
-    );
-  }
-
   return (
     <AdminLayout>
       <div className="admin-content">
@@ -69,23 +60,32 @@ function AdminDashboardPage() {
 
         {/* Métricas Simplificadas */}
         <div className="metricas-grid-simple">
-          <div className="metrica-card">
-            <h3>Admins Cadastrados</h3>
-            <div className="metrica-valor">{metricas.adminsIpsCadastrados || 0}</div>
-            <p className="metrica-desc">IPs cadastrados</p>
-          </div>
+          {loading ? (
+            <div className="loading-message">
+              <div className="loading-spinner"></div>
+              <p>Carregando...</p>
+            </div>
+          ) : (
+            <>
+              <div className="metrica-card">
+                <h3>Admins Cadastrados</h3>
+                <div className="metrica-valor">{metricas.adminsIpsCadastrados || 0}</div>
+                <p className="metrica-desc">IPs cadastrados</p>
+              </div>
 
-          <div className="metrica-card">
-            <h3>Admins Online</h3>
-            <div className="metrica-valor">{metricas.adminsOnline || 0}</div>
-            <p className="metrica-desc">Últimas 24h</p>
-          </div>
+              <div className="metrica-card">
+                <h3>Admins Online</h3>
+                <div className="metrica-valor">{metricas.adminsOnline || 0}</div>
+                <p className="metrica-desc">Últimas 24h</p>
+              </div>
 
-          <div className="metrica-card">
-            <h3>Contatos Pendentes</h3>
-            <div className="metrica-valor">{metricas.contatosPendentes || 0}</div>
-            <p className="metrica-desc">Aguardando resposta</p>
-          </div>
+              <div className="metrica-card">
+                <h3>Contatos Pendentes</h3>
+                <div className="metrica-valor">{metricas.contatosPendentes || 0}</div>
+                <p className="metrica-desc">Aguardando resposta</p>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </AdminLayout>
