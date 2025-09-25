@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { apiAdminContatos } from "../services/apiAdminContatos";
 import AdminLayout from '../components/AdminLayout';
 import "./style/AdminContatoPage.css";
@@ -13,6 +14,9 @@ function truncarTexto(texto, limite = 50) {
 }
 
 export default function AdminContatoPage() {
+  const token = localStorage.getItem("adminToken");
+  if (!token) return <Navigate to="/admin/login" replace />;
+  
   const [itens, setItens] = useState([]);
   const [loading, setLoading] = useState(true);
   const [contador, setContador] = useState(0);

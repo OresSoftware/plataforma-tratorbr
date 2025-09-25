@@ -134,7 +134,7 @@ const PlanosPage = () => {
             <div className='botoesApp'>
               <button className='entrarGestor'><img src="" alt="" />Acessar Painel</button>
 
-              <a href="https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20preciso%20de%20suporte%20na%20plataforma%20de%20gestão?" target="_blank" rel="noopener noreferrer"><button className='suporteApp'>Suporte</button></a>
+              <a href="https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20preciso%20de%20suporte%20na%20plataforma%20de%20gestão." target="_blank" rel="noopener noreferrer"><button className='suporteApp'>Suporte</button></a>
             </div>
           </div>
           <div className="phones">

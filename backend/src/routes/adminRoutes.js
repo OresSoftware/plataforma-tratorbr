@@ -85,8 +85,8 @@ router.post('/ips-autorizados', verificarAdmin, exigirMaster, adminIpsController
 router.delete('/ips-autorizados/:id', verificarAdmin, exigirMaster, adminIpsController.removerIpAutorizado);
 router.post('/ips-autorizados/:id/refresh-location', verificarAdmin, exigirMaster, adminIpsController.refreshIpLocation);
 
-// ---- Rotas de Contatos ---- //
-router.use('/contatos', adminContatoRoutes);
+// ---- Rotas de Contatos (PROTEGIDAS) ---- //
+router.use('/contatos', verificarAdmin, adminContatoRoutes);
 
 module.exports = router;
 
