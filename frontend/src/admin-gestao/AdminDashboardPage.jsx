@@ -1,7 +1,7 @@
 // src/pages/AdminDashboardPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { api } from "../lib/api";
 import AdminLayout from '../components/AdminLayout';
 import './style/AdminDashboardPage.css';
 
@@ -13,27 +13,26 @@ function AdminDashboardPage() {
 
   useEffect(() => {
     carregarDados();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const carregarDados = async () => {
     try {
       setLoading(true);
 
+      // Se você ainda quiser checar o token localmente, pode manter:
       const token = localStorage.getItem('adminToken');
       if (!token) {
         navigate('/admin/login');
         return;
       }
 
-      const config = {
-        headers: { Authorization: `Bearer ${token}` }
-      };
-
-      const metricasRes = await axios.get('http://localhost:3001/api/admin/dashboard/metricas', config);
-      setMetricas(metricasRes.data);
+      // Cliente central já injeta Authorization. Basta chamar:
+      const { data } = await api.get('/admin/dashboard/metricas');
+      setMetricas(data);
       setError('');
-
     } catch (err) {
+      // Se você usa axiosGuard/redirect de 401 global, isso aqui pode ser só setError
       if (err.response?.status === 401) {
         localStorage.removeItem('adminToken');
         localStorage.removeItem('adminData');

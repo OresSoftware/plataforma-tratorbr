@@ -1,9 +1,10 @@
-// Cliente padrão (páginas protegidas)
 import axios from "axios";
 
-export const api = axios.create({
-  baseURL: "http://localhost:3001/api",
-});
+const BASE_URL =
+  (import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim()) ||
+  `${window.location.origin.replace(/\/$/, "")}/api`;
+
+export const api = axios.create({ baseURL: BASE_URL, withCredentials: true });
 
 api.interceptors.request.use((cfg) => {
   const t = localStorage.getItem("adminToken");
@@ -11,7 +12,8 @@ api.interceptors.request.use((cfg) => {
   return cfg;
 });
 
-// Redireciona somente FORA do login
+// Se você NÃO tiver axiosGuard central de 401/403, mantenha este bloco.
+// Se JÁ tiver, pode remover para não duplicar.
 api.interceptors.response.use(
   (r) => r,
   (err) => {
@@ -27,7 +29,4 @@ api.interceptors.response.use(
   }
 );
 
-// Cliente “limpo” para a página de login (sem interceptors)
-export const apiAuth = axios.create({
-  baseURL: "http://localhost:3001/api",
-});
+export const apiAuth = axios.create({ baseURL: BASE_URL, withCredentials: true });

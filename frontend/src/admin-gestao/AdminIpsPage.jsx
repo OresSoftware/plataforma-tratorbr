@@ -1,24 +1,26 @@
+// frontend/src/admin-gestao/AdminIpsPage.jsx
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import axios from "axios";
 import { Plus, Trash2, RefreshCw, X, MapPin } from "lucide-react";
-import AdminLayout from '../components/AdminLayout';
+import AdminLayout from "../components/AdminLayout";
 import "./style/AdminIpsPage.css";
+import { api } from "../lib/api"
 
 function isPrivateIp(ip) {
   if (!ip) return true;
   const s = String(ip).toLowerCase();
-  if (s === '::1' || s === 'localhost') return true;
-  if (s.startsWith('::ffff:')) return isPrivateIp(s.replace('::ffff:', ''));
-  if (s.includes(':')) return s.startsWith('fc') || s.startsWith('fd');
+  if (s === "::1" || s === "localhost") return true;
+  if (s.startsWith("::ffff:")) return isPrivateIp(s.replace("::ffff:", ""));
+  if (s.includes(":")) return s.startsWith("fc") || s.startsWith("fd");
   return (
-    s.startsWith('10.') ||
-    s.startsWith('192.168.') ||
-    s.startsWith('127.') ||
-    (s.startsWith('172.') && (() => {
-      const b = parseInt(s.split('.')[1], 10);
-      return b >= 16 && b <= 31;
-    })())
+    s.startsWith("10.") ||
+    s.startsWith("192.168.") ||
+    s.startsWith("127.") ||
+    (s.startsWith("172.") &&
+      (() => {
+        const b = parseInt(s.split(".")[1], 10);
+        return b >= 16 && b <= 31;
+      })())
   );
 }
 
@@ -43,14 +45,8 @@ export default function AdminIpsPage() {
   const [refreshingAll, setRefreshingAll] = useState(false);
 
   // tempos
-  const MIN_SPIN_MS = 1200;     // giro mínimo do botão
-  const TOAST_MS = 4500;        // tempo de exibição do toast
-
-  const api = axios.create({ baseURL: "http://localhost:3001/api" });
-  api.interceptors.request.use((cfg) => {
-    cfg.headers.Authorization = `Bearer ${token}`;
-    return cfg;
-  });
+  const MIN_SPIN_MS = 1200; // giro mínimo do botão
+  const TOAST_MS = 4500; // tempo de exibição do toast
 
   const carregar = async () => {
     setErro("");
@@ -70,7 +66,9 @@ export default function AdminIpsPage() {
     }
   };
 
-  useEffect(() => { carregar(); }, []);
+  useEffect(() => {
+    carregar();
+  }, []);
 
   // controla quanto tempo o toast fica visível
   useEffect(() => {
@@ -81,9 +79,15 @@ export default function AdminIpsPage() {
 
   const adicionar = async (e) => {
     e.preventDefault();
-    setErro(""); setQr(null); setSalvandoIp(true);
+    setErro("");
+    setQr(null);
+    setSalvandoIp(true);
     try {
-      const payload = { ip: form.ip.trim(), descricao: form.descricao?.trim() || "", targetRole: form.targetRole };
+      const payload = {
+        ip: form.ip.trim(),
+        descricao: form.descricao?.trim() || "",
+        targetRole: form.targetRole,
+      };
       const { data } = await api.post("/admin/ips-autorizados", payload);
       if (data.twofa) setQr(data.twofa);
       setForm({ targetRole: "master", ip: "", descricao: "" });
@@ -122,13 +126,14 @@ export default function AdminIpsPage() {
     } catch (e) {
       const status = e?.response?.status;
       const msg = e?.response?.data?.message;
-      toastNext = status === 409
-        ? { type: "error", msg: "Faltam colunas de localização: rode a migração no banco." }
-        : { type: "error", msg: msg || "Não foi possível atualizar a localização agora" };
+      toastNext =
+        status === 409
+          ? { type: "error", msg: "Faltam colunas de localização: rode a migração no banco." }
+          : { type: "error", msg: msg || "Não foi possível atualizar a localização agora" };
     } finally {
       const elapsed = Date.now() - startedAt;
       const wait = Math.max(0, MIN_SPIN_MS - elapsed);
-      await new Promise(r => setTimeout(r, wait));
+      await new Promise((r) => setTimeout(r, wait));
       setRefreshingId(null);
       if (toastNext) setToast(toastNext);
       await carregar();
@@ -136,8 +141,8 @@ export default function AdminIpsPage() {
   };
 
   const atualizarTodosLocais = async () => {
-    const ipsPublicos = lista.filter(item => !isPrivateIp(item.ip));
-    
+    const ipsPublicos = lista.filter((item) => !isPrivateIp(item.ip));
+
     if (ipsPublicos.length === 0) {
       setToast({ type: "error", msg: "Nenhum IP público encontrado para atualizar." });
       return;
@@ -145,16 +150,16 @@ export default function AdminIpsPage() {
 
     const startedAt = Date.now();
     setRefreshingAll(true);
-    
+
     try {
-      const promises = ipsPublicos.map(item => 
+      const promises = ipsPublicos.map((item) =>
         api.post(`/admin/ips-autorizados/${item.id}/refresh-location`)
       );
-      
+
       const results = await Promise.allSettled(promises);
-      const sucessos = results.filter(r => r.status === 'fulfilled').length;
-      const erros = results.filter(r => r.status === 'rejected').length;
-      
+      const sucessos = results.filter((r) => r.status === "fulfilled").length;
+      const erros = results.filter((r) => r.status === "rejected").length;
+
       if (sucessos > 0 && erros === 0) {
         setToast({ type: "success", msg: `${sucessos} localizações atualizadas com sucesso!` });
       } else if (sucessos > 0 && erros > 0) {
@@ -162,13 +167,12 @@ export default function AdminIpsPage() {
       } else {
         setToast({ type: "error", msg: "Falha ao atualizar localizações." });
       }
-      
     } catch (e) {
       setToast({ type: "error", msg: "Erro ao atualizar localizações em lote." });
     } finally {
       const elapsed = Date.now() - startedAt;
       const wait = Math.max(0, MIN_SPIN_MS - elapsed);
-      await new Promise(r => setTimeout(r, wait));
+      await new Promise((r) => setTimeout(r, wait));
       setRefreshingAll(false);
       await carregar();
     }
@@ -180,7 +184,7 @@ export default function AdminIpsPage() {
       const r = await fetch("https://api.ipify.org?format=json");
       const j = await r.json();
       if (j?.ip) {
-        setForm(f => ({ ...f, ip: j.ip }));
+        setForm((f) => ({ ...f, ip: j.ip }));
         setToast({ type: "success", msg: `Seu IP público é ${j.ip}` });
       } else {
         setToast({ type: "error", msg: "Não foi possível obter seu IP público agora." });
