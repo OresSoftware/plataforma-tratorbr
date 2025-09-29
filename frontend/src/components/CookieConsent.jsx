@@ -28,7 +28,7 @@ const CookieConsent = () => {
                 Nós usamos cookies e outras tecnologias semelhantes para melhorar a sua experiência em nossos serviços,
                 personalizar publicidade e recomendar conteúdo de seu interesse. Ao utilizar nossos serviços, você concorda
                 com o monitoramento descrito em nossa política.
-                <a href="/politica-privacidade" className="cookie-link">Ver nossa política</a>
+                <a href="/poloticasdeprivacidade.html" className="cookie-link">Ver nossa política</a>
             </p>
             <div className="cookie-buttons">
                 <button className="cookie-accept" onClick={handleAccept}>Aceitar</button>

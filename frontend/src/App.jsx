@@ -45,7 +45,7 @@ function App() {
           {/* Páginas Públicas */}
           <Route path="/" element={<Aplicativo />} />
           <Route path="/contato" element={<ContatoPage />} />
-          <Route path="/termos-e-politicas" element={<TermosEPolitica />} />
+          <Route path="/poloticasdeprivacidade.html" element={<TermosEPolitica />} />
           <Route path="/ajuda" element={<AjudaPage />} />
           <Route path="/excluir-conta" element={<ExcluirContaPage />} />
           <Route path="/sobre-nos" element={<SobreNosPage />} />
