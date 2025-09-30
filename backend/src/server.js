@@ -1,4 +1,6 @@
+// src/server.js
 require("dotenv-flow").config();
+
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -18,7 +20,7 @@ function parseOrigins(list) {
     .map((s) => s.trim())
     .filter(Boolean);
 }
-const allowlist = new Set(parseOrigins(process.env.FRONTEND_ORIGINS));
+const allowlist = new Set(parseOrigins(process.env.FRONTEND_ORIGINS || ""));
 
 app.use(
   cors({
@@ -29,16 +31,17 @@ app.use(
       return cb(new Error("Not allowed by CORS: " + origin));
     },
     credentials: true,
-    // (opcional) se seu front mandar cabeçalhos extras:
-    // allowedHeaders: ["Content-Type", "Authorization"],
-    // methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   })
 );
 
+// Body & cookies
 app.use(express.json());
 app.use(cookieParser());
 
-// Rotas de consentimento de cookies
+// ---------- Healthcheck (sem /api) ----------
+app.get("/healthz", (req, res) => res.status(200).send("ok"));
+
+// ---------- Rotas de consentimento de cookies ----------
 app.post("/api/consent", (req, res) => {
   const { consent } = req.body; // "true" ou "false"
   res.cookie("cookieConsent", consent, {
@@ -59,12 +62,23 @@ app.post("/api/consent/clear", (req, res) => {
   res.json({ message: "Consentimento removido" });
 });
 
-// Suas rotas
+// ---------- Suas rotas /api ----------
 app.use("/api/admin", adminRoutes);
 app.use("/api/contatos", contatoRoutes);
 
+// ---------- Tratamento básico de erros (inclui erro de CORS) ----------
+app.use((err, req, res, next) => {
+  if (err && /Not allowed by CORS/i.test(err.message)) {
+    return res.status(403).json({ error: "CORS bloqueado para esta origem." });
+  }
+  console.error("Unhandled error:", err);
+  res.status(500).json({ error: "Erro interno do servidor." });
+});
+
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+const HOST = "0.0.0.0"; // importante para Docker/containers
+
+app.listen(PORT, HOST, () => {
   console.log(`Servidor backend rodando na porta ${PORT}`);
   console.log("CORS allowlist:", Array.from(allowlist));
 });
