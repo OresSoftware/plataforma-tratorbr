@@ -12,19 +12,28 @@ api.interceptors.request.use((cfg) => {
   return cfg;
 });
 
-// Se você NÃO tiver axiosGuard central de 401/403, mantenha este bloco.
-// Se JÁ tiver, pode remover para não duplicar.
+// Se você NÃO tiver um axiosGuard global, mantenha este bloco.
+// Caso já tenha um guard central, remova este para não duplicar.
 api.interceptors.response.use(
   (r) => r,
   (err) => {
     const status = err?.response?.status;
     const url = (err?.config?.url || "").toLowerCase();
     const isLoginCall = url.includes("/admin/login");
-    if ((status === 401 || status === 403) && !isLoginCall) {
+
+    // 👉 Foco apenas em 401 (token inválido/expirado)
+    if (status === 401 && !isLoginCall) {
+      try {
+        localStorage.removeItem("adminToken"); // limpa token
+      } catch {}
+      // (opcional) manter a rota para voltar depois do login
+      const next = encodeURIComponent(window.location.pathname + window.location.search);
       if (window.location.pathname !== "/admin/login") {
-        window.location.assign("/admin/login");
+        window.location.assign(`/admin/login?next=${next}`);
       }
     }
+
+    // 403 agora tende a ser "sem permissão" — não redireciona para login aqui.
     return Promise.reject(err);
   }
 );

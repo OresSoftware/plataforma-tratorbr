@@ -71,7 +71,7 @@ const exigirMaster = (req, res, next) => {
 // ------------------ Rotas públicas de Admin ------------------ //
 router.post('/login', adminAuthController.loginAdmin);
 router.get('/verificar-token', adminAuthController.verificarToken);
-router.get('/ip-atual', adminAuthController.obterIpAtual || ((_req, res) => res.json({ ip: '-' })));
+// router.get('/ip-atual', adminAuthController.obterIpAtual || ((_req, res) => res.json({ ip: '-' })));
 router.get('/ping', verificarAdmin, (req, res) => res.json({ ok: true, adminId: req.admin.id }));
 
 // ------------------ Rotas protegidas ------------------ //
