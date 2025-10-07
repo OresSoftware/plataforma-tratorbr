@@ -1,20 +1,11 @@
 // backend/src/routes/adminRoutes.js
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const db = require('../config/db');
 const adminController = require('../controllers/adminController');
 const adminAuthController = require('../controllers/adminAuthController');
-const adminIpsController = require('../controllers/adminIpsController');
 const adminContatoRoutes = require('./adminContatoRoutes');
 
 const router = express.Router();
-
-function getClientIp(req) {
-  const xf = req.headers['x-forwarded-for'];
-  if (xf) return xf.split(',')[0].trim();
-  const raw = req.ip || req.socket?.remoteAddress || req.connection?.remoteAddress || '';
-  return String(raw).replace('::ffff:', '');
-}
 
 // -------- Middlewares de segurança -------- //
 const verificarAdmin = async (req, res, next) => {
@@ -35,15 +26,6 @@ const verificarAdmin = async (req, res, next) => {
       role: payload.role || 'gestor'
     };
 
-    const ip = getClientIp(req);
-    try {
-      await db.query(
-        'UPDATE admin_ips SET last_seen_at = NOW() WHERE admin_id = ? AND ip = ? AND ativo = 1',
-        [req.admin.id, ip]
-      );
-    } catch (err) {
-      console.log('Info: IP não cadastrado:', ip);
-    }
     next();
   } catch (err) {
     console.error('verificarAdmin:', err);
@@ -61,7 +43,6 @@ const exigirMaster = (req, res, next) => {
 // ------------------ Rotas públicas de Admin ------------------ //
 router.post('/login', adminAuthController.loginAdmin);
 router.get('/verificar-token', adminAuthController.verificarToken);
-// router.get('/ip-atual', adminAuthController.obterIpAtual || ((_req, res) => res.json({ ip: '-' })));
 router.get('/ping', verificarAdmin, (req, res) => res.json({ ok: true, adminId: req.admin.id }));
 
 // ------------------ Rotas protegidas ------------------ //
@@ -69,14 +50,7 @@ router.get('/ping', verificarAdmin, (req, res) => res.json({ ok: true, adminId: 
 router.get('/dashboard/metricas', verificarAdmin, adminController.obterMetricasDashboard);
 router.get('/dashboard/pendencias', verificarAdmin, adminController.obterPendencias);
 
-// ---- Gestão de IPs (Master) ---- //
-router.get('/ips-autorizados', verificarAdmin, exigirMaster, adminIpsController.listarIpsAutorizados);
-router.post('/ips-autorizados', verificarAdmin, exigirMaster, adminIpsController.adicionarIpAutorizado);
-router.delete('/ips-autorizados/:id', verificarAdmin, exigirMaster, adminIpsController.removerIpAutorizado);
-router.post('/ips-autorizados/:id/refresh-location', verificarAdmin, exigirMaster, adminIpsController.refreshIpLocation);
-
 // ---- Rotas de Contatos (PROTEGIDAS) ---- //
 router.use('/contatos', verificarAdmin, adminContatoRoutes);
 
 module.exports = router;
-
