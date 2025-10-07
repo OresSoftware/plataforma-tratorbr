@@ -57,14 +57,6 @@ const verificarAdmin = async (req, res, next) => {
     } catch (err) {
       console.log('Info: IP não cadastrado:', ip);
     }
-
-
-    // Atualizar last_seen_at para rastrear admins online
-    await db.query(
-      'UPDATE admin_ips SET last_seen_at = NOW() WHERE admin_id = ? AND ip = ? AND ativo = 1',
-      [req.admin.id, ip]
-    );
-
     next();
   } catch (err) {
     console.error('verificarAdmin:', err);
