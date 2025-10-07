@@ -14,13 +14,6 @@ exports.loginAdmin = async (req, res) => {
       return res.status(400).json({ message: 'Todos os campos são obrigatórios' });
     }
 
-    // const clientIP =
-    //   req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
-    //   req.socket?.remoteAddress ||
-    //   req.ip;
-
-    // console.log(`Tentativa de login: ${username} do IP: ${clientIP}`);
-
     // Verificar se o usuário existe
     const [admins] = await db.query(
       `SELECT id, username, password_hash AS senha_hash, role, ativo, twofa_secret
@@ -43,18 +36,6 @@ exports.loginAdmin = async (req, res) => {
       return res.status(401).json({ message: 'Usuário ou senha incorretos' });
     }
 
-    // Verificar IP autorizado
-    // const [rows] = await db.query(
-    //   `SELECT id, twofa_secret FROM admin_ips WHERE admin_id = ? AND ip = ? AND ativo = 1`,
-    //   [admin.id, clientIP]
-    // );
-
-    // if (!rows.length) {
-    //   console.log(`IP não autorizado: ${clientIP} para usuário: ${username}`);
-    //   return res.status(403).json({ message: 'IP não autorizado para acesso' });
-    // }
-
-    // Validar código 2FA
     const validOtp = speakeasy.totp.verify({
       secret: admin.twofa_secret,
       encoding: 'base32',
@@ -125,13 +106,4 @@ exports.verificarToken = async (req, res) => {
   }
 };
 
-// Obter IP atual do cliente
-// exports.obterIpAtual = async (req, res) => {
-//     try {
-//         const clientIP = req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
-//         res.json({ ip_atual: clientIP });
-//     } catch (error) {
-//         res.status(500).json({ message: 'Erro ao obter IP' });
-//     }
-// };
 
