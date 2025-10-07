@@ -35,18 +35,29 @@ const verificarAdmin = async (req, res, next) => {
       role: payload.role || 'gestor'
     };
 
+    // const ip = getClientIp(req);
+    // const [rows] = await db.query(
+    //   'SELECT id FROM admin_ips WHERE admin_id = ? AND ip = ? AND ativo = 1 LIMIT 1',
+    //   [req.admin.id, ip]
+    // );
+    // const autorizado = Array.isArray(rows) && rows.length > 0;
+    // if (!autorizado) {
+    //   return res.status(403).json({
+    //     code: 'IP_NOT_ALLOWED',
+    //     message: 'IP não autorizado para este administrador.'
+    //   });
+    // }
+    // Atualizar last_seen_at para rastrear admins online
     const ip = getClientIp(req);
-    const [rows] = await db.query(
-      'SELECT id FROM admin_ips WHERE admin_id = ? AND ip = ? AND ativo = 1 LIMIT 1',
-      [req.admin.id, ip]
-    );
-    const autorizado = Array.isArray(rows) && rows.length > 0;
-    if (!autorizado) {
-      return res.status(403).json({
-        code: 'IP_NOT_ALLOWED',
-        message: 'IP não autorizado para este administrador.'
-      });
+    try {
+      await db.query(
+        'UPDATE admin_ips SET last_seen_at = NOW() WHERE admin_id = ? AND ip = ? AND ativo = 1',
+        [req.admin.id, ip]
+      );
+    } catch (err) {
+      console.log('Info: IP não cadastrado:', ip);
     }
+
 
     // Atualizar last_seen_at para rastrear admins online
     await db.query(
