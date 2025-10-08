@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, MapPin, LogOut, MessageCircleQuestion } from "lucide-react";
+import { Menu, X, LayoutDashboard, MapPin, LogOut, MessageCircleQuestion, Building2 } from "lucide-react";
 import './style/AdminSidebar.css';
 
 const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
@@ -65,7 +65,7 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
       {menuOpen && <div className="sidebar-backdrop" onClick={() => setMenuOpen(false)} />}
 
       {/* Sidebar (fixa no desktop; off-canvas no mobile) */}
-      <aside 
+      <aside
         className={`admin-sidebar ${menuOpen ? 'is-open' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -101,6 +101,14 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
               IP de Acesso
             </button>
           )}
+
+                    <button
+            className={`nav-item ${isActive('/admin/empresas') ? 'active' : ''}`}
+            onClick={() => handleMenuItemClick('/admin/empresas')}
+          >
+            <Building2 className="nav-icon" size={22} />
+            Empresas
+          </button>
 
           <button
             className={`nav-item ${isActive('/admin/contato') ? 'active' : ''}`}

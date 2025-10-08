@@ -16,16 +16,16 @@ import CookieConsent from "./components/CookieConsent";
 import Analytics from "./components/Analytics";
 import { MobileMenuProvider } from "./contexts/MobileMenuContext";
 import AdminContatoPage from './admin-gestao/AdminContatoPage';
+import AdminEnterprisesPage from './admin-gestao/AdminEnterprisesPage'; // ← ADICIONE ESTA LINHA
 import { useLocation, useNavigationType } from 'react-router-dom';
 import { useEffect } from 'react';
 
 
 function ScrollToHashElement() {
   const { hash } = useLocation();
-  const action = useNavigationType(); // 'PUSH' | 'REPLACE' | 'POP' (reload/back/forward)
+  const action = useNavigationType();
 
   useEffect(() => {
-    // Só rola ao hash quando a navegação foi por Link/navigate (PUSH/REPLACE).
     if (hash && (action === 'PUSH' || action === 'REPLACE')) {
       const el = document.querySelector(hash);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -56,6 +56,7 @@ function App() {
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           <Route path="/admin/ips" element={<AdminIpsPage />} />
           <Route path="/admin/contato" element={<AdminContatoPage />} />
+          <Route path="/admin/empresas" element={<AdminEnterprisesPage />} /> {/* ← ADICIONE ESTA LINHA */}
           
 
           {/* Redirecionamentos */}
@@ -70,4 +71,3 @@ function App() {
 }
 
 export default App;
-

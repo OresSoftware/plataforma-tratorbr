@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const adminController = require('../controllers/adminController');
 const adminAuthController = require('../controllers/adminAuthController');
 const adminContatoRoutes = require('./adminContatoRoutes');
+const adminEnterpriseRoutes = require('./adminEnterpriseRoutes'); 
+const cityController = require('../controllers/cityController');
 
 const router = express.Router();
 
@@ -52,5 +54,9 @@ router.get('/dashboard/pendencias', verificarAdmin, adminController.obterPendenc
 
 // ---- Rotas de Contatos (PROTEGIDAS) ---- //
 router.use('/contatos', verificarAdmin, adminContatoRoutes);
+
+// ---- Rotas de Empresas (PROTEGIDAS) ---- //
+router.use('/enterprises', verificarAdmin, adminEnterpriseRoutes); 
+router.get('/cities', verificarAdmin, cityController.listarCidades);
 
 module.exports = router;
