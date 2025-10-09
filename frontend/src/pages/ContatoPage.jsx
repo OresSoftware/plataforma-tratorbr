@@ -129,7 +129,7 @@ export default function ContatoPage() {
               <div className="field">
                 <input
                   inputMode="tel"
-                  placeholder="Seu Número de Contato"
+                  placeholder="Seu WhatsApp"
                   value={form.telefone}
                   onChange={(e) => setForm({ ...form, telefone: maskTelefone(e.target.value) })}
                   aria-invalid={!!errors.telefone}

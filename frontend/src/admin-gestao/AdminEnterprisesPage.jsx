@@ -1,4 +1,3 @@
-// frontend/src/admin-gestao/AdminEnterprisesPage.jsx
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import { apiAdminEnterprises } from "../services/apiAdminEnterprises";
@@ -7,19 +6,44 @@ import AdminLayout from '../components/AdminLayout';
 import "./style/AdminEnterprisesPage.css";
 import { Search, PlusCircle, ChevronLeft, ChevronRight, Edit, Power, ChevronDown } from 'lucide-react';
 
-// Funções de formatação
-const formatCNPJ = (value) => {
-  const numbers = value.replace(/\D/g, '');
-  return numbers
-    .replace(/(\d{2})(\d)/, '$1.$2')
-    .replace(/(\d{3})(\d)/, '$1.$2')
-    .replace(/(\d{3})(\d)/, '$1/$2')
-    .replace(/(\d{4})(\d)/, '$1-$2')
-    .slice(0, 18);
+/** ===================== CNPJ UTILS (sanitize, validate, format) ===================== */
+const sanitizeCNPJ = (value = "") => String(value).replace(/\D/g, "").slice(0, 14);
+
+const isCNPJ = (value = "") => {
+  const cnpj = sanitizeCNPJ(value);
+  if (cnpj.length !== 14) return false;
+  if (/^(\d)\1{13}$/.test(cnpj)) return false;
+
+  const calcDV = (base, pesos) => {
+    const soma = base.split("").reduce((acc, d, i) => acc + Number(d) * pesos[i], 0);
+    const resto = soma % 11;
+    return resto < 2 ? 0 : 11 - resto;
+  };
+
+  const pesos1 = [5,4,3,2,9,8,7,6,5,4,3,2];
+  const pesos2 = [6,5,4,3,2,9,8,7,6,5,4,3,2];
+
+  const base12 = cnpj.slice(0, 12);
+  const dv1 = calcDV(base12, pesos1);
+  const dv2 = calcDV(base12 + String(dv1), pesos2);
+
+  return cnpj.endsWith(String(dv1) + String(dv2));
 };
 
+const formatCNPJ = (value = "") => {
+  const v = sanitizeCNPJ(value);
+  // 99.999.999/9999-99
+  if (v.length <= 2) return v;
+  if (v.length <= 5) return v.replace(/(\d{2})(\d{1,3})/, "$1.$2");
+  if (v.length <= 8) return v.replace(/(\d{2})(\d{3})(\d{1,3})/, "$1.$2.$3");
+  if (v.length <= 12) return v.replace(/(\d{2})(\d{3})(\d{3})(\d{1,4})/, "$1.$2.$3/$4");
+  return v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})/, "$1.$2.$3/$4-$5");
+};
+/** ==================================================================================== */
+
+// Outras máscaras
 const formatPhone = (value) => {
-  const numbers = value.replace(/\D/g, '');
+  const numbers = String(value || "").replace(/\D/g, '');
   if (numbers.length <= 10) {
     return numbers
       .replace(/(\d{2})(\d)/, '($1) $2')
@@ -33,7 +57,7 @@ const formatPhone = (value) => {
 };
 
 const formatCEP = (value) => {
-  const numbers = value.replace(/\D/g, '');
+  const numbers = String(value || "").replace(/\D/g, '');
   return numbers
     .replace(/(\d{5})(\d)/, '$1-$2')
     .slice(0, 9);
@@ -177,7 +201,9 @@ export default function AdminEnterprisesPage() {
   };
 
   const abrirModalForm = (empresa = null) => {
-    setEmpresaSelecionada(empresa);
+    // garante que o CNPJ chegue formatado no formulário
+    const empresaFmt = empresa ? { ...empresa, cnpj: formatCNPJ(empresa.cnpj) } : null;
+    setEmpresaSelecionada(empresaFmt);
     setModalContent('form');
     setModalAberto(true);
   };
@@ -243,7 +269,7 @@ export default function AdminEnterprisesPage() {
               type="text" 
               placeholder="Buscar por Razão, Fantasia, CNPJ ou Cidade..." 
               value={busca}
-              onChange={e => setBusca(e.target.value)}
+              onChange={e => e.target.value.length <= 100 && setBusca(e.target.value)}
             />
             <button type="submit"><Search size={20} /></button>
           </form>
@@ -283,7 +309,7 @@ export default function AdminEnterprisesPage() {
                         )}
                       </td>
                       <td className="nome-cell">{e.fantasia || 'N/A'}</td>
-                      <td>{e.cnpj || 'N/A'}</td>
+                      <td>{e.cnpj ? formatCNPJ(e.cnpj) : 'N/A'}</td>
                       <td>{e.cidade_nome ? `${e.cidade_nome} - ${e.cidade_uf}` : 'N/A'}</td>
                       <td>
                         <span className={`status-badge ${e.ativo ? 'status-ativo' : 'status-inativo'}`}>
@@ -334,7 +360,7 @@ export default function AdminEnterprisesPage() {
                     </div>
                   </div>
                   <div className="card-info">
-                    <p><strong>CNPJ:</strong> {e.cnpj || 'N/A'}</p>
+                    <p><strong>CNPJ:</strong> {e.cnpj ? formatCNPJ(e.cnpj) : 'N/A'}</p>
                     <p><strong>Cidade:</strong> {e.cidade_nome ? `${e.cidade_nome} - ${e.cidade_uf}` : 'N/A'}</p>
                   </div>
                   <div className="card-acoes">
@@ -381,10 +407,11 @@ export default function AdminEnterprisesPage() {
   );
 }
 
-// Componente para o formulário de criação/edição
+// Formulário de criação/edição com validação de CNPJ
 const FormEmpresa = ({ empresa, onSave, onClose }) => {
   const [dados, setDados] = useState(empresa || { ativo: 1 });
   const [cidades, setCidades] = useState([]);
+  const [cnpjTouched, setCnpjTouched] = useState(false);
 
   useEffect(() => {
     carregarCidades('');
@@ -416,8 +443,18 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(dados);
+    const cnpjDigits = sanitizeCNPJ(dados.cnpj);
+    if (!isCNPJ(cnpjDigits)) {
+      setCnpjTouched(true);
+      return;
+    }
+    // envia normalizado
+    const payload = { ...dados, cnpj: cnpjDigits };
+    onSave(payload);
   };
+
+  const cnpjDigits = sanitizeCNPJ(dados.cnpj);
+  const cnpjValido = cnpjDigits.length === 14 && isCNPJ(cnpjDigits);
 
   return (
     <form onSubmit={handleSubmit} className="modal-form">
@@ -438,13 +475,19 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
           </div>
           <div className="form-field">
             <label>CNPJ *</label>
-            <input 
-              name="cnpj" 
-              value={dados.cnpj || ''} 
-              onChange={handleChange} 
+            <input
+              name="cnpj"
+              value={dados.cnpj || ''}
+              onChange={handleChange}
+              onBlur={() => setCnpjTouched(true)}
               placeholder="00.000.000/0000-00"
-              required 
+              maxLength={18}
+              required
+              aria-invalid={cnpjTouched && !cnpjValido}
             />
+            {cnpjTouched && !cnpjValido && (
+              <small style={{ color: "crimson" }}>CNPJ inválido</small>
+            )}
           </div>
           <div className="form-field">
             <label>Email</label>
@@ -518,13 +561,13 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
 
       <div className="modal-actions">
         <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-        <button type="submit" className="btn btn-primary">Salvar</button>
+        <button type="submit" className="btn btn-primary" disabled={!cnpjValido}>Salvar</button>
       </div>
     </form>
   );
 };
 
-// Componente para exibir detalhes da empresa
+// Detalhes
 const DetalhesEmpresa = ({ empresa, onClose }) => (
   <div className="modal-details">
     <div className="modal-header">
@@ -560,7 +603,7 @@ const DetalhesEmpresa = ({ empresa, onClose }) => (
         </div>
         <div className="detail-item">
           <label>CNPJ:</label>
-          <span>{empresa.cnpj || 'N/A'}</span>
+          <span>{empresa.cnpj ? formatCNPJ(empresa.cnpj) : 'N/A'}</span>
         </div>
         <div className="detail-item">
           <label>Email:</label>

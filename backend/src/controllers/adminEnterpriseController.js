@@ -1,8 +1,29 @@
-// backend/src/controllers/adminEnterpriseController.js
 const pool = require("../config/db");
 
-// Função auxiliar para remover caracteres não numéricos
+// Helpers
 const soNumeros = (str) => String(str || '').replace(/\D/g, '');
+
+// Validação de CNPJ (DV oficial)
+const isCNPJ = (value = "") => {
+  const cnpj = soNumeros(value);
+  if (cnpj.length !== 14) return false;
+  if (/^(\d)\1{13}$/.test(cnpj)) return false;
+
+  const calcDV = (base, pesos) => {
+    const soma = base.split("").reduce((acc, d, i) => acc + Number(d) * pesos[i], 0);
+    const resto = soma % 11;
+    return resto < 2 ? 0 : 11 - resto;
+  };
+
+  const pesos1 = [5,4,3,2,9,8,7,6,5,4,3,2];
+  const pesos2 = [6,5,4,3,2,9,8,7,6,5,4,3,2];
+
+  const base12 = cnpj.slice(0, 12);
+  const dv1 = calcDV(base12, pesos1);
+  const dv2 = calcDV(base12 + String(dv1), pesos2);
+
+  return cnpj.endsWith(String(dv1) + String(dv2));
+};
 
 // GET /api/admin/enterprises
 async function listarEmpresas(req, res) {
@@ -40,7 +61,6 @@ async function listarEmpresas(req, res) {
 
     const whereSql = whereClauses.join(' AND ');
 
-    // Buscar empresas com informações da cidade
     const [rows] = await pool.query(
       `SELECT e.*, c.name as cidade_nome, c.code as cidade_uf
          FROM ocbr_enterprise e
@@ -51,7 +71,6 @@ async function listarEmpresas(req, res) {
       [...params, pageSize, offset]
     );
 
-    // Contar total de registros (COM JOIN)
     const [[{ total }]] = await pool.query(
       `SELECT COUNT(*) AS total 
          FROM ocbr_enterprise e
@@ -70,92 +89,109 @@ async function listarEmpresas(req, res) {
 
 // GET /api/admin/enterprises/:id
 async function buscarEmpresaPorId(req, res) {
-    try {
-        const id = Number(req.params.id);
-        if (!id) return res.status(400).json({ ok: false, error: "ID inválido." });
+  try {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ ok: false, error: "ID inválido." });
 
-        const [rows] = await pool.query(
-            `SELECT e.*, c.name as cidade_nome, c.code as cidade_uf
+    const [rows] = await pool.query(
+      `SELECT e.*, c.name as cidade_nome, c.code as cidade_uf
          FROM ocbr_enterprise e
          LEFT JOIN ocbr_city c ON e.city_id = c.city_id
         WHERE e.enterprise_id = ?`,
-            [id]
-        );
+      [id]
+    );
 
-        if (!rows || rows.length === 0) {
-            return res.status(404).json({ ok: false, error: "Empresa não encontrada." });
-        }
-
-        res.json({ ok: true, data: rows[0] });
-    } catch (e) {
-        console.error("buscarEmpresaPorId:", e);
-        res.status(500).json({ ok: false, error: "Erro ao buscar empresa." });
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ ok: false, error: "Empresa não encontrada." });
     }
+
+    res.json({ ok: true, data: rows[0] });
+  } catch (e) {
+    console.error("buscarEmpresaPorId:", e);
+    res.status(500).json({ ok: false, error: "Erro ao buscar empresa." });
+  }
 }
 
 // POST /api/admin/enterprises
 async function criarEmpresa(req, res) {
-    try {
-        const dados = req.body;
+  try {
+    const dados = { ...req.body };
 
-        if (!dados.fantasia || !dados.razao || !dados.cnpj) {
-            return res.status(400).json({
-                ok: false,
-                error: 'Fantasia, Razão Social e CNPJ são obrigatórios.'
-            });
-        }
-
-        const [[existente]] = await pool.query(
-            'SELECT enterprise_id FROM ocbr_enterprise WHERE cnpj = ?',
-            [dados.cnpj]
-        );
-
-        if (existente) {
-            return res.status(400).json({
-                ok: false,
-                error: 'CNPJ já cadastrado no sistema.'
-            });
-        }
-
-        const [result] = await pool.query(
-            'INSERT INTO ocbr_enterprise SET ?',
-            [dados]
-        );
-
-        res.status(201).json({
-            ok: true,
-            id: result.insertId,
-            message: 'Empresa cadastrada com sucesso!'
-        });
-    } catch (e) {
-        console.error("criarEmpresa:", e);
-        res.status(500).json({ ok: false, error: "Erro ao criar empresa." });
+    if (!dados.fantasia || !dados.razao || !dados.cnpj) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Fantasia, Razão Social e CNPJ são obrigatórios.'
+      });
     }
+
+    const cnpj = soNumeros(dados.cnpj);
+    if (!isCNPJ(cnpj)) {
+      return res.status(422).json({ ok: false, error: 'CNPJ inválido.' });
+    }
+
+    // Unicidade usando CNPJ sanitizado
+    const [[existente]] = await pool.query(
+      `SELECT enterprise_id 
+         FROM ocbr_enterprise 
+        WHERE REPLACE(REPLACE(REPLACE(cnpj, '.', ''), '/', ''), '-', '') = ?`,
+      [cnpj]
+    );
+    if (existente) {
+      return res.status(400).json({ ok: false, error: 'CNPJ já cadastrado no sistema.' });
+    }
+
+    // Salvar normalizado (somente dígitos)
+    dados.cnpj = cnpj;
+
+    const [result] = await pool.query(
+      'INSERT INTO ocbr_enterprise SET ?',
+      [dados]
+    );
+
+    res.status(201).json({
+      ok: true,
+      id: result.insertId,
+      message: 'Empresa cadastrada com sucesso!'
+    });
+  } catch (e) {
+    console.error("criarEmpresa:", e);
+    res.status(500).json({ ok: false, error: "Erro ao criar empresa." });
+  }
 }
 
 // PUT /api/admin/enterprises/:id
 async function atualizarEmpresa(req, res) {
   try {
     const { id } = req.params;
-    const payload = req.body;
+    const payload = { ...req.body };
 
-    // Remover campos que não pertencem à tabela ocbr_enterprise
+    // Remover campos que não pertencem à tabela
     delete payload.enterprise_id;
     delete payload.cidade_nome;
     delete payload.cidade_uf;
     delete payload.created_at;
     delete payload.updated_at;
 
-    // Validar CNPJ único (exceto o próprio registro)
-    if (payload.cnpj) {
-      const cnpjLimpo = soNumeros(payload.cnpj);
+    // Se veio CNPJ, valida e normaliza
+    if (payload.cnpj !== undefined) {
+      const cnpj = soNumeros(payload.cnpj);
+      if (!isCNPJ(cnpj)) {
+        return res.status(422).json({ ok: false, error: 'CNPJ inválido.' });
+      }
+
+      // Unicidade (exceto o próprio)
       const [[existing]] = await pool.query(
-        'SELECT enterprise_id FROM ocbr_enterprise WHERE REPLACE(REPLACE(REPLACE(cnpj, ".", ""), "/", ""), "-", "") = ? AND enterprise_id != ?',
-        [cnpjLimpo, id]
+        `SELECT enterprise_id 
+           FROM ocbr_enterprise 
+          WHERE REPLACE(REPLACE(REPLACE(cnpj, ".", ""), "/", ""), "-", "") = ? 
+            AND enterprise_id != ?`,
+        [cnpj, id]
       );
       if (existing) {
         return res.status(400).json({ ok: false, error: 'CNPJ já cadastrado para outra empresa.' });
       }
+
+      payload.cnpj = cnpj; // salva normalizado
     }
 
     await pool.query('UPDATE ocbr_enterprise SET ? WHERE enterprise_id = ?', [payload, id]);
@@ -167,60 +203,59 @@ async function atualizarEmpresa(req, res) {
   }
 }
 
-
 // PATCH /api/admin/enterprises/:id/status
 async function ativarDesativarEmpresa(req, res) {
-    try {
-        const id = Number(req.params.id);
-        const { ativo } = req.body;
+  try {
+    const id = Number(req.params.id);
+    const { ativo } = req.body;
 
-        if (!id || typeof ativo !== 'number') {
-            return res.status(400).json({ ok: false, error: "Dados inválidos." });
-        }
-
-        const [[empresa]] = await pool.query(
-            'SELECT enterprise_id, fantasia FROM ocbr_enterprise WHERE enterprise_id = ?',
-            [id]
-        );
-
-        if (!empresa) {
-            return res.status(404).json({ ok: false, error: 'Empresa não encontrada.' });
-        }
-
-        await pool.query(
-            'UPDATE ocbr_enterprise SET ativo = ? WHERE enterprise_id = ?',
-            [ativo, id]
-        );
-
-        const statusTexto = ativo ? 'ativada' : 'desativada';
-        res.json({
-            ok: true,
-            message: `Empresa ${empresa.fantasia} ${statusTexto} com sucesso!`
-        });
-    } catch (e) {
-        console.error("ativarDesativarEmpresa:", e);
-        res.status(500).json({ ok: false, error: "Erro ao alterar status da empresa." });
+    if (!id || typeof ativo !== 'number') {
+      return res.status(400).json({ ok: false, error: "Dados inválidos." });
     }
+
+    const [[empresa]] = await pool.query(
+      'SELECT enterprise_id, fantasia FROM ocbr_enterprise WHERE enterprise_id = ?',
+      [id]
+    );
+
+    if (!empresa) {
+      return res.status(404).json({ ok: false, error: 'Empresa não encontrada.' });
+    }
+
+    await pool.query(
+      'UPDATE ocbr_enterprise SET ativo = ? WHERE enterprise_id = ?',
+      [ativo, id]
+    );
+
+    const statusTexto = ativo ? 'ativada' : 'desativada';
+    res.json({
+      ok: true,
+      message: `Empresa ${empresa.fantasia} ${statusTexto} com sucesso!`
+    });
+  } catch (e) {
+    console.error("ativarDesativarEmpresa:", e);
+    res.status(500).json({ ok: false, error: "Erro ao alterar status da empresa." });
+  }
 }
 
 // GET /api/admin/enterprises/contador/ativos
 async function contadorAtivos(req, res) {
-    try {
-        const [[{ total }]] = await pool.query(
-            `SELECT COUNT(*) AS total FROM ocbr_enterprise WHERE ativo = 1`
-        );
-        res.json({ ok: true, total });
-    } catch (e) {
-        console.error("contadorAtivos:", e);
-        res.status(500).json({ ok: false, error: "Erro ao obter contador." });
-    }
+  try {
+    const [[{ total }]] = await pool.query(
+      `SELECT COUNT(*) AS total FROM ocbr_enterprise WHERE ativo = 1`
+    );
+    res.json({ ok: true, total });
+  } catch (e) {
+    console.error("contadorAtivos:", e);
+    res.status(500).json({ ok: false, error: "Erro ao obter contador." });
+  }
 }
 
 module.exports = {
-    listarEmpresas,
-    buscarEmpresaPorId,
-    criarEmpresa,
-    atualizarEmpresa,
-    ativarDesativarEmpresa,
-    contadorAtivos,
+  listarEmpresas,
+  buscarEmpresaPorId,
+  criarEmpresa,
+  atualizarEmpresa,
+  ativarDesativarEmpresa,
+  contadorAtivos,
 };
