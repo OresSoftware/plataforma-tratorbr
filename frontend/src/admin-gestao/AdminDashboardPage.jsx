@@ -10,6 +10,7 @@ function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     carregarDados();
@@ -67,13 +68,13 @@ function AdminDashboardPage() {
           ) : (
             <>
               <div className="metrica-card">
-                <h3>Admins Cadastrados</h3>
+                <h3>Usuarios Cadastrados</h3>
                 <div className="metrica-valor">{metricas.adminsIpsCadastrados || 0}</div>
                 <p className="metrica-desc">IPs cadastrados</p>
               </div>
 
               <div className="metrica-card">
-                <h3>Admins Online</h3>
+                <h3>Empresas Cadastradas</h3>
                 <div className="metrica-valor">{metricas.adminsOnline || 0}</div>
                 <p className="metrica-desc">Últimas 24h</p>
               </div>

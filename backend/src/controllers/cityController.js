@@ -33,6 +33,42 @@ async function listarCidades(req, res) {
   }
 }
 
+// GET /api/admin/cargos
+async function listarCargos(req, res) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT cargo_id, name
+         FROM ocbr_cargo
+        WHERE status = 1 AND cargo_id > 0
+        ORDER BY name ASC`
+    );
+
+    res.json({ ok: true, data: rows });
+  } catch (e) {
+    console.error("listarCargos:", e);
+    res.status(500).json({ ok: false, error: "Erro ao listar cargos." });
+  }
+}
+
+// GET /api/admin/ocupacoes
+async function listarOcupacoes(req, res) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT ocupacao_id, name
+         FROM ocbr_ocupacao
+        WHERE status = 1 AND ocupacao_id > 0
+        ORDER BY name ASC`
+    );
+
+    res.json({ ok: true, data: rows });
+  } catch (e) {
+    console.error("listarOcupacoes:", e);
+    res.status(500).json({ ok: false, error: "Erro ao listar ocupações." });
+  }
+}
+
 module.exports = {
   listarCidades,
+  listarCargos,
+  listarOcupacoes,
 };

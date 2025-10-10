@@ -6,6 +6,7 @@ import { apiAuth } from "../lib/api"; // ✅ só o cliente "limpo" para login
 
 const AdminLoginPage = () => {
   const [formData, setFormData] = useState({ username: '', password: '', otp: '' });
+  const [showPwd, setShowPwd] = useState(false); // 👈 estado para mostrar/ocultar senha
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -20,7 +21,6 @@ const AdminLoginPage = () => {
     setError('');
 
     try {
-      // 👉 se o backend espera outros nomes de campo (ex.: email/senha), ajuste aqui:
       const body = {
         username: formData.username.trim(),
         password: formData.password,
@@ -29,7 +29,6 @@ const AdminLoginPage = () => {
 
       const { data } = await apiAuth.post("/admin/login", body);
 
-      // Se o backend retorna token/admin no body:
       if (data?.token) localStorage.setItem('adminToken', data.token);
       if (data?.admin) localStorage.setItem('adminData', JSON.stringify(data.admin));
 
@@ -64,16 +63,47 @@ const AdminLoginPage = () => {
               />
             </div>
 
-            <div className="form-group">
+            {/* Campo de senha com botão de mostrar/ocultar */}
+            <div className="form-group password-field">
               <input
-                type="password"
+                type={showPwd ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Senha"
                 autoComplete="current-password"
                 required
+                aria-describedby="password-visibility-help"
               />
+              <button
+                type="button"
+                className="password-toggle"
+                aria-label={showPwd ? "Ocultar senha" : "Mostrar senha"}
+                aria-pressed={showPwd}
+                onMouseDown={(e) => e.preventDefault()} // mantém o foco no input
+                onClick={() => setShowPwd(v => !v)}
+                title={showPwd ? "Ocultar senha" : "Mostrar senha"}
+              >
+                {/* Ícone de olho (alterna entre aberto/fechado) */}
+                {showPwd ? (
+                  // olho "fechado"
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 3l18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M10.58 6.5A10.75 10.75 0 0 1 12 6c7 0 11 6 11 6s-1.07 1.82-3.07 3.5M6.53 6.53C3.9 8.35 2 12 2 12s4 6 10 6c1.2 0 2.34-.2 3.39-.57" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
+                  </svg>
+                ) : (
+                  // olho "aberto"
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" stroke="currentColor" strokeWidth="2"/>
+                    <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                  </svg>
+                )}
+              </button>
+              {/* texto invisível para leitores de tela */}
+              <span id="password-visibility-help" className="sr-only">
+                Botão para alternar a visibilidade da senha
+              </span>
             </div>
 
             <div className="form-group">

@@ -16,7 +16,8 @@ import CookieConsent from "./components/CookieConsent";
 import Analytics from "./components/Analytics";
 import { MobileMenuProvider } from "./contexts/MobileMenuContext";
 import AdminContatoPage from './admin-gestao/AdminContatoPage';
-import AdminEnterprisesPage from './admin-gestao/AdminEnterprisesPage'; // ← ADICIONE ESTA LINHA
+import AdminEnterprisesPage from './admin-gestao/AdminEnterprisesPage';
+import AdminUsersPage from './admin-gestao/AdminUsersPage';
 import { useLocation, useNavigationType } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -56,7 +57,8 @@ function App() {
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           <Route path="/admin/ips" element={<AdminIpsPage />} />
           <Route path="/admin/contato" element={<AdminContatoPage />} />
-          <Route path="/admin/empresas" element={<AdminEnterprisesPage />} /> {/* ← ADICIONE ESTA LINHA */}
+          <Route path="/admin/empresas" element={<AdminEnterprisesPage />} /> 
+          <Route path="/admin/usuarios" element={<AdminUsersPage />} />
           
 
           {/* Redirecionamentos */}

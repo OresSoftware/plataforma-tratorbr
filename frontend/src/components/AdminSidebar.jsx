@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, MapPin, LogOut, MessageCircleQuestion, Building2 } from "lucide-react";
+import { Menu, X, LayoutDashboard, MapPin, LogOut, MessageCircleQuestion, Building2, Users } from "lucide-react";
 import './style/AdminSidebar.css';
 
 const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
@@ -92,7 +92,7 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
             Dashboard
           </button>
 
-          {isMaster && (
+          {/* {isMaster && (
             <button
               className={`nav-item ${isActive('/admin/ips') ? 'active' : ''}`}
               onClick={() => handleMenuItemClick('/admin/ips')}
@@ -100,14 +100,22 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
               <MapPin className="nav-icon" size={22} />
               IP de Acesso
             </button>
-          )}
+          )} */}
 
-                    <button
+          <button
             className={`nav-item ${isActive('/admin/empresas') ? 'active' : ''}`}
             onClick={() => handleMenuItemClick('/admin/empresas')}
           >
             <Building2 className="nav-icon" size={22} />
             Empresas
+          </button>
+
+          <button
+            className={`nav-item ${isActive('/admin/usuarios') ? 'active' : ''}`}
+            onClick={() => handleMenuItemClick('/admin/usuarios')}
+          >
+            <Users className="nav-icon" size={22} />
+            Usuários APP
           </button>
 
           <button
