@@ -869,3 +869,95 @@
     font-size: 1rem;
   }
 }
+
+/* Lista de Usuários Vinculados */
+.usuarios-vinculados {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--border);
+}
+
+.usuarios-vinculados h3 {
+  font-size: 1.2rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+}
+
+.loading-text,
+.empty-text {
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+  padding: 1.5rem;
+  font-size: 14px;
+}
+
+.usuarios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.usuario-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.usuario-item:hover {
+  background: #e7eded;
+  border-color: var(--primary);
+}
+
+.usuario-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.usuario-info strong {
+  font-size: 14px;
+  color: var(--primary);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+}
+
+.usuario-email {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.usuario-cargo {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+.status-badge-small {
+  padding: 0.25rem 0.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .usuario-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .status-badge-small {
+    align-self: flex-end;
+  }
+}

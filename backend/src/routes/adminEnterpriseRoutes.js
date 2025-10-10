@@ -7,6 +7,7 @@ const {
   atualizarEmpresa,
   ativarDesativarEmpresa,
   contadorAtivos,
+  listarUsuariosDaEmpresa,
 } = require("../controllers/adminEnterpriseController");
 
 const router = express.Router();
@@ -17,7 +18,7 @@ const router = express.Router();
 // GET /api/admin/enterprises/contador/ativos
 // IMPORTANTE: Esta rota deve vir ANTES de /:id para não conflitar
 router.get("/contador/ativos", contadorAtivos);
-
+router.get('/:id/users', listarUsuariosDaEmpresa);
 // GET /api/admin/enterprises?status=ativos&page=1&pageSize=20&busca=termo
 router.get("/", listarEmpresas);
 

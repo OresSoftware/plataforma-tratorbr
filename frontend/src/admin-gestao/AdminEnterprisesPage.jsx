@@ -568,78 +568,124 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
 };
 
 // Detalhes
-const DetalhesEmpresa = ({ empresa, onClose }) => (
-  <div className="modal-details">
-    <div className="modal-header">
-      <h2>{empresa.fantasia || 'N/A'}</h2>
-      <button className="modal-close" onClick={onClose}>×</button>
-    </div>
+// Componente para exibir detalhes da empresa
+const DetalhesEmpresa = ({ empresa, onClose }) => {
+  const [usuarios, setUsuarios] = useState([]);
+  const [loadingUsuarios, setLoadingUsuarios] = useState(true);
 
-    <div className="modal-body">
-      {/* Logos */}
-      <div className="logos-container">
-        {empresa.logo && (
-          <div className="logo-detail">
-            <label>Logo:</label>
-            <img src={empresa.logo} alt="Logo" />
-          </div>
-        )}
-        {empresa.representada_logo && (
-          <div className="logo-detail">
-            <label>Logo Representada:</label>
-            <img src={empresa.representada_logo} alt="Logo Representada" />
-          </div>
-        )}
+  useEffect(() => {
+    carregarUsuarios();
+  }, []);
+
+  const carregarUsuarios = async () => {
+    try {
+      const result = await apiAdminEnterprises.listarUsuariosDaEmpresa(empresa.enterprise_id);
+      setUsuarios(result.data || []);
+    } catch (error) {
+      console.error('Erro ao carregar usuários', error);
+    } finally {
+      setLoadingUsuarios(false);
+    }
+  };
+
+  return (
+    <div className="modal-details">
+      <div className="modal-header">
+        <h2>{empresa.fantasia || 'N/A'}</h2>
+        <button className="modal-close" onClick={onClose}>×</button>
       </div>
 
-      <div className="details-grid">
-        <div className="detail-item">
-          <label>Nome Fantasia:</label>
-          <span>{empresa.fantasia || 'N/A'}</span>
+      <div className="modal-body">
+        {/* Logos */}
+        <div className="logos-container">
+          {empresa.logo && (
+            <div className="logo-detail">
+              <label>Logo:</label>
+              <img src={empresa.logo} alt="Logo" />
+            </div>
+          )}
+          {empresa.representada_logo && (
+            <div className="logo-detail">
+              <label>Logo Representada:</label>
+              <img src={empresa.representada_logo} alt="Logo Representada" />
+            </div>
+          )}
         </div>
-        <div className="detail-item">
-          <label>Razão Social:</label>
-          <span>{empresa.razao || 'N/A'}</span>
+
+        <div className="details-grid">
+          <div className="detail-item">
+            <label>Nome Fantasia:</label>
+            <span>{empresa.fantasia || 'N/A'}</span>
+          </div>
+          <div className="detail-item">
+            <label>Razão Social:</label>
+            <span>{empresa.razao || 'N/A'}</span>
+          </div>
+          <div className="detail-item">
+            <label>CNPJ:</label>
+            <span>{empresa.cnpj || 'N/A'}</span>
+          </div>
+          <div className="detail-item">
+            <label>Email:</label>
+            <span>{empresa.email || 'N/A'}</span>
+          </div>
+          <div className="detail-item">
+            <label>Telefone:</label>
+            <span>{empresa.fone || 'N/A'}</span>
+          </div>
+          <div className="detail-item full-width">
+            <label>Endereço:</label>
+            <span>{empresa.endereco ? `${empresa.endereco}, ${empresa.numero || 's/n'}` : 'N/A'}</span>
+          </div>
+          <div className="detail-item">
+            <label>Complemento:</label>
+            <span>{empresa.complemento || 'N/A'}</span>
+          </div>
+          <div className="detail-item">
+            <label>CEP:</label>
+            <span>{empresa.cep || 'N/A'}</span>
+          </div>
+          <div className="detail-item">
+            <label>Cidade:</label>
+            <span>{empresa.cidade_nome ? `${empresa.cidade_nome} - ${empresa.cidade_uf}` : 'N/A'}</span>
+          </div>
+          <div className="detail-item">
+            <label>Site:</label>
+            <span>{empresa.site ? <a href={empresa.site} target="_blank" rel="noreferrer">{empresa.site}</a> : 'N/A'}</span>
+          </div>
+          <div className="detail-item">
+            <label>Status:</label>
+            <span className={`status-badge ${empresa.ativo ? 'status-ativo' : 'status-inativo'}`}>
+              {empresa.ativo ? 'Ativo' : 'Inativo'}
+            </span>
+          </div>
         </div>
-        <div className="detail-item">
-          <label>CNPJ:</label>
-          <span>{empresa.cnpj ? formatCNPJ(empresa.cnpj) : 'N/A'}</span>
-        </div>
-        <div className="detail-item">
-          <label>Email:</label>
-          <span>{empresa.email || 'N/A'}</span>
-        </div>
-        <div className="detail-item">
-          <label>Telefone:</label>
-          <span>{empresa.fone || 'N/A'}</span>
-        </div>
-        <div className="detail-item full-width">
-          <label>Endereço:</label>
-          <span>{empresa.endereco ? `${empresa.endereco}, ${empresa.numero || 's/n'}` : 'N/A'}</span>
-        </div>
-        <div className="detail-item">
-          <label>Complemento:</label>
-          <span>{empresa.complemento || 'N/A'}</span>
-        </div>
-        <div className="detail-item">
-          <label>CEP:</label>
-          <span>{empresa.cep || 'N/A'}</span>
-        </div>
-        <div className="detail-item">
-          <label>Cidade:</label>
-          <span>{empresa.cidade_nome ? `${empresa.cidade_nome} - ${empresa.cidade_uf}` : 'N/A'}</span>
-        </div>
-        <div className="detail-item">
-          <label>Site:</label>
-          <span>{empresa.site ? <a href={empresa.site} target="_blank" rel="noreferrer">{empresa.site}</a> : 'N/A'}</span>
-        </div>
-        <div className="detail-item">
-          <label>Status:</label>
-          <span className={`status-badge ${empresa.ativo ? 'status-ativo' : 'status-inativo'}`}>
-            {empresa.ativo ? 'Ativo' : 'Inativo'}
-          </span>
+
+        {/* Lista de Usuários Vinculados */}
+        <div className="usuarios-vinculados">
+          <h3>Usuários Vinculados ({usuarios.length})</h3>
+          {loadingUsuarios ? (
+            <p className="loading-text">Carregando usuários...</p>
+          ) : usuarios.length === 0 ? (
+            <p className="empty-text">Nenhum usuário vinculado a esta empresa.</p>
+          ) : (
+            <div className="usuarios-list">
+              {usuarios.map((u) => (
+                <div key={u.user_id} className="usuario-item">
+                  <div className="usuario-info">
+                    <strong>{u.firstname} {u.lastname}</strong>
+                    <span className="usuario-email">{u.email}</span>
+                    {u.cargo_nome && <span className="usuario-cargo">{u.cargo_nome}</span>}
+                  </div>
+                  <span className={`status-badge-small ${u.status ? 'status-ativo' : 'status-inativo'}`}>
+                    {u.status ? 'Ativo' : 'Inativo'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};

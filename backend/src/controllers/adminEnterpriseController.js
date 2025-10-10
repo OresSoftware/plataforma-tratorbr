@@ -251,6 +251,35 @@ async function contadorAtivos(req, res) {
   }
 }
 
+// GET /api/admin/enterprises/:id/users
+async function listarUsuariosDaEmpresa(req, res) {
+  try {
+    const { id } = req.params;
+
+    const [rows] = await pool.query(
+      `SELECT 
+         u.user_id,
+         u.firstname,
+         u.lastname,
+         u.email,
+         u.fone,
+         u.status,
+         c.name as cargo_nome
+       FROM ocbr_user u
+       LEFT JOIN ocbr_cargo c ON u.cargo_id = c.cargo_id
+       WHERE u.enterprise_id = ?
+       ORDER BY u.firstname ASC`,
+      [id]
+    );
+
+    res.json({ ok: true, data: rows });
+  } catch (e) {
+    console.error("listarUsuariosDaEmpresa:", e);
+    res.status(500).json({ ok: false, error: "Erro ao listar usuários da empresa." });
+  }
+}
+
+
 module.exports = {
   listarEmpresas,
   buscarEmpresaPorId,
@@ -258,4 +287,5 @@ module.exports = {
   atualizarEmpresa,
   ativarDesativarEmpresa,
   contadorAtivos,
+  listarUsuariosDaEmpresa,
 };

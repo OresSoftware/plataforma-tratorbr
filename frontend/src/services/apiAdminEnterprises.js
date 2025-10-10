@@ -33,4 +33,10 @@ export const apiAdminEnterprises = {
     const { data } = await api.get('/admin/enterprises/contador/ativos');
     return data;
   },
+
+  async listarUsuariosDaEmpresa(id) {
+    const { data } = await api.get(`/admin/enterprises/${id}/users`);
+    return data;
+  },
+
 };
