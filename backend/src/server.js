@@ -8,6 +8,8 @@ const cookieParser = require("cookie-parser");
 const adminRoutes = require("./routes/adminRoutes");
 const contatoRoutes = require("./routes/contatoRoutes");
 
+const publicRoutes = require("./routes/publicRoutes");
+
 const app = express();
 
 // Se houver proxy reverso (NGINX/Cloudflare), isso garante IP correto
@@ -82,3 +84,5 @@ app.listen(PORT, HOST, () => {
   console.log(`Servidor backend rodando na porta ${PORT}`);
   console.log("CORS allowlist:", Array.from(allowlist));
 });
+
+app.use("/api/public", publicRoutes);
