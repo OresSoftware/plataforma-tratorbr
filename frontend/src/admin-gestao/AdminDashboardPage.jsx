@@ -227,15 +227,15 @@ function AdminDashboardPage() {
           ) : (
             <>
               <div className="metrica-card">
-                <h3>Empresas Cadastradas</h3>
-                <div className="metrica-valor">{metricas.empresasAtivas || 0}</div>
-                <p className="metrica-desc">Ativas</p>
-              </div>
-
-              <div className="metrica-card">
                 <h3>Usuários no App</h3>
                 <div className="metrica-valor">{metricas.usuariosAtivos || 0}</div>
                 <p className="metrica-desc">Ativos</p>
+              </div>
+
+              <div className="metrica-card">
+                <h3>Empresas Cadastradas</h3>
+                <div className="metrica-valor">{metricas.empresasAtivas || 0}</div>
+                <p className="metrica-desc">Ativas</p>
               </div>
 
               <div className="metrica-card">

@@ -103,19 +103,19 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
           )} */}
 
           <button
-            className={`nav-item ${isActive('/admin/empresas') ? 'active' : ''}`}
-            onClick={() => handleMenuItemClick('/admin/empresas')}
-          >
-            <Building2 className="nav-icon" size={22} />
-            Empresas
-          </button>
-
-          <button
             className={`nav-item ${isActive('/admin/usuarios') ? 'active' : ''}`}
             onClick={() => handleMenuItemClick('/admin/usuarios')}
           >
             <Users className="nav-icon" size={22} />
             Usuários APP
+          </button>
+
+          <button
+            className={`nav-item ${isActive('/admin/empresas') ? 'active' : ''}`}
+            onClick={() => handleMenuItemClick('/admin/empresas')}
+          >
+            <Building2 className="nav-icon" size={22} />
+            Empresas
           </button>
 
           <button
