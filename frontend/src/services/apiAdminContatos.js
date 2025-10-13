@@ -9,8 +9,9 @@ export const apiAdminContatos = {
     return data;
   },
 
-  async marcarRespondido(id) {
-    const { data } = await api.patch(`/admin/contatos/${id}/respondido`);
+  async marcarRespondido(id, canal) {
+    // canal: 'email' | 'whatsapp'
+    const { data } = await api.patch(`/admin/contatos/${id}/respondido`, { canal });
     return data;
   },
 

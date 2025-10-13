@@ -1,7 +1,7 @@
 // backend/controllers/adminContatoController.js
 const pool = require("../config/db"); // ajuste o caminho se seu db.js estiver em outro lugar
 
-// GET /api/admin/contatos?status=pendente&page=1&pageSize=20
+// GET /api/admin/contatos?status=pendente|respondido|todos&page=1&pageSize=20
 async function listarContatos(req, res) {
   try {
     const status = String(req.query.status || "pendente").toLowerCase();
@@ -9,17 +9,41 @@ async function listarContatos(req, res) {
     const pageSize = Math.min(100, Math.max(5, parseInt(req.query.pageSize || "20", 10)));
     const offset = (page - 1) * pageSize;
 
-    const where =
-      status === "todos" ? "deleted_at IS NULL" : "status = ? AND deleted_at IS NULL";
-    const params = status === "todos" ? [] : [status];
+    // WHERE e parâmetros
+    let where = "deleted_at IS NULL";
+    const params = [];
 
+    if (status !== "todos") {
+      where += " AND status = ?";
+      params.push(status);
+    }
+
+    // ORDER BY dinâmico:
+    // - respondido  -> responded_at DESC
+    // - pendente/todos -> created_at DESC
+    const orderBy =
+      status === "respondido" ? "ORDER BY responded_at DESC" : "ORDER BY created_at DESC";
+
+    // SELECT inclui sempre os campos de auditoria; quando pendente, eles virão null
     const [rows] = await pool.query(
-      `SELECT id, nome, email, telefone, mensagem, status, created_at
-         FROM contatos
-        WHERE ${where}
-        ORDER BY created_at DESC
-        LIMIT ? OFFSET ?`,
-      status === "todos" ? [pageSize, offset] : [...params, pageSize, offset]
+      `
+      SELECT
+        id,
+        nome,
+        email,
+        telefone,
+        mensagem,
+        status,
+        created_at,
+        responded_at,
+        responded_by,
+        response_channel
+      FROM contatos
+      WHERE ${where}
+      ${orderBy}
+      LIMIT ? OFFSET ?
+      `,
+      [...params, pageSize, offset]
     );
 
     const [[{ total }]] = await pool.query(
@@ -27,10 +51,10 @@ async function listarContatos(req, res) {
       params
     );
 
-    res.json({ ok: true, data: rows, page, pageSize, total });
+    return res.json({ ok: true, data: rows, page, pageSize, total });
   } catch (e) {
     console.error("listarContatos:", e);
-    res.status(500).json({ ok: false, error: "Erro ao listar contatos." });
+    return res.status(500).json({ ok: false, error: "Erro ao listar contatos." });
   }
 }
 
@@ -38,22 +62,36 @@ async function listarContatos(req, res) {
 async function marcarRespondido(req, res) {
   try {
     const id = Number(req.params.id);
-    if (!id) return res.status(400).json({ ok: false, error: "ID inválido." });
+    const canal = String(req.body?.canal || "").toLowerCase();
 
-    const adminId = (req.admin && req.admin.id) || null; // vem do middleware verificarAdmin
-    await pool.query(
+    if (!id || !['email', 'whatsapp'].includes(canal)) {
+      return res.status(400).json({ ok: false, error: "Canal inválido. Use 'email' ou 'whatsapp'." });
+    }
+
+    // Quem está marcando (vem do middleware de admin autenticado)
+    const adminId = req.admin?.id || null;
+
+    const [result] = await pool.query(
       `UPDATE contatos
-          SET status='respondido', responded_at=NOW(), responded_by=?
-        WHERE id=? AND deleted_at IS NULL`,
-      [adminId, id]
+          SET status='respondido',
+              responded_at = NOW(),
+              responded_by = ?,
+              response_channel = ?
+        WHERE id = ? AND deleted_at IS NULL`,
+      [adminId, canal, id]
     );
 
-    res.json({ ok: true });
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ ok: false, error: "Contato não encontrado ou já excluído." });
+    }
+
+    return res.json({ ok: true });
   } catch (e) {
     console.error("marcarRespondido:", e);
-    res.status(500).json({ ok: false, error: "Erro ao atualizar contato." });
+    return res.status(500).json({ ok: false, error: "Erro ao marcar respondido." });
   }
 }
+
 
 // DELETE /api/admin/contatos/:id  (hard delete ou soft delete)
 async function excluirContato(req, res) {

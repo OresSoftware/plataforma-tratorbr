@@ -5,7 +5,8 @@ import { apiAdminUsers } from "../services/apiAdminUsers";
 import { api } from "../lib/api";
 import AdminLayout from '../components/AdminLayout';
 import "./style/AdminUsersPage.css";
-import { Search, ChevronLeft, ChevronRight, Edit, Power, Key, User, Copy, Check } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Edit, Power, Key, User } from 'lucide-react';
+import { solicitarRedefinicaoSenha } from "../services/apiPublicAuth"; // << NOVO: chama API pública/esqueci-senha
 
 // Componente de Modal genérico
 const Modal = ({ children, onClose }) => (
@@ -51,41 +52,29 @@ const validarCPF = (cpf) => {
   return true;
 };
 
-// Modal de senha gerada
-const ModalSenhaGerada = ({ senha, email, onClose }) => {
-  const [copiado, setCopiado] = useState(false);
-
-  const copiarSenha = () => {
-    navigator.clipboard.writeText(senha);
-    setCopiado(true);
-    setTimeout(() => setCopiado(false), 2000);
-  };
-
+// ========= NOVO MODAL: aviso de e-mail enviado / minutos restantes =========
+const ModalAvisoReset = ({ nomeOuEmail, minutos, onClose }) => {
   return (
     <div className="modal-senha">
       <div className="modal-header">
-        <h2>✅ Senha Resetada com Sucesso!</h2>
+        <h2>📧 Email de Redefinição Enviado</h2>
         <button className="modal-close" onClick={onClose}>×</button>
       </div>
       <div className="modal-body">
-        <p className="senha-info">Uma nova senha temporária foi gerada para o usuário:</p>
-        <div className="email-box">{email}</div>
-        
-        <div className="senha-container">
-          <div className="senha-label">Nova Senha Temporária:</div>
-          <div className="senha-box">
-            <span className="senha-valor">{senha}</span>
-            <button className="btn-copiar" onClick={copiarSenha}>
-              {copiado ? <Check size={20} /> : <Copy size={20} />}
-              {copiado ? 'Copiado!' : 'Copiar'}
-            </button>
-          </div>
+        <p className="senha-info">
+          Disparamos a mensagem de redefinição para:
+        </p>
+        <div className="email-box">{nomeOuEmail}</div>
+
+        <div className="senha-aviso" style={{ marginTop: 12 }}>
+          ⏱️ Este link expira em <strong>{minutos}</strong> {minutos === 1 ? 'minuto' : 'minutos'}.
         </div>
 
-        <div className="senha-aviso">
-          ⚠️ Envie esta senha para o usuário. Ela expira em 24 horas.
-        </div>
+        <p style={{ marginTop: 16, color: "#4b5563" }}>
+          Oriente o usuário a checar a caixa de entrada e também o spam/lixo eletrônico.
+        </p>
       </div>
+
       <div className="modal-actions">
         <button className="btn btn-primary" onClick={onClose}>Fechar</button>
       </div>
@@ -109,7 +98,10 @@ export default function AdminUsersPage() {
   const [modalAberto, setModalAberto] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
-  const [senhaGerada, setSenhaGerada] = useState(null);
+
+  // ===== NOVO: estado para aviso de email enviado / minutos =====
+  const [avisoReset, setAvisoReset] = useState(null); 
+  // { nomeOuEmail: string, minutos: number }
 
   const carregarUsuarios = useCallback(async () => {
     setLoading(true);
@@ -164,7 +156,7 @@ export default function AdminUsersPage() {
     setModalAberto(false);
     setUsuarioSelecionado(null);
     setModalContent(null);
-    setSenhaGerada(null);
+    setAvisoReset(null); // limpa também
   };
 
   const handleSave = async (dadosUsuario) => {
@@ -195,18 +187,45 @@ export default function AdminUsersPage() {
     }
   };
 
+  // ========= NOVO: função pra extrair minutos a partir da resposta da API pública =========
+  const extrairMinutosRestantes = (resp) => {
+    if (!resp) return 30; // fallback
+    if (typeof resp.expires_in_minutes === "number") return resp.expires_in_minutes;
+    if (resp.expires_at) {
+      const exp = new Date(resp.expires_at).getTime();
+      const now = Date.now();
+      const diffMin = Math.max(0, Math.round((exp - now) / 60000));
+      return diffMin || 30;
+    }
+    return 30;
+  };
+
+  // ========= ALTERADO: Resetar senha agora dispara a API pública de esqueci-senha =========
   const handleResetSenha = async (usuario) => {
-    const confirmMessage = `Deseja resetar a senha do usuário ${usuario.firstname} ${usuario.lastname}?\n\nUma nova senha temporária será gerada.`;
-    if (window.confirm(confirmMessage)) {
-      try {
-        const result = await apiAdminUsers.resetarSenha(usuario.user_id);
-        setSenhaGerada({ senha: result.novaSenha, email: result.email });
-        setModalContent('senha');
-        setModalAberto(true);
-      } catch (error) {
-        console.error('Erro ao resetar senha', error);
-        alert('Falha ao resetar senha.');
-      }
+    const nomeCompleto = `${usuario.firstname || ''} ${usuario.lastname || ''}`.trim();
+    const labelPessoa = nomeCompleto || (usuario.email || 'Usuário');
+    const confirmMessage = `Deseja enviar o e-mail de redefinição de senha para ${labelPessoa}?`;
+    if (!window.confirm(confirmMessage)) return;
+
+    if (!usuario.email) {
+      alert("Este usuário não possui e-mail cadastrado.");
+      return;
+    }
+
+    try {
+      // Chama a API pública: ela dispara o e-mail e retorna expiração
+      const resp = await solicitarRedefinicaoSenha({ email: usuario.email });
+
+      const minutos = extrairMinutosRestantes(resp);
+      const nomeOuEmail = resp?.name || labelPessoa || usuario.email;
+
+      setAvisoReset({ nomeOuEmail, minutos });
+      setModalContent('aviso');
+      setModalAberto(true);
+    } catch (error) {
+      console.error('Erro ao solicitar redefinição de senha', error);
+      // mensagem neutra (sem revelar se o e-mail existe)
+      alert('Se o e-mail existir, enviaremos as instruções.');
     }
   };
 
@@ -271,24 +290,24 @@ export default function AdminUsersPage() {
                         </span>
                       </td>
                       <td className="acoes-cell">
-                        <div className="acoes">
+                        <div className="acoes" onClick={(ev) => ev.stopPropagation()}>
                           <button 
                             className="btn-icon btn-edit" 
-                            onClick={(ev) => { ev.stopPropagation(); abrirModalForm(u); }} 
+                            onClick={() => abrirModalForm(u)} 
                             title="Editar"
                           >
                             <Edit size={16} />
                           </button>
                           <button 
                             className="btn-icon btn-reset" 
-                            onClick={(ev) => { ev.stopPropagation(); handleResetSenha(u); }} 
-                            title="Resetar Senha"
+                            onClick={() => handleResetSenha(u)} 
+                            title="Enviar redefinição por e-mail"
                           >
                             <Key size={16} />
                           </button>
                           <button 
                             className={`btn-icon ${u.status ? 'btn-deactivate' : 'btn-activate'}`}
-                            onClick={(ev) => { ev.stopPropagation(); handleStatusToggle(u); }} 
+                            onClick={() => handleStatusToggle(u)} 
                             title={u.status ? 'Desativar' : 'Ativar'}
                           >
                             <Power size={16} />
@@ -327,22 +346,22 @@ export default function AdminUsersPage() {
                     <p><strong>Empresa:</strong> {u.empresa_nome || 'Sem empresa'}</p>
                     <p><strong>Cargo:</strong> {u.cargo_nome || 'Sem cargo'}</p>
                   </div>
-                  <div className="card-acoes">
+                  <div className="card-acoes" onClick={(ev) => ev.stopPropagation()}>
                     <button 
                       className="btn btn-edit" 
-                      onClick={(ev) => { ev.stopPropagation(); abrirModalForm(u); }}
+                      onClick={() => abrirModalForm(u)}
                     >
                       <Edit size={16} /> Editar
                     </button>
                     <button 
                       className="btn btn-reset" 
-                      onClick={(ev) => { ev.stopPropagation(); handleResetSenha(u); }}
+                      onClick={() => handleResetSenha(u)}
                     >
-                      <Key size={16} /> Resetar Senha
+                      <Key size={16} /> Enviar Redefinição
                     </button>
                     <button 
                       className={`btn ${u.status ? 'btn-deactivate' : 'btn-activate'}`}
-                      onClick={(ev) => { ev.stopPropagation(); handleStatusToggle(u); }}
+                      onClick={() => handleStatusToggle(u)}
                     >
                       <Power size={16} /> {u.status ? 'Desativar' : 'Ativar'}
                     </button>
@@ -371,7 +390,13 @@ export default function AdminUsersPage() {
         <Modal onClose={fecharModal}>
           {modalContent === 'details' && <DetalhesUsuario usuario={usuarioSelecionado} onClose={fecharModal} />}
           {modalContent === 'form' && <FormUsuario usuario={usuarioSelecionado} onSave={handleSave} onClose={fecharModal} />}
-          {modalContent === 'senha' && <ModalSenhaGerada senha={senhaGerada.senha} email={senhaGerada.email} onClose={fecharModal} />}
+          {modalContent === 'aviso' && avisoReset && (
+            <ModalAvisoReset
+              nomeOuEmail={avisoReset.nomeOuEmail}
+              minutos={avisoReset.minutos}
+              onClose={fecharModal}
+            />
+          )}
         </Modal>
       )}
     </AdminLayout>
@@ -388,6 +413,7 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
 
   useEffect(() => {
     carregarDados();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const carregarDados = async () => {
