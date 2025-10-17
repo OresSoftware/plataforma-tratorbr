@@ -25,6 +25,63 @@ const isCNPJ = (value = "") => {
   return cnpj.endsWith(String(dv1) + String(dv2));
 };
 
+/* =========================================================================
+   Inscrição Estadual (IE) - Normalização e validação mínima (sem alterar DB)
+   ========================================================================= */
+const normalizeIE = (value = "") => String(value || "").trim();
+const onlyDigits = (s = "") => String(s).replace(/\D/g, "");
+
+function validarIEMinima(ieRaw = "") {
+  const ie = normalizeIE(ieRaw);
+  if (!ie) return true; // permitir vazio
+  if (ie.toUpperCase() === "ISENTO") return true;
+  const digits = onlyDigits(ie);
+  // regra simples que você definiu: até 14 dígitos (bloqueios adicionais opcionais)
+  if (digits.length < 1 || digits.length > 14) return false;
+  return /^\d+$/.test(digits);
+}
+
+function prepararIEParaSalvar(ieRaw = "") {
+  const ie = normalizeIE(ieRaw);
+  if (!ie) return null;
+  if (ie.toUpperCase() === "ISENTO") return "ISENTO";
+  return onlyDigits(ie);
+}
+// ========================================================================
+
+/* =========================================================================
+   UF & Duplicidade de IE por UF (sem índice no DB)
+   ========================================================================= */
+async function getUFByCityId(cityId) {
+  if (!cityId) return null;
+  const [[row]] = await pool.query(
+    'SELECT code FROM ocbr_city WHERE city_id = ? LIMIT 1',
+    [cityId]
+  );
+  return row ? row.code : null;
+}
+
+async function existeIEDuplicadaMesmaUF({ ie, uf, ignorarEnterpriseId = null }) {
+  if (!ie || ie.toUpperCase() === 'ISENTO' || !uf) return false;
+  const params = [ie, uf];
+  let sql = `
+    SELECT e.enterprise_id
+      FROM ocbr_enterprise e
+      LEFT JOIN ocbr_city c ON e.city_id = c.city_id
+     WHERE e.inscricao_estadual = ?
+       AND c.code = ?
+  `;
+  if (ignorarEnterpriseId) {
+    sql += ' AND e.enterprise_id <> ?';
+    params.push(ignorarEnterpriseId);
+  }
+  sql += ' LIMIT 1';
+  const [[dup]] = await pool.query(sql, params);
+  return !!dup;
+}
+// ========================================================================
+
+
 // GET /api/admin/enterprises
 async function listarEmpresas(req, res) {
   try {
@@ -44,19 +101,34 @@ async function listarEmpresas(req, res) {
       whereClauses.push('e.ativo = 0');
     }
 
-    // Filtro de busca (razão, fantasia, CNPJ ou cidade)
+    // Filtro de busca (inclui BAIRRO agora)
     if (busca.trim()) {
       const cnpjLimpo = soNumeros(busca);
+      const ieLimpa   = soNumeros(busca);
+
       whereClauses.push(`(
         e.razao LIKE ? OR 
         e.fantasia LIKE ? OR 
         REPLACE(REPLACE(REPLACE(e.cnpj, '.', ''), '/', ''), '-', '') LIKE ? OR
         c.name LIKE ? OR
-        c.code LIKE ?
+        c.code LIKE ? OR
+        e.bairro LIKE ? OR
+        e.inscricao_estadual LIKE ? OR
+        REPLACE(REPLACE(REPLACE(e.inscricao_estadual, '.', ''), '/', ''), '-', '') LIKE ?
       )`);
       const buscaParam = `%${busca}%`;
       const cnpjParam = `%${cnpjLimpo}%`;
-      params.push(buscaParam, buscaParam, cnpjParam, buscaParam, buscaParam);
+      const ieParam = `%${ieLimpa}%`;
+      params.push(
+        buscaParam, // razao
+        buscaParam, // fantasia
+        cnpjParam,  // cnpj digits
+        buscaParam, // cidade nome
+        buscaParam, // UF
+        buscaParam, // bairro
+        buscaParam, // IE texto/ISENTO
+        ieParam     // IE digits
+      );
     }
 
     const whereSql = whereClauses.join(' AND ');
@@ -140,8 +212,34 @@ async function criarEmpresa(req, res) {
       return res.status(400).json({ ok: false, error: 'CNPJ já cadastrado no sistema.' });
     }
 
-    // Salvar normalizado (somente dígitos)
+    // Salvar CNPJ normalizado
     dados.cnpj = cnpj;
+
+    // IE: validação e normalização simples
+    if (dados.inscricao_estadual !== undefined) {
+      if (!validarIEMinima(dados.inscricao_estadual)) {
+        return res.status(422).json({ ok: false, error: 'Inscrição Estadual inválida.' });
+      }
+      const ieToSave = prepararIEParaSalvar(dados.inscricao_estadual);
+      if (ieToSave && ieToSave.length > 45) {
+        return res.status(422).json({ ok: false, error: 'Inscrição Estadual excede o limite de 45 caracteres.' });
+      }
+      dados.inscricao_estadual = ieToSave;
+
+      // Duplicidade por UF (opcional, já implementada)
+      if (ieToSave && ieToSave.toUpperCase() !== 'ISENTO' && dados.city_id) {
+        const uf = await getUFByCityId(dados.city_id);
+        if (uf) {
+          const duplicada = await existeIEDuplicadaMesmaUF({ ie: ieToSave, uf });
+          if (duplicada) {
+            return res.status(409).json({
+              ok: false,
+              error: `Já existe empresa com esta Inscrição Estadual na UF ${uf}.`
+            });
+          }
+        }
+      }
+    }
 
     const [result] = await pool.query(
       'INSERT INTO ocbr_enterprise SET ?',
@@ -172,14 +270,13 @@ async function atualizarEmpresa(req, res) {
     delete payload.created_at;
     delete payload.updated_at;
 
-    // Se veio CNPJ, valida e normaliza
+    // CNPJ
     if (payload.cnpj !== undefined) {
       const cnpj = soNumeros(payload.cnpj);
       if (!isCNPJ(cnpj)) {
         return res.status(422).json({ ok: false, error: 'CNPJ inválido.' });
       }
 
-      // Unicidade (exceto o próprio)
       const [[existing]] = await pool.query(
         `SELECT enterprise_id 
            FROM ocbr_enterprise 
@@ -191,8 +288,66 @@ async function atualizarEmpresa(req, res) {
         return res.status(400).json({ ok: false, error: 'CNPJ já cadastrado para outra empresa.' });
       }
 
-      payload.cnpj = cnpj; // salva normalizado
+      payload.cnpj = cnpj;
     }
+
+    // IE
+    if (payload.inscricao_estadual !== undefined) {
+      if (!validarIEMinima(payload.inscricao_estadual)) {
+        return res.status(422).json({ ok: false, error: 'Inscrição Estadual inválida.' });
+      }
+      const ieToSave = prepararIEParaSalvar(payload.inscricao_estadual);
+      if (ieToSave && ieToSave.length > 45) {
+        return res.status(422).json({ ok: false, error: 'Inscrição Estadual excede o limite de 45 caracteres.' });
+      }
+      payload.inscricao_estadual = ieToSave;
+    }
+
+    // Duplicidade por UF no PUT (opcional, já implementada)
+    let cityIdFinal = payload.city_id;
+    if (cityIdFinal === undefined) {
+      const [[empAtual]] = await pool.query(
+        'SELECT city_id FROM ocbr_enterprise WHERE enterprise_id = ? LIMIT 1',
+        [id]
+      );
+      cityIdFinal = empAtual ? empAtual.city_id : null;
+    }
+    let ieFinal = payload.inscricao_estadual;
+    if (ieFinal === undefined) {
+      const [[empAtualIE]] = await pool.query(
+        'SELECT inscricao_estadual FROM ocbr_enterprise WHERE enterprise_id = ? LIMIT 1',
+        [id]
+      );
+      ieFinal = empAtualIE ? empAtualIE.inscricao_estadual : null;
+    }
+    if (ieFinal && String(ieFinal).toUpperCase() !== 'ISENTO' && cityIdFinal) {
+      const uf = await getUFByCityId(cityIdFinal);
+      if (uf) {
+        const duplicada = await existeIEDuplicadaMesmaUF({
+          ie: ieFinal,
+          uf,
+          ignorarEnterpriseId: id
+        });
+        if (duplicada) {
+          return res.status(409).json({
+            ok: false,
+            error: `Já existe empresa com esta Inscrição Estadual na UF ${uf}.`
+          });
+        }
+      }
+    }
+
+    // >>>>> ADIÇÃO: impedir esvaziar obrigatórios no PUT <<<<<
+    if (payload.razao !== undefined && String(payload.razao).trim() === "") {
+      return res.status(422).json({ ok: false, error: "Razão Social não pode ser vazia." });
+    }
+    if (payload.fantasia !== undefined && String(payload.fantasia).trim() === "") {
+      return res.status(422).json({ ok: false, error: "Nome Fantasia não pode ser vazio." });
+    }
+    if (payload.cnpj !== undefined && String(payload.cnpj).trim() === "") {
+      return res.status(422).json({ ok: false, error: "CNPJ não pode ser vazio." });
+    }
+    // --------------------------------------------------------
 
     await pool.query('UPDATE ocbr_enterprise SET ? WHERE enterprise_id = ?', [payload, id]);
 

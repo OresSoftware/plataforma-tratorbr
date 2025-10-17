@@ -20,8 +20,8 @@ const isCNPJ = (value = "") => {
     return resto < 2 ? 0 : 11 - resto;
   };
 
-  const pesos1 = [5,4,3,2,9,8,7,6,5,4,3,2];
-  const pesos2 = [6,5,4,3,2,9,8,7,6,5,4,3,2];
+  const pesos1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  const pesos2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
   const base12 = cnpj.slice(0, 12);
   const dv1 = calcDV(base12, pesos1);
@@ -32,12 +32,19 @@ const isCNPJ = (value = "") => {
 
 const formatCNPJ = (value = "") => {
   const v = sanitizeCNPJ(value);
-  // 99.999.999/9999-99
   if (v.length <= 2) return v;
   if (v.length <= 5) return v.replace(/(\d{2})(\d{1,3})/, "$1.$2");
   if (v.length <= 8) return v.replace(/(\d{2})(\d{3})(\d{1,3})/, "$1.$2.$3");
   if (v.length <= 12) return v.replace(/(\d{2})(\d{3})(\d{3})(\d{1,4})/, "$1.$2.$3/$4");
   return v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})/, "$1.$2.$3/$4-$5");
+};
+/** ==================================================================================== */
+
+/** ===================== IE (Inscrição Estadual) – helpers simples ==================== */
+const sanitizeIEInput = (value = "") => {
+  const v = String(value || "");
+  if (v.trim().toUpperCase() === "ISENTO") return "ISENTO";
+  return v.replace(/\D/g, "").slice(0, 14);
 };
 /** ==================================================================================== */
 
@@ -92,9 +99,7 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange }) => {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onSearchChange(searchTerm);
-    }, 300);
+    const timer = setTimeout(() => onSearchChange(searchTerm), 300);
     return () => clearTimeout(timer);
   }, [searchTerm, onSearchChange]);
 
@@ -152,10 +157,17 @@ export default function AdminEnterprisesPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [status, setStatus] = useState('todos');
+
+  // filtro: 'ativos' | 'inativos'
+  const [status, setStatus] = useState('ativos');
+
   const [busca, setBusca] = useState('');
   const [termoBuscado, setTermoBuscado] = useState('');
+
+  // contadores para os botões
   const [contadorAtivos, setContadorAtivos] = useState(0);
+  const [contadorInativos, setContadorInativos] = useState(0);
+  const [contadorTodos, setContadorTodos] = useState(0);
 
   const [modalAberto, setModalAberto] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -174,19 +186,32 @@ export default function AdminEnterprisesPage() {
     setLoading(false);
   }, [status, page, termoBuscado]);
 
-  const carregarContador = useCallback(async () => {
+  // carrega contadores: ativos via endpoint dedicado; inativos via listar (pageSize 1)
+  const carregarContadores = useCallback(async () => {
     try {
-      const result = await apiAdminEnterprises.contadorAtivos();
-      setContadorAtivos(result.total || 0);
+      // ativos
+      const atv = await apiAdminEnterprises.contadorAtivos();
+      setContadorAtivos(atv.total || 0);
+
+      // inativos - usa listar para pegar total
+      const ina = await apiAdminEnterprises.listar({ status: 'inativos', page: 1, pageSize: 1, busca: '' });
+      setContadorInativos(ina.total || 0);
+
+      // todos (sem filtro de status)
+      const todos = await apiAdminEnterprises.listar({ status: 'todos', page: 1, pageSize: 1, busca: '' });
+      setContadorTodos(todos.total || 0);
     } catch (err) {
-      console.error("Erro ao carregar contador", err);
+      console.error("Erro ao carregar contadores", err);
     }
   }, []);
 
   useEffect(() => {
     carregarEmpresas();
-    carregarContador();
-  }, [carregarEmpresas, carregarContador]);
+  }, [carregarEmpresas]);
+
+  useEffect(() => {
+    carregarContadores();
+  }, [carregarContadores]);
 
   const handleBusca = (e) => {
     e.preventDefault();
@@ -201,7 +226,6 @@ export default function AdminEnterprisesPage() {
   };
 
   const abrirModalForm = (empresa = null) => {
-    // garante que o CNPJ chegue formatado no formulário
     const empresaFmt = empresa ? { ...empresa, cnpj: formatCNPJ(empresa.cnpj) } : null;
     setEmpresaSelecionada(empresaFmt);
     setModalContent('form');
@@ -222,8 +246,10 @@ export default function AdminEnterprisesPage() {
         await apiAdminEnterprises.criar(dadosEmpresa);
       }
       fecharModal();
-      carregarEmpresas();
-      carregarContador();
+      // recarrega lista e contadores
+      setPage(1);
+      await carregarEmpresas();
+      await carregarContadores();
     } catch (error) {
       console.error('Erro ao salvar empresa', error);
       const mensagem = error.response?.data?.error || 'Falha ao salvar. Verifique os dados e tente novamente.';
@@ -237,8 +263,8 @@ export default function AdminEnterprisesPage() {
     if (window.confirm(confirmMessage)) {
       try {
         await apiAdminEnterprises.ativarDesativar(empresa.enterprise_id, novoStatus);
-        carregarEmpresas();
-        carregarContador();
+        await carregarEmpresas();
+        await carregarContadores();
       } catch (error) {
         console.error('Erro ao alterar status', error);
         alert('Falha ao alterar status.');
@@ -246,15 +272,50 @@ export default function AdminEnterprisesPage() {
     }
   };
 
+  // handlers dos botões de filtro
+  const filtrarAtivos = () => {
+    setPage(1);
+    setStatus('ativos');
+  };
+  const filtrarInativos = () => {
+    setPage(1);
+    setStatus('inativos');
+  };
+
+  const isAtivos = status === 'ativos';
+  const isInativos = status === 'inativos';
+
   return (
     <AdminLayout>
       <div className="enterprise-wrap">
         <header className="enterprise-header">
           <h1>Empresas</h1>
           <div className="enterprise-actions">
-            <div className="badge">
-              <p className="ped">Ativos</p>
-              <span className="count">{contadorAtivos}</span>
+            {/* Botões de filtro com contadores */}
+            <div className="status-buttons">
+              <button
+                className={`btn ${status === 'todos' ? "btn-primary" : "btn-outline"}`}
+                onClick={() => setStatus('todos')}
+              >
+                Todos
+                <span className="count">{contadorTodos}</span>
+              </button>
+
+              <button
+                className={`btn ${status === 'ativos' ? "btn-success" : "btn-outline"}`}
+                onClick={() => setStatus('ativos')}
+              >
+                Ativos
+                <span className="count">{contadorAtivos}</span>
+              </button>
+
+              <button
+                className={`btn ${status === 'inativos' ? "btn-danger" : "btn-outline"}`}
+                onClick={() => setStatus('inativos')}
+              >
+                Inativos
+                <span className="count">{contadorInativos}</span>
+              </button>
             </div>
             <button className="btn btn-primary" onClick={() => abrirModalForm()}>
               <PlusCircle size={18} />
@@ -265,19 +326,16 @@ export default function AdminEnterprisesPage() {
 
         <div className="enterprise-filters">
           <form onSubmit={handleBusca} className="search-form">
-            <input 
-              type="text" 
-              placeholder="Buscar por Razão, Fantasia, CNPJ ou Cidade..." 
+            <input
+              type="text"
+              placeholder="Buscar por Razão, Fantasia, CNPJ, Bairro, Cidade, UF ou IE..."
               value={busca}
               onChange={e => e.target.value.length <= 100 && setBusca(e.target.value)}
             />
             <button type="submit"><Search size={20} /></button>
           </form>
-          <select value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}>
-            <option value="todos">Todos</option>
-            <option value="ativos">Ativos</option>
-            <option value="inativos">Inativos</option>
-          </select>
+
+          {/* removido o <select> de status; agora os botões fazem o filtro */}
         </div>
 
         <div className="enterprise-card">
@@ -288,6 +346,7 @@ export default function AdminEnterprisesPage() {
                   <th>Logo</th>
                   <th>Fantasia</th>
                   <th>CNPJ</th>
+                  <th>IE</th>
                   <th>Cidade</th>
                   <th>Status</th>
                   <th>Ações</th>
@@ -295,9 +354,9 @@ export default function AdminEnterprisesPage() {
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={6} className="center">Carregando...</td></tr>
+                  <tr><td colSpan={7} className="center">Carregando...</td></tr>
                 ) : empresas.length === 0 ? (
-                  <tr><td colSpan={6} className="center">Nenhuma empresa encontrada.</td></tr>
+                  <tr><td colSpan={7} className="center">Nenhuma empresa encontrada.</td></tr>
                 ) : (
                   empresas.map((e) => (
                     <tr key={e.enterprise_id} className="table-row" onClick={() => abrirModalDetalhes(e)}>
@@ -310,6 +369,7 @@ export default function AdminEnterprisesPage() {
                       </td>
                       <td className="nome-cell">{e.fantasia || 'N/A'}</td>
                       <td>{e.cnpj ? formatCNPJ(e.cnpj) : 'N/A'}</td>
+                      <td>{e.inscricao_estadual || 'N/A'}</td>
                       <td>{e.cidade_nome ? `${e.cidade_nome} - ${e.cidade_uf}` : 'N/A'}</td>
                       <td>
                         <span className={`status-badge ${e.ativo ? 'status-ativo' : 'status-inativo'}`}>
@@ -318,16 +378,16 @@ export default function AdminEnterprisesPage() {
                       </td>
                       <td className="acoes-cell">
                         <div className="acoes">
-                          <button 
-                            className="btn-icon btn-edit" 
-                            onClick={(ev) => { ev.stopPropagation(); abrirModalForm(e); }} 
+                          <button
+                            className="btn-icon btn-edit"
+                            onClick={(ev) => { ev.stopPropagation(); abrirModalForm(e); }}
                             title="Editar"
                           >
                             <Edit size={16} />
                           </button>
-                          <button 
+                          <button
                             className={`btn-icon ${e.ativo ? 'btn-deactivate' : 'btn-activate'}`}
-                            onClick={(ev) => { ev.stopPropagation(); handleStatusToggle(e); }} 
+                            onClick={(ev) => { ev.stopPropagation(); handleStatusToggle(e); }}
                             title={e.ativo ? 'Desativar' : 'Ativar'}
                           >
                             <Power size={16} />
@@ -361,16 +421,17 @@ export default function AdminEnterprisesPage() {
                   </div>
                   <div className="card-info">
                     <p><strong>CNPJ:</strong> {e.cnpj ? formatCNPJ(e.cnpj) : 'N/A'}</p>
+                    <p><strong>IE:</strong> {e.inscricao_estadual || 'N/A'}</p>
                     <p><strong>Cidade:</strong> {e.cidade_nome ? `${e.cidade_nome} - ${e.cidade_uf}` : 'N/A'}</p>
                   </div>
                   <div className="card-acoes">
-                    <button 
-                      className="btn btn-edit" 
+                    <button
+                      className="btn btn-edit"
                       onClick={(ev) => { ev.stopPropagation(); abrirModalForm(e); }}
                     >
                       <Edit size={16} /> Editar
                     </button>
-                    <button 
+                    <button
                       className={`btn ${e.ativo ? 'btn-deactivate' : 'btn-activate'}`}
                       onClick={(ev) => { ev.stopPropagation(); handleStatusToggle(e); }}
                     >
@@ -409,7 +470,7 @@ export default function AdminEnterprisesPage() {
 
 // Formulário de criação/edição com validação de CNPJ
 const FormEmpresa = ({ empresa, onSave, onClose }) => {
-  const [dados, setDados] = useState(empresa || { ativo: 1 });
+  const [dados, setDados] = useState(empresa || { ativo: 1, inscricao_estadual: "" });
   const [cidades, setCidades] = useState([]);
   const [cnpjTouched, setCnpjTouched] = useState(false);
 
@@ -436,6 +497,11 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
       formattedValue = formatPhone(value);
     } else if (name === 'cep') {
       formattedValue = formatCEP(value);
+    } else if (name === 'inscricao_estadual') {
+      formattedValue = sanitizeIEInput(value);
+      if (formattedValue && formattedValue.length > 45) {
+        formattedValue = formattedValue.slice(0, 45);
+      }
     }
 
     setDados(prev => ({ ...prev, [name]: formattedValue }));
@@ -448,7 +514,6 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
       setCnpjTouched(true);
       return;
     }
-    // envia normalizado
     const payload = { ...dados, cnpj: cnpjDigits };
     onSave(payload);
   };
@@ -489,32 +554,29 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
               <small style={{ color: "crimson" }}>CNPJ inválido</small>
             )}
           </div>
+
           <div className="form-field">
-            <label>Email</label>
-            <input type="email" name="email" value={dados.email || ''} onChange={handleChange} />
-          </div>
-          <div className="form-field">
-            <label>Telefone</label>
-            <input 
-              name="fone" 
-              value={dados.fone || ''} 
+            <label>Inscrição Estadual</label>
+            <input
+              name="inscricao_estadual"
+              value={dados.inscricao_estadual || ''}
               onChange={handleChange}
-              placeholder="(00) 00000-0000"
+              placeholder="Digite a IE ou 'ISENTO'"
+              maxLength={45}
             />
+            <small className="hint">Digite apenas números (até 14) ou “ISENTO”.</small>
           </div>
-          <div className="form-field">
-            <label>CEP</label>
-            <input 
-              name="cep" 
-              value={dados.cep || ''} 
-              onChange={handleChange}
-              placeholder="00000-000"
-            />
-          </div>
+
           <div className="form-field full-width">
             <label>Endereço</label>
             <input name="endereco" value={dados.endereco || ''} onChange={handleChange} />
           </div>
+
+          <div className="form-field">
+            <label>Bairro</label>
+            <input name="bairro" value={dados.bairro || ''} onChange={handleChange} />
+          </div>
+
           <div className="form-field">
             <label>Número</label>
             <input name="numero" value={dados.numero || ''} onChange={handleChange} />
@@ -522,6 +584,15 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
           <div className="form-field">
             <label>Complemento</label>
             <input name="complemento" value={dados.complemento || ''} onChange={handleChange} />
+          </div>
+          <div className="form-field">
+            <label>CEP</label>
+            <input
+              name="cep"
+              value={dados.cep || ''}
+              onChange={handleChange}
+              placeholder="00000-000"
+            />
           </div>
           <div className="form-field">
             <label>Cidade</label>
@@ -533,25 +604,38 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
             />
           </div>
           <div className="form-field">
+            <label>Telefone</label>
+            <input
+              name="fone"
+              value={dados.fone || ''}
+              onChange={handleChange}
+              placeholder="(00) 00000-0000"
+            />
+          </div>
+          <div className="form-field">
+            <label>Email</label>
+            <input type="email" name="email" value={dados.email || ''} onChange={handleChange} />
+          </div>
+          <div className="form-field">
             <label>Site</label>
             <input type="url" name="site" value={dados.site || ''} onChange={handleChange} />
           </div>
           <div className="form-field full-width">
             <label>Logo (URL)</label>
-            <input 
-              type="url" 
-              name="logo" 
-              value={dados.logo || ''} 
+            <input
+              type="url"
+              name="logo"
+              value={dados.logo || ''}
               onChange={handleChange}
               placeholder="https://exemplo.com/logo.png"
             />
           </div>
           <div className="form-field full-width">
             <label>Logo Representada (URL)</label>
-            <input 
-              type="url" 
-              name="representada_logo" 
-              value={dados.representada_logo || ''} 
+            <input
+              type="url"
+              name="representada_logo"
+              value={dados.representada_logo || ''}
               onChange={handleChange}
               placeholder="https://exemplo.com/representada.png"
             />
@@ -568,7 +652,6 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
 };
 
 // Detalhes
-// Componente para exibir detalhes da empresa
 const DetalhesEmpresa = ({ empresa, onClose }) => {
   const [usuarios, setUsuarios] = useState([]);
   const [loadingUsuarios, setLoadingUsuarios] = useState(true);
@@ -596,7 +679,6 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
       </div>
 
       <div className="modal-body">
-        {/* Logos */}
         <div className="logos-container">
           {empresa.logo && (
             <div className="logo-detail">
@@ -625,18 +707,22 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
             <label>CNPJ:</label>
             <span>{empresa.cnpj || 'N/A'}</span>
           </div>
+
           <div className="detail-item">
-            <label>Email:</label>
-            <span>{empresa.email || 'N/A'}</span>
+            <label>Inscrição Estadual:</label>
+            <span>{empresa.inscricao_estadual || 'N/A'}</span>
           </div>
-          <div className="detail-item">
-            <label>Telefone:</label>
-            <span>{empresa.fone || 'N/A'}</span>
-          </div>
+
           <div className="detail-item full-width">
             <label>Endereço:</label>
             <span>{empresa.endereco ? `${empresa.endereco}, ${empresa.numero || 's/n'}` : 'N/A'}</span>
           </div>
+
+          <div className="detail-item">
+            <label>Bairro:</label>
+            <span>{empresa.bairro || 'N/A'}</span>
+          </div>
+
           <div className="detail-item">
             <label>Complemento:</label>
             <span>{empresa.complemento || 'N/A'}</span>
@@ -650,6 +736,14 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
             <span>{empresa.cidade_nome ? `${empresa.cidade_nome} - ${empresa.cidade_uf}` : 'N/A'}</span>
           </div>
           <div className="detail-item">
+            <label>Telefone:</label>
+            <span>{empresa.fone || 'N/A'}</span>
+          </div>
+          <div className="detail-item">
+            <label>Email:</label>
+            <span>{empresa.email || 'N/A'}</span>
+          </div>
+          <div className="detail-item">
             <label>Site:</label>
             <span>{empresa.site ? <a href={empresa.site} target="_blank" rel="noreferrer">{empresa.site}</a> : 'N/A'}</span>
           </div>
@@ -661,7 +755,6 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
           </div>
         </div>
 
-        {/* Lista de Usuários Vinculados */}
         <div className="usuarios-vinculados">
           <h3>Usuários Vinculados ({usuarios.length})</h3>
           {loadingUsuarios ? (

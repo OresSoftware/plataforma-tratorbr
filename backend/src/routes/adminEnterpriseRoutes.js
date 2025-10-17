@@ -12,11 +12,6 @@ const {
 
 const router = express.Router();
 
-// As rotas aqui já são protegidas pelo adminRoutes.js
-// que aplica verificarAdmin antes de chegar aqui.
-
-// GET /api/admin/enterprises/contador/ativos
-// IMPORTANTE: Esta rota deve vir ANTES de /:id para não conflitar
 router.get("/contador/ativos", contadorAtivos);
 router.get('/:id/users', listarUsuariosDaEmpresa);
 // GET /api/admin/enterprises?status=ativos&page=1&pageSize=20&busca=termo

@@ -961,3 +961,143 @@
     align-self: flex-end;
   }
 }
+
+
+/* === Filtros Ativos / Inativos (botões no header) === */
+.status-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* versão contornada (quando não selecionado) */
+.btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover {
+  border-color: var(--primary);
+  background: #f4f7f7;
+}
+
+/* versão vermelha (selecionado Inativos) */
+.btn-danger {
+  background: var(--red);
+  color: #fff;
+}
+.btn-danger:hover {
+  background: #991b0f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* badge do contador dentro do botão */
+.btn .count {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  line-height: 1;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.btn-primary .count,
+.btn-danger .count {
+  /* em botões “cheios”, deixa translúcido */
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.btn-outline .count {
+  /* em botão contornado, usa cor neutra */
+  background: #eef3f3;
+  color: var(--primary);
+}
+
+/* em telas menores, deixe os botões ocuparem mais espaço */
+@media (max-width: 768px) {
+  .status-buttons {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .status-buttons .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
+
+/* === Filtros: Ativos / Inativos / Todos === */
+.status-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Botão contornado genérico (não selecionado) */
+.btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover {
+  border-color: var(--primary);
+  background: #f4f7f7;
+}
+
+/* Botão verde (Ativos) */
+.btn-success {
+  background: var(--green);
+  color: #fff;
+}
+.btn-success:hover {
+  background: #357a2b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Botão vermelho (Inativos) */
+.btn-danger {
+  background: var(--red);
+  color: #fff;
+}
+.btn-danger:hover {
+  background: #991b0f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Contador dentro dos botões */
+.btn .count {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  line-height: 1;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.btn-success .count,
+.btn-danger .count {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.btn-outline .count {
+  background: #eef3f3;
+  color: var(--primary);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .status-buttons {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .status-buttons .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
