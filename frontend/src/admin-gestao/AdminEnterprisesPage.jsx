@@ -79,13 +79,14 @@ const Modal = ({ children, onClose }) => (
   </div>
 );
 
-// Componente de Dropdown Customizado para Cidades
-const CityDropdown = ({ value, onChange, cidades, onSearchChange }) => {
+/* =================== CityDropdown (com fallback para edição) =================== */
+const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef(null);
 
-  const cidadeSelecionada = cidades.find(c => c.city_id === parseInt(value));
+  // compara sempre como número
+  const cidadeSelecionada = cidades.find(c => Number(c.city_id) === Number(value));
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -104,15 +105,21 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange }) => {
   }, [searchTerm, onSearchChange]);
 
   const handleSelect = (cityId) => {
-    onChange({ target: { name: 'city_id', value: cityId } });
+    onChange({ target: { name: 'city_id', value: Number(cityId)} });
     setIsOpen(false);
     setSearchTerm('');
   };
 
+  // label exibido: se a cidade estiver na lista atual, usa ela;
+  // senão, usa o fallback vindo do pai (útil na edição)
+  const label = cidadeSelecionada
+    ? `${cidadeSelecionada.name} - ${cidadeSelecionada.code}`
+    : (value ? (currentLabel || 'Selecione uma cidade') : 'Selecione uma cidade');
+
   return (
     <div className="city-dropdown" ref={dropdownRef}>
       <div className="city-dropdown-trigger" onClick={() => setIsOpen(!isOpen)}>
-        <span>{cidadeSelecionada ? `${cidadeSelecionada.name} - ${cidadeSelecionada.code}` : 'Selecione uma cidade'}</span>
+        <span>{label}</span>
         <ChevronDown size={18} className={isOpen ? 'rotate' : ''} />
       </div>
 
@@ -135,7 +142,7 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange }) => {
               cidades.slice(0, 100).map(cidade => (
                 <div
                   key={cidade.city_id}
-                  className={`city-dropdown-item ${cidade.city_id === parseInt(value) ? 'selected' : ''}`}
+                  className={`city-dropdown-item ${Number(cidade.city_id) === Number(value) ? 'selected' : ''}`}
                   onClick={() => handleSelect(cidade.city_id)}
                 >
                   {cidade.name} - {cidade.code}
@@ -148,6 +155,7 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange }) => {
     </div>
   );
 };
+/* ============================================================================ */
 
 export default function AdminEnterprisesPage() {
   const token = localStorage.getItem("adminToken");
@@ -158,7 +166,7 @@ export default function AdminEnterprisesPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // filtro: 'ativos' | 'inativos'
+  // filtro: 'todos' | 'ativos' | 'inativos'
   const [status, setStatus] = useState('ativos');
 
   const [busca, setBusca] = useState('');
@@ -186,14 +194,14 @@ export default function AdminEnterprisesPage() {
     setLoading(false);
   }, [status, page, termoBuscado]);
 
-  // carrega contadores: ativos via endpoint dedicado; inativos via listar (pageSize 1)
+  // carrega contadores
   const carregarContadores = useCallback(async () => {
     try {
       // ativos
       const atv = await apiAdminEnterprises.contadorAtivos();
       setContadorAtivos(atv.total || 0);
 
-      // inativos - usa listar para pegar total
+      // inativos
       const ina = await apiAdminEnterprises.listar({ status: 'inativos', page: 1, pageSize: 1, busca: '' });
       setContadorInativos(ina.total || 0);
 
@@ -272,19 +280,6 @@ export default function AdminEnterprisesPage() {
     }
   };
 
-  // handlers dos botões de filtro
-  const filtrarAtivos = () => {
-    setPage(1);
-    setStatus('ativos');
-  };
-  const filtrarInativos = () => {
-    setPage(1);
-    setStatus('inativos');
-  };
-
-  const isAtivos = status === 'ativos';
-  const isInativos = status === 'inativos';
-
   return (
     <AdminLayout>
       <div className="enterprise-wrap">
@@ -295,7 +290,7 @@ export default function AdminEnterprisesPage() {
             <div className="status-buttons">
               <button
                 className={`btn ${status === 'todos' ? "btn-primary" : "btn-outline"}`}
-                onClick={() => setStatus('todos')}
+                onClick={() => { setPage(1); setStatus('todos'); }}
               >
                 Todos
                 <span className="count">{contadorTodos}</span>
@@ -303,7 +298,7 @@ export default function AdminEnterprisesPage() {
 
               <button
                 className={`btn ${status === 'ativos' ? "btn-success" : "btn-outline"}`}
-                onClick={() => setStatus('ativos')}
+                onClick={() => { setPage(1); setStatus('ativos'); }}
               >
                 Ativos
                 <span className="count">{contadorAtivos}</span>
@@ -311,7 +306,7 @@ export default function AdminEnterprisesPage() {
 
               <button
                 className={`btn ${status === 'inativos' ? "btn-danger" : "btn-outline"}`}
-                onClick={() => setStatus('inativos')}
+                onClick={() => { setPage(1); setStatus('inativos'); }}
               >
                 Inativos
                 <span className="count">{contadorInativos}</span>
@@ -334,8 +329,7 @@ export default function AdminEnterprisesPage() {
             />
             <button type="submit"><Search size={20} /></button>
           </form>
-
-          {/* removido o <select> de status; agora os botões fazem o filtro */}
+          {/* select removido — filtros via botões */}
         </div>
 
         <div className="enterprise-card">
@@ -597,10 +591,15 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
           <div className="form-field">
             <label>Cidade</label>
             <CityDropdown
-              value={dados.city_id || ''}
+              value={Number(dados.city_id) || ''}
               onChange={handleChange}
               cidades={cidades}
               onSearchChange={carregarCidades}
+              currentLabel={
+                (empresa && (empresa.cidade_nome || empresa.cidade_uf))
+                  ? `${empresa.cidade_nome || ''}${empresa.cidade_nome && empresa.cidade_uf ? ' - ' : ''}${empresa.cidade_uf || ''}`
+                  : ''
+              }
             />
           </div>
           <div className="form-field">

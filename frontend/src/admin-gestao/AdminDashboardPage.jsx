@@ -29,8 +29,6 @@ const PALETTE = [
   "#A5F3FC"  // azul pastel
 ];
 
-
-
 const DIAS_JANELA = 30; // janela do gráfico de linha (últimos X dias)
 const PAGE_SIZE = 100;  // paginação para carregar tudo sem mudar o backend
 
@@ -58,7 +56,7 @@ function AdminDashboardPage() {
 
   // ---------- Helpers de data ----------
   const hoje = useMemo(() => new Date(), []);
-  const yyyy_mm_dd = (d) => d.toISOString().slice(0, 10);
+  const dd_mm_yyyy_iso = (d) => d.toISOString().slice(0, 10); // YYYY-MM-DD
   const addDays = (d, n) => {
     const c = new Date(d);
     c.setDate(c.getDate() + n);
@@ -69,9 +67,15 @@ function AdminDashboardPage() {
     const out = [];
     for (let i = dias - 1; i >= 0; i--) {
       const dia = addDays(hoje, -i);
-      out.push(yyyy_mm_dd(dia));
+      out.push(dd_mm_yyyy_iso(dia)); // YYYY-MM-DD
     }
-    return out; // array com YYYY-MM-DD
+    return out;
+  };
+
+  // >>> Formatter para exibir no gráfico em dd_mm_yyyy
+  const formatarLabelBR = (iso) => {
+    const [y, m, d] = String(iso).split("-");
+    return `${d}/${m}/${y.slice(-2)}`;
   };
 
   // ---------- Chamadas de contadores (cards) ----------
@@ -121,17 +125,14 @@ function AdminDashboardPage() {
 
   // ---------- Agregações para os gráficos ----------
   const montarPizzaUsuariosPorEmpresa = (usuarios) => {
-    // agrupar por empresa_nome (ou "Sem empresa")
     const mapa = new Map();
     for (const u of usuarios) {
       const nome = (u?.empresa_nome || "Sem empresa").trim() || "Sem empresa";
       mapa.set(nome, (mapa.get(nome) || 0) + 1);
     }
-    // ordenar por valor desc
     const arr = Array.from(mapa, ([name, value]) => ({ name, value }));
     arr.sort((a, b) => b.value - a.value);
 
-    // Top N e "Outros"
     const TOP = 8;
     const top = arr.slice(0, TOP);
     const resto = arr.slice(TOP);
@@ -141,19 +142,16 @@ function AdminDashboardPage() {
   };
 
   const montarSeriePorDia = (items, campoData) => {
-    // gera contagem YYYY-MM-DD
     const porDia = new Map();
     for (const it of items) {
       const raw = it?.[campoData];
       if (!raw) continue;
-      // normaliza: pega só AAAA-MM-DD
-      const dia = String(raw).slice(0, 10);
+      const dia = String(raw).slice(0, 10); // normaliza YYYY-MM-DD
       porDia.set(dia, (porDia.get(dia) || 0) + 1);
     }
 
-    // preenche a janela (0 onde não houver)
     const linha = gerarLinhaDoTempo(DIAS_JANELA).map((d) => ({
-      date: d,
+      date: d,             // YYYY-MM-DD
       valor: porDia.get(d) || 0,
     }));
     return linha;
@@ -165,26 +163,20 @@ function AdminDashboardPage() {
       setLoading(true);
       setErro("");
 
-      // garante que o token existe (o axios guard já faz, mas aqui evita flicker)
       const token = localStorage.getItem("adminToken");
       if (!token) {
         navigate("/admin/login");
         return;
       }
 
-      // 1) cards
       await carregarContadores();
 
-      // 2) dados para gráficos
       const [usuarios, empresas] = await Promise.all([
         listarTodosUsuarios(),
         listarTodasEmpresas(),
       ]);
 
-      // Pizza: usuários por empresa
       setPizzaUsuariosPorEmpresa(montarPizzaUsuariosPorEmpresa(usuarios));
-
-      // Linha (usuários: date_added | empresas: created_at)
       setSerieUsuariosPorDia(montarSeriePorDia(usuarios, "date_added"));
       setSerieEmpresasPorDia(montarSeriePorDia(empresas, "created_at"));
     } catch (err) {
@@ -320,9 +312,11 @@ function AdminDashboardPage() {
                 <ResponsiveContainer width="100%" height={320}>
                   <LineChart data={dadosLinha} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
+                    {/* Eixo X em dd_mm_yyyy */}
+                    <XAxis dataKey="date" tickFormatter={formatarLabelBR} />
                     <YAxis allowDecimals={false} />
-                    <ReTooltip />
+                    {/* Tooltip também em dd_mm_yyyy */}
+                    <ReTooltip labelFormatter={formatarLabelBR} />
                     <Line
                       type="monotone"
                       dataKey="valor"
