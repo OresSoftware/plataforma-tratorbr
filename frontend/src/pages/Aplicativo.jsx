@@ -14,6 +14,7 @@ import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import { WifiOff } from "lucide-react";
 import iph03 from '/imagens-aplicativo/iphone-03.png';
 import qrcode from '/imagens-aplicativo/qr-code.png';
+import qrcodeapple from '/imagens-aplicativo/qr-code-apple.jpg';
 import './style/Aplicativo.css';
 
 
@@ -150,8 +151,8 @@ const PlanosPage = () => {
               <a href="https://play.google.com/store/apps/details?id=br.com.tratorbr.TratorBR&pcampaignid=web_share" className="download-btn google-play" target='_blank' rel='external'>
                 <img src={appIphone} alt="Baixar no Google Play" />
               </a>
-              <a href="#" className="download-btn app-store">
-                <img style={{ opacity: 0.5 }} src={appAndroid} alt="Baixar na App Store" />
+              <a href="https://apps.apple.com/br/app/tratorbr/id6748466764" className="download-btn app-store" target='_blank' rel='external'>
+                <img style={{ opacity: 1 }} src={appAndroid} alt="Baixar na App Store" />
               </a>
             </div>
             <img
@@ -345,9 +346,9 @@ const PlanosPage = () => {
                   <span className="arrow-s">→</span>
                 </div>
               </a>
-              <a href="" target="_blank" rel="external" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <a href="https://apps.apple.com/br/app/tratorbr/id6748466764" target="_blank" rel="external" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div className="card">
-                  <img src={qrcode} alt="QR Code Parceiro" className="qr-code" />
+                  <img src={qrcodeapple} alt="QR Code Parceiro" className="qr-code" />
                   <div>
                     <h3>Baixe o app na Apple Store</h3>
                     <p>Escaneie para baixar</p>
