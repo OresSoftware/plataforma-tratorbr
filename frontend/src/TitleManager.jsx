@@ -17,7 +17,10 @@ const TitleManager = () => {
       '/ajuda': 'TratorBR - Ajuda',
       '/excluir-conta': 'TratorBR - Excluir Conta',
       '/sobre-nos': 'TratorBR - Sobre Nós',
-      '/admin/contato': 'TratorBR - Contato Admin'
+      '/admin/contato': 'TratorBR - Contato Admin',
+      '/admin/usuarios': 'TratorBR - Usuarios Admin',
+      '/admin/empresas': 'TratorBR - Empresas Admin'
+      
     };
 
     const title = titles[location.pathname] || 'TratorBR';
