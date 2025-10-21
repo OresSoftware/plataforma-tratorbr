@@ -70,14 +70,49 @@ const formatCEP = (value) => {
     .slice(0, 9);
 };
 
-// Componente de Modal genérico
-const Modal = ({ children, onClose }) => (
-  <div className="modal-overlay" onClick={onClose}>
-    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      {children}
+/* =================== Modal “estrito” (não fecha fora/ESC) =================== */
+const Modal = ({ children /*, onClose */ }) => {
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (e.key === "Tab" && contentRef.current) {
+        const focusables = contentRef.current.querySelectorAll(
+          'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault(); first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", handler, true);
+    return () => document.removeEventListener("keydown", handler, true);
+  }, []);
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content" onClick={(e) => e.stopPropagation()} ref={contentRef}>
+        {children}
+      </div>
     </div>
-  </div>
-);
+  );
+};
+/* ============================================================================ */
 
 /* =================== CityDropdown (com fallback para edição) =================== */
 const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel = '' }) => {
@@ -85,7 +120,6 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel =
   const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef(null);
 
-  // compara sempre como número
   const cidadeSelecionada = cidades.find(c => Number(c.city_id) === Number(value));
 
   useEffect(() => {
@@ -110,8 +144,6 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel =
     setSearchTerm('');
   };
 
-  // label exibido: se a cidade estiver na lista atual, usa ela;
-  // senão, usa o fallback vindo do pai (útil na edição)
   const label = cidadeSelecionada
     ? `${cidadeSelecionada.name} - ${cidadeSelecionada.code}`
     : (value ? (currentLabel || 'Selecione uma cidade') : 'Selecione uma cidade');
@@ -157,6 +189,23 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel =
 };
 /* ============================================================================ */
 
+/* ====== NOVO: limpeza de payload antes do POST/PUT ====== */
+const limparEmpresaPayload = (dados) => {
+  const removidos = [
+    "enterprise_id",
+    "score",
+    "cidade_nome",
+    "cidade_uf",
+    "created_at",
+    "updated_at"
+  ];
+  const out = {};
+  for (const [k, v] of Object.entries(dados || {})) {
+    if (!removidos.includes(k)) out[k] = v;
+  }
+  return out;
+};
+
 export default function AdminEnterprisesPage() {
   const token = localStorage.getItem("adminToken");
   if (!token) return <Navigate to="/admin/login" replace />;
@@ -194,18 +243,14 @@ export default function AdminEnterprisesPage() {
     setLoading(false);
   }, [status, page, termoBuscado]);
 
-  // carrega contadores
   const carregarContadores = useCallback(async () => {
     try {
-      // ativos
       const atv = await apiAdminEnterprises.contadorAtivos();
       setContadorAtivos(atv.total || 0);
 
-      // inativos
       const ina = await apiAdminEnterprises.listar({ status: 'inativos', page: 1, pageSize: 1, busca: '' });
       setContadorInativos(ina.total || 0);
 
-      // todos (sem filtro de status)
       const todos = await apiAdminEnterprises.listar({ status: 'todos', page: 1, pageSize: 1, busca: '' });
       setContadorTodos(todos.total || 0);
     } catch (err) {
@@ -248,13 +293,13 @@ export default function AdminEnterprisesPage() {
 
   const handleSave = async (dadosEmpresa) => {
     try {
+      const payload = limparEmpresaPayload(dadosEmpresa);
       if (empresaSelecionada?.enterprise_id) {
-        await apiAdminEnterprises.atualizar(empresaSelecionada.enterprise_id, dadosEmpresa);
+        await apiAdminEnterprises.atualizar(empresaSelecionada.enterprise_id, payload);
       } else {
-        await apiAdminEnterprises.criar(dadosEmpresa);
+        await apiAdminEnterprises.criar(payload);
       }
       fecharModal();
-      // recarrega lista e contadores
       setPage(1);
       await carregarEmpresas();
       await carregarContadores();
@@ -286,7 +331,6 @@ export default function AdminEnterprisesPage() {
         <header className="enterprise-header">
           <h1>Empresas</h1>
           <div className="enterprise-actions">
-            {/* Botões de filtro com contadores */}
             <div className="status-buttons">
               <button
                 className={`btn ${status === 'todos' ? "btn-primary" : "btn-outline"}`}
@@ -329,7 +373,6 @@ export default function AdminEnterprisesPage() {
             />
             <button type="submit"><Search size={20} /></button>
           </form>
-          {/* select removido — filtros via botões */}
         </div>
 
         <div className="enterprise-card">
@@ -453,7 +496,7 @@ export default function AdminEnterprisesPage() {
       </div>
 
       {modalAberto && (
-        <Modal onClose={fecharModal}>
+        <Modal>
           {modalContent === 'details' && <DetalhesEmpresa empresa={empresaSelecionada} onClose={fecharModal} />}
           {modalContent === 'form' && <FormEmpresa empresa={empresaSelecionada} onSave={handleSave} onClose={fecharModal} />}
         </Modal>
@@ -467,6 +510,7 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
   const [dados, setDados] = useState(empresa || { ativo: 1, inscricao_estadual: "" });
   const [cidades, setCidades] = useState([]);
   const [cnpjTouched, setCnpjTouched] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     carregarCidades('');
@@ -501,15 +545,20 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
     setDados(prev => ({ ...prev, [name]: formattedValue }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const cnpjDigits = sanitizeCNPJ(dados.cnpj);
     if (!isCNPJ(cnpjDigits)) {
       setCnpjTouched(true);
       return;
     }
-    const payload = { ...dados, cnpj: cnpjDigits };
-    onSave(payload);
+    setIsSaving(true);
+    try {
+      const payload = { ...dados, cnpj: cnpjDigits };
+      await onSave(payload);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const cnpjDigits = sanitizeCNPJ(dados.cnpj);
@@ -519,7 +568,7 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
     <form onSubmit={handleSubmit} className="modal-form">
       <div className="modal-header">
         <h2>{empresa ? 'Editar' : 'Nova'} Empresa</h2>
-        <button type="button" className="modal-close" onClick={onClose}>×</button>
+        <button type="button" className="modal-close" onClick={onClose} disabled={isSaving} aria-disabled={isSaving} title={isSaving ? "Salvando..." : "Fechar"}>×</button>
       </div>
 
       <div className="modal-body">
@@ -643,8 +692,10 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
       </div>
 
       <div className="modal-actions">
-        <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-        <button type="submit" className="btn btn-primary" disabled={!cnpjValido}>Salvar</button>
+        <button type="button" className="btn btn-secondary" onClick={onClose} disabled={isSaving}>Cancelar</button>
+        <button type="submit" className="btn btn-primary" disabled={!cnpjValido || isSaving}>
+          {isSaving ? "Salvando..." : "Salvar"}
+        </button>
       </div>
     </form>
   );

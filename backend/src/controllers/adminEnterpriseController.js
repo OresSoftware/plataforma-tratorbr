@@ -26,7 +26,7 @@ const isCNPJ = (value = "") => {
 };
 
 /* =========================================================================
-   Inscrição Estadual (IE) - Normalização e validação mínima (sem alterar DB)
+   Inscrição Estadual (IE) - Normalização e validação mínima
    ========================================================================= */
 const normalizeIE = (value = "") => String(value || "").trim();
 const onlyDigits = (s = "") => String(s).replace(/\D/g, "");
@@ -36,7 +36,6 @@ function validarIEMinima(ieRaw = "") {
   if (!ie) return true; // permitir vazio
   if (ie.toUpperCase() === "ISENTO") return true;
   const digits = onlyDigits(ie);
-  // regra simples que você definiu: até 14 dígitos (bloqueios adicionais opcionais)
   if (digits.length < 1 || digits.length > 14) return false;
   return /^\d+$/.test(digits);
 }
@@ -50,7 +49,7 @@ function prepararIEParaSalvar(ieRaw = "") {
 // ========================================================================
 
 /* =========================================================================
-   UF & Duplicidade de IE por UF (sem índice no DB)
+   UF & Duplicidade de IE por UF
    ========================================================================= */
 async function getUFByCityId(cityId) {
   if (!cityId) return null;
@@ -81,74 +80,130 @@ async function existeIEDuplicadaMesmaUF({ ie, uf, ignorarEnterpriseId = null }) 
 }
 // ========================================================================
 
-
-// GET /api/admin/enterprises
+/* =========================================================================
+   GET /api/admin/enterprises
+   - Filtro + SCORE (campo calculado no SELECT — não existe no UPDATE)
+   ========================================================================= */
 async function listarEmpresas(req, res) {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
     const pageSize = Math.min(100, Math.max(5, parseInt(req.query.pageSize || "20", 10)));
     const offset = (page - 1) * pageSize;
-    const status = req.query.status || 'todos';
-    const busca = req.query.busca || '';
 
-    let whereClauses = ['1=1'];
-    const params = [];
+    const status = String(req.query.status || 'todos').toLowerCase();
+    const buscaRaw = String(req.query.busca || '').trim();
 
-    // Filtro por status
-    if (status === 'ativos') {
-      whereClauses.push('e.ativo = 1');
-    } else if (status === 'inativos') {
-      whereClauses.push('e.ativo = 0');
+    const like = `%${buscaRaw}%`;
+    const cnpjDigits = soNumeros(buscaRaw);
+    const ieDigits   = soNumeros(buscaRaw);
+    const buscaIsento = buscaRaw.toUpperCase() === 'ISENTO';
+
+    const where = ['1=1'];
+    const paramsWhere = [];
+
+    if (status === 'ativos')   where.push('e.ativo = 1');
+    if (status === 'inativos') where.push('e.ativo = 0');
+
+    if (buscaRaw) {
+      const blocos = [];
+      const blocParams = [];
+
+      blocos.push('e.razao LIKE ?', 'e.fantasia LIKE ?');
+      blocParams.push(like, like);
+
+      blocos.push('c.name LIKE ?', 'c.code LIKE ?');
+      blocParams.push(like, like);
+
+      blocos.push('e.bairro LIKE ?');
+      blocParams.push(like);
+
+      blocos.push('e.inscricao_estadual LIKE ?');
+      blocParams.push(like);
+
+      if (ieDigits) {
+        blocos.push("REPLACE(REPLACE(REPLACE(e.inscricao_estadual, '.', ''), '/', ''), '-', '') LIKE ?");
+        blocParams.push(`%${ieDigits}%`);
+      }
+
+      if (cnpjDigits) {
+        blocos.push("REPLACE(REPLACE(REPLACE(e.cnpj, '.', ''), '/', ''), '-', '') LIKE ?");
+        blocParams.push(`%${cnpjDigits}%`);
+      }
+
+      if (buscaIsento) {
+        blocos.push("UPPER(e.inscricao_estadual) = 'ISENTO'");
+      }
+
+      if (blocos.length) {
+        where.push(`(${blocos.join(' OR ')})`);
+        paramsWhere.push(...blocParams);
+      }
     }
 
-    // Filtro de busca (inclui BAIRRO agora)
-    if (busca.trim()) {
-      const cnpjLimpo = soNumeros(busca);
-      const ieLimpa   = soNumeros(busca);
+    const whereSql = where.join(' AND ');
 
-      whereClauses.push(`(
-        e.razao LIKE ? OR 
-        e.fantasia LIKE ? OR 
-        REPLACE(REPLACE(REPLACE(e.cnpj, '.', ''), '/', ''), '-', '') LIKE ? OR
-        c.name LIKE ? OR
-        c.code LIKE ? OR
-        e.bairro LIKE ? OR
-        e.inscricao_estadual LIKE ? OR
-        REPLACE(REPLACE(REPLACE(e.inscricao_estadual, '.', ''), '/', ''), '-', '') LIKE ?
-      )`);
-      const buscaParam = `%${busca}%`;
-      const cnpjParam = `%${cnpjLimpo}%`;
-      const ieParam = `%${ieLimpa}%`;
-      params.push(
-        buscaParam, // razao
-        buscaParam, // fantasia
-        cnpjParam,  // cnpj digits
-        buscaParam, // cidade nome
-        buscaParam, // UF
-        buscaParam, // bairro
-        buscaParam, // IE texto/ISENTO
-        ieParam     // IE digits
-      );
-    }
+    const pesos = {
+      fantasia: 10,
+      razao: 9,
+      cidade: 8,
+      uf: 8,
+      bairro: 6,
+      cnpjEq: 30,
+      cnpjLike: 12,
+      ieEq: 18,
+      ieLike: 8,
+      isento: 7,
+    };
 
-    const whereSql = whereClauses.join(' AND ');
+    const paramsScore = [];
+    const eqCNPJ   = cnpjDigits && cnpjDigits.length === 14 ? cnpjDigits : '__NO_MATCH__';
+    const eqIE     = ieDigits   && ieDigits.length   >= 2   ? ieDigits   : '__NO_MATCH__';
+    const likeCNPJ = cnpjDigits ? `%${cnpjDigits}%` : '__NO_MATCH__';
+    const likeIE   = ieDigits   ? `%${ieDigits}%`   : '__NO_MATCH__';
+    const isentoChave = buscaIsento ? 'ISENTO' : '__NO_MATCH__';
+
+    paramsScore.push(like, like, like, like, like);
+    paramsScore.push(eqCNPJ, likeCNPJ, eqIE, likeIE, isentoChave);
+
+    const scoreExpr = `
+      (
+        (e.fantasia LIKE ?) * ${pesos.fantasia} +
+        (e.razao LIKE ?) * ${pesos.razao} +
+        (c.name LIKE ?) * ${pesos.cidade} +
+        (c.code LIKE ?) * ${pesos.uf} +
+        (e.bairro LIKE ?) * ${pesos.bairro} +
+        (REPLACE(REPLACE(REPLACE(e.cnpj, '.', ''), '/', ''), '-', '') = ?) * ${pesos.cnpjEq} +
+        (REPLACE(REPLACE(REPLACE(e.cnpj, '.', ''), '/', ''), '-', '') LIKE ?) * ${pesos.cnpjLike} +
+        (REPLACE(REPLACE(REPLACE(e.inscricao_estadual, '.', ''), '/', ''), '-', '') = ?) * ${pesos.ieEq} +
+        (REPLACE(REPLACE(REPLACE(e.inscricao_estadual, '.', ''), '/', ''), '-', '') LIKE ?) * ${pesos.ieLike} +
+        (UPPER(e.inscricao_estadual) = UPPER(?)) * ${pesos.isento}
+      ) AS score
+    `;
 
     const [rows] = await pool.query(
-      `SELECT e.*, c.name as cidade_nome, c.code as cidade_uf
-         FROM ocbr_enterprise e
-         LEFT JOIN ocbr_city c ON e.city_id = c.city_id
-        WHERE ${whereSql}
-        ORDER BY e.fantasia ASC
-        LIMIT ? OFFSET ?`,
-      [...params, pageSize, offset]
+      `
+      SELECT 
+        e.*,
+        c.name AS cidade_nome,
+        c.code AS cidade_uf,
+        ${scoreExpr}
+      FROM ocbr_enterprise e
+      LEFT JOIN ocbr_city c ON e.city_id = c.city_id
+      WHERE ${whereSql}
+      ORDER BY score DESC, e.fantasia ASC
+      LIMIT ? OFFSET ?
+      `,
+      [...paramsScore, ...paramsWhere, pageSize, offset]
     );
 
     const [[{ total }]] = await pool.query(
-      `SELECT COUNT(*) AS total 
-         FROM ocbr_enterprise e
-         LEFT JOIN ocbr_city c ON e.city_id = c.city_id
-        WHERE ${whereSql}`,
-      params
+      `
+      SELECT COUNT(*) AS total
+      FROM ocbr_enterprise e
+      LEFT JOIN ocbr_city c ON e.city_id = c.city_id
+      WHERE ${whereSql}
+      `,
+      paramsWhere
     );
 
     res.json({ ok: true, data: rows, page, pageSize, total });
@@ -157,7 +212,6 @@ async function listarEmpresas(req, res) {
     res.status(500).json({ ok: false, error: "Erro ao listar empresas." });
   }
 }
-
 
 // GET /api/admin/enterprises/:id
 async function buscarEmpresaPorId(req, res) {
@@ -189,6 +243,14 @@ async function criarEmpresa(req, res) {
   try {
     const dados = { ...req.body };
 
+    // limpar campos que não pertencem à tabela
+    delete dados.enterprise_id;
+    delete dados.score;
+    delete dados.cidade_nome;
+    delete dados.cidade_uf;
+    delete dados.created_at;
+    delete dados.updated_at;
+
     if (!dados.fantasia || !dados.razao || !dados.cnpj) {
       return res.status(400).json({
         ok: false,
@@ -201,7 +263,6 @@ async function criarEmpresa(req, res) {
       return res.status(422).json({ ok: false, error: 'CNPJ inválido.' });
     }
 
-    // Unicidade usando CNPJ sanitizado
     const [[existente]] = await pool.query(
       `SELECT enterprise_id 
          FROM ocbr_enterprise 
@@ -212,10 +273,8 @@ async function criarEmpresa(req, res) {
       return res.status(400).json({ ok: false, error: 'CNPJ já cadastrado no sistema.' });
     }
 
-    // Salvar CNPJ normalizado
     dados.cnpj = cnpj;
 
-    // IE: validação e normalização simples
     if (dados.inscricao_estadual !== undefined) {
       if (!validarIEMinima(dados.inscricao_estadual)) {
         return res.status(422).json({ ok: false, error: 'Inscrição Estadual inválida.' });
@@ -226,7 +285,6 @@ async function criarEmpresa(req, res) {
       }
       dados.inscricao_estadual = ieToSave;
 
-      // Duplicidade por UF (opcional, já implementada)
       if (ieToSave && ieToSave.toUpperCase() !== 'ISENTO' && dados.city_id) {
         const uf = await getUFByCityId(dados.city_id);
         if (uf) {
@@ -265,12 +323,12 @@ async function atualizarEmpresa(req, res) {
 
     // Remover campos que não pertencem à tabela
     delete payload.enterprise_id;
+    delete payload.score;         // <— IMPORTANTE (campo calculado)
     delete payload.cidade_nome;
     delete payload.cidade_uf;
     delete payload.created_at;
     delete payload.updated_at;
 
-    // CNPJ
     if (payload.cnpj !== undefined) {
       const cnpj = soNumeros(payload.cnpj);
       if (!isCNPJ(cnpj)) {
@@ -291,7 +349,6 @@ async function atualizarEmpresa(req, res) {
       payload.cnpj = cnpj;
     }
 
-    // IE
     if (payload.inscricao_estadual !== undefined) {
       if (!validarIEMinima(payload.inscricao_estadual)) {
         return res.status(422).json({ ok: false, error: 'Inscrição Estadual inválida.' });
@@ -303,7 +360,6 @@ async function atualizarEmpresa(req, res) {
       payload.inscricao_estadual = ieToSave;
     }
 
-    // Duplicidade por UF no PUT (opcional, já implementada)
     let cityIdFinal = payload.city_id;
     if (cityIdFinal === undefined) {
       const [[empAtual]] = await pool.query(
@@ -337,7 +393,6 @@ async function atualizarEmpresa(req, res) {
       }
     }
 
-    // >>>>> ADIÇÃO: impedir esvaziar obrigatórios no PUT <<<<<
     if (payload.razao !== undefined && String(payload.razao).trim() === "") {
       return res.status(422).json({ ok: false, error: "Razão Social não pode ser vazia." });
     }
@@ -347,7 +402,6 @@ async function atualizarEmpresa(req, res) {
     if (payload.cnpj !== undefined && String(payload.cnpj).trim() === "") {
       return res.status(422).json({ ok: false, error: "CNPJ não pode ser vazio." });
     }
-    // --------------------------------------------------------
 
     await pool.query('UPDATE ocbr_enterprise SET ? WHERE enterprise_id = ?', [payload, id]);
 
@@ -433,7 +487,6 @@ async function listarUsuariosDaEmpresa(req, res) {
     res.status(500).json({ ok: false, error: "Erro ao listar usuários da empresa." });
   }
 }
-
 
 module.exports = {
   listarEmpresas,

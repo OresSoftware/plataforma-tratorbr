@@ -11,60 +11,75 @@ async function listarUsuarios(req, res) {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
     const pageSize = Math.min(100, Math.max(5, parseInt(req.query.pageSize || "20", 10)));
     const offset = (page - 1) * pageSize;
-    const status = req.query.status || 'todos';
-    const busca = req.query.busca || '';
+    const status = String(req.query.status || 'todos').toLowerCase(); // 'todos' | 'ativos' | 'inativos'
+    const busca = String(req.query.busca || '').trim();
 
-    let whereClauses = ['1=1'];
+    const where = ["1=1"];
     const params = [];
 
     // Filtro por status
     if (status === 'ativos') {
-      whereClauses.push('u.status = 1');
+      where.push('u.status = 1');
     } else if (status === 'inativos') {
-      whereClauses.push('u.status = 0');
+      where.push('u.status = 0');
     }
 
-    // Filtro de busca (nome, sobrenome, email ou CPF)
-    if (busca.trim()) {
-      const cpfLimpo = soNumeros(busca);
-      whereClauses.push(`(
-        u.firstname LIKE ? OR 
-        u.lastname LIKE ? OR 
-        u.email LIKE ? OR
-        REPLACE(REPLACE(u.cpf, '.', ''), '-', '') LIKE ?
-      )`);
-      const buscaParam = `%${busca}%`;
-      const cpfParam = `%${cpfLimpo}%`;
-      params.push(buscaParam, buscaParam, buscaParam, cpfParam);
+    // Filtro de busca (NOME/SOBRENOME/NOME COMPLETO/EMAIL/CPF/EMPRESA/CARGO)
+    if (busca) {
+      const like = `%${busca}%`;
+      const cpfDigits = soNumeros(busca);
+
+      const subCondicoes = [
+        "u.firstname LIKE ?",
+        "u.lastname LIKE ?",
+        "CONCAT(u.firstname, ' ', u.lastname) LIKE ?",
+        "u.email LIKE ?",
+        "e.fantasia LIKE ?",
+        "c.name LIKE ?"
+      ];
+      const subParams = [like, like, like, like, like, like];
+
+      // só adiciona o filtro de CPF se tiver número na busca
+      if (cpfDigits) {
+        subCondicoes.push("REPLACE(REPLACE(REPLACE(u.cpf, '.', ''), '-', ''), ' ', '') LIKE ?");
+        subParams.push(`%${cpfDigits}%`);
+      }
+
+      where.push(`(${subCondicoes.join(" OR ")})`);
+      params.push(...subParams);
     }
 
-    const whereSql = whereClauses.join(' AND ');
+    const whereSql = where.join(' AND ');
 
     // Buscar usuários com informações relacionadas
     const [rows] = await pool.query(
       `SELECT 
-        u.*,
-        e.fantasia as empresa_nome,
-        c.name as cargo_nome,
-        o.name as ocupacao_nome,
-        ci.name as cidade_nome,
-        ci.code as cidade_uf
+         u.*,
+         e.fantasia AS empresa_nome,
+         c.name     AS cargo_nome,
+         o.name     AS ocupacao_nome,
+         ci.name    AS cidade_nome,
+         ci.code    AS cidade_uf
        FROM ocbr_user u
        LEFT JOIN ocbr_enterprise e ON u.enterprise_id = e.enterprise_id
-       LEFT JOIN ocbr_cargo c ON u.cargo_id = c.cargo_id
-       LEFT JOIN ocbr_ocupacao o ON u.ocupacao_id = o.ocupacao_id
-       LEFT JOIN ocbr_city ci ON u.city_id = ci.city_id
-      WHERE ${whereSql}
-      ORDER BY u.firstname ASC
-      LIMIT ? OFFSET ?`,
+       LEFT JOIN ocbr_cargo      c ON u.cargo_id      = c.cargo_id
+       LEFT JOIN ocbr_ocupacao   o ON u.ocupacao_id   = o.ocupacao_id
+       LEFT JOIN ocbr_city      ci ON u.city_id       = ci.city_id
+       WHERE ${whereSql}
+       ORDER BY u.firstname ASC
+       LIMIT ? OFFSET ?`,
       [...params, pageSize, offset]
     );
 
-    // Contar total de registros
+    // Contar total de registros (usa as mesmas JOINs para refletir os filtros de empresa/cargo)
     const [[{ total }]] = await pool.query(
-      `SELECT COUNT(*) AS total 
-       FROM ocbr_user u
-      WHERE ${whereSql}`,
+      `SELECT COUNT(*) AS total
+         FROM ocbr_user u
+         LEFT JOIN ocbr_enterprise e ON u.enterprise_id = e.enterprise_id
+         LEFT JOIN ocbr_cargo      c ON u.cargo_id      = c.cargo_id
+         LEFT JOIN ocbr_ocupacao   o ON u.ocupacao_id   = o.ocupacao_id
+         LEFT JOIN ocbr_city      ci ON u.city_id       = ci.city_id
+        WHERE ${whereSql}`,
       params
     );
 
@@ -82,18 +97,18 @@ async function buscarUsuarioPorId(req, res) {
 
     const [[user]] = await pool.query(
       `SELECT 
-        u.*,
-        e.fantasia as empresa_nome,
-        c.name as cargo_nome,
-        o.name as ocupacao_nome,
-        ci.name as cidade_nome,
-        ci.code as cidade_uf
+         u.*,
+         e.fantasia AS empresa_nome,
+         c.name     AS cargo_nome,
+         o.name     AS ocupacao_nome,
+         ci.name    AS cidade_nome,
+         ci.code    AS cidade_uf
        FROM ocbr_user u
        LEFT JOIN ocbr_enterprise e ON u.enterprise_id = e.enterprise_id
-       LEFT JOIN ocbr_cargo c ON u.cargo_id = c.cargo_id
-       LEFT JOIN ocbr_ocupacao o ON u.ocupacao_id = o.ocupacao_id
-       LEFT JOIN ocbr_city ci ON u.city_id = ci.city_id
-      WHERE u.user_id = ?`,
+       LEFT JOIN ocbr_cargo      c ON u.cargo_id      = c.cargo_id
+       LEFT JOIN ocbr_ocupacao   o ON u.ocupacao_id   = o.ocupacao_id
+       LEFT JOIN ocbr_city      ci ON u.city_id       = ci.city_id
+       WHERE u.user_id = ?`,
       [id]
     );
 
@@ -142,7 +157,7 @@ async function atualizarUsuario(req, res) {
     delete payload.image;
     delete payload.plano_id;
     delete payload.sequencial;
-    
+
     // Atualizar date_modified
     payload.date_modified = new Date();
 
@@ -187,14 +202,14 @@ async function ativarDesativarUsuario(req, res) {
     }
 
     await pool.query(
-      'UPDATE ocbr_user SET status = ?, date_modified = ? WHERE user_id = ?', 
+      'UPDATE ocbr_user SET status = ?, date_modified = ? WHERE user_id = ?',
       [status, new Date(), id]
     );
 
     const statusTexto = status ? 'ativado' : 'desativado';
-    res.json({ 
-      ok: true, 
-      message: `Usuário ${user.firstname} ${user.lastname} ${statusTexto} com sucesso!` 
+    res.json({
+      ok: true,
+      message: `Usuário ${user.firstname} ${user.lastname} ${statusTexto} com sucesso!`
     });
   } catch (e) {
     console.error("ativarDesativarUsuario:", e);
@@ -218,10 +233,10 @@ async function resetarSenha(req, res) {
 
     // Gerar senha temporária (6 dígitos)
     const novaSenha = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     // Hash da senha
     const hashedPassword = await bcrypt.hash(novaSenha, 10);
-    
+
     // Definir limite de 24 horas para usar a senha temporária
     const tmpLimite = new Date();
     tmpLimite.setHours(tmpLimite.getHours() + 24);
@@ -231,11 +246,10 @@ async function resetarSenha(req, res) {
       [hashedPassword, tmpLimite, new Date(), id]
     );
 
-    // TODO: Aqui você pode enviar um email para o usuário com a nova senha
-    // Por enquanto, vamos retornar a senha na resposta (apenas para admin)
+    // TODO: enviar e-mail com a nova senha ao usuário
 
-    res.json({ 
-      ok: true, 
+    res.json({
+      ok: true,
       message: `Senha resetada com sucesso! Nova senha: ${novaSenha}`,
       novaSenha: novaSenha,
       email: user.email

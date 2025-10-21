@@ -6,9 +6,9 @@ import { api } from "../lib/api";
 import AdminLayout from '../components/AdminLayout';
 import "./style/AdminUsersPage.css";
 import { Search, ChevronLeft, ChevronRight, Edit, Power, Key, User } from 'lucide-react';
-import { solicitarRedefinicaoSenha } from "../services/apiPublicAuth"; // << NOVO: chama API pública/esqueci-senha
+import { solicitarRedefinicaoSenha } from "../services/apiPublicAuth";
 
-// Componente de Modal genérico
+// Modal genérico
 const Modal = ({ children, onClose }) => (
   <div className="modal-overlay" onClick={onClose}>
     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -17,9 +17,9 @@ const Modal = ({ children, onClose }) => (
   </div>
 );
 
-// Funções auxiliares de formatação e validação
+// Helpers CPF
 const formatarCPF = (valor) => {
-  const numeros = valor.replace(/\D/g, '');
+  const numeros = String(valor || "").replace(/\D/g, '');
   return numeros
     .replace(/(\d{3})(\d)/, '$1.$2')
     .replace(/(\d{3})(\d)/, '$1.$2')
@@ -29,30 +29,23 @@ const formatarCPF = (valor) => {
 
 const validarCPF = (cpf) => {
   if (!cpf) return true;
-  const numeros = cpf.replace(/\D/g, '');
+  const numeros = String(cpf).replace(/\D/g, '');
   if (numeros.length !== 11) return false;
   if (/^(\d)\1{10}$/.test(numeros)) return false;
-  
   let soma = 0;
-  for (let i = 0; i < 9; i++) {
-    soma += parseInt(numeros.charAt(i)) * (10 - i);
-  }
+  for (let i = 0; i < 9; i++) soma += parseInt(numeros.charAt(i)) * (10 - i);
   let resto = 11 - (soma % 11);
-  let digitoVerificador1 = resto >= 10 ? 0 : resto;
-  if (digitoVerificador1 !== parseInt(numeros.charAt(9))) return false;
-  
+  let dv1 = resto >= 10 ? 0 : resto;
+  if (dv1 !== parseInt(numeros.charAt(9))) return false;
   soma = 0;
-  for (let i = 0; i < 10; i++) {
-    soma += parseInt(numeros.charAt(i)) * (11 - i);
-  }
+  for (let i = 0; i < 10; i++) soma += parseInt(numeros.charAt(i)) * (11 - i);
   resto = 11 - (soma % 11);
-  let digitoVerificador2 = resto >= 10 ? 0 : resto;
-  if (digitoVerificador2 !== parseInt(numeros.charAt(10))) return false;
-  
+  let dv2 = resto >= 10 ? 0 : resto;
+  if (dv2 !== parseInt(numeros.charAt(10))) return false;
   return true;
 };
 
-// ========= NOVO MODAL: aviso de e-mail enviado / minutos restantes =========
+// Modal aviso reset
 const ModalAvisoReset = ({ nomeOuEmail, minutos, onClose }) => {
   return (
     <div className="modal-senha">
@@ -61,20 +54,15 @@ const ModalAvisoReset = ({ nomeOuEmail, minutos, onClose }) => {
         <button className="modal-close" onClick={onClose}>×</button>
       </div>
       <div className="modal-body">
-        <p className="senha-info">
-          Disparamos a mensagem de redefinição para:
-        </p>
+        <p className="senha-info">Disparamos a mensagem de redefinição para:</p>
         <div className="email-box">{nomeOuEmail}</div>
-
         <div className="senha-aviso" style={{ marginTop: 12 }}>
           ⏱️ Este link expira em <strong>{minutos}</strong> {minutos === 1 ? 'minuto' : 'minutos'}.
         </div>
-
         <p style={{ marginTop: 16, color: "#4b5563" }}>
           Oriente o usuário a checar a caixa de entrada e também o spam/lixo eletrônico.
         </p>
       </div>
-
       <div className="modal-actions">
         <button className="btn btn-primary" onClick={onClose}>Fechar</button>
       </div>
@@ -90,18 +78,23 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [status, setStatus] = useState('todos');
+
+  // agora usando os mesmos filtros da página de empresas
+  const [status, setStatus] = useState('ativos'); // 'todos' | 'ativos' | 'inativos'
+
   const [busca, setBusca] = useState('');
   const [termoBuscado, setTermoBuscado] = useState('');
+
+  // contadores
   const [contadorAtivos, setContadorAtivos] = useState(0);
+  const [contadorInativos, setContadorInativos] = useState(0);
+  const [contadorTodos, setContadorTodos] = useState(0);
 
   const [modalAberto, setModalAberto] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
 
-  // ===== NOVO: estado para aviso de email enviado / minutos =====
-  const [avisoReset, setAvisoReset] = useState(null); 
-  // { nomeOuEmail: string, minutos: number }
+  const [avisoReset, setAvisoReset] = useState(null);
 
   const carregarUsuarios = useCallback(async () => {
     setLoading(true);
@@ -116,19 +109,29 @@ export default function AdminUsersPage() {
     setLoading(false);
   }, [status, page, termoBuscado]);
 
-  const carregarContador = useCallback(async () => {
+  // carrega contadores (ativos via endpoint; inativos e todos via listar pageSize=1)
+  const carregarContadores = useCallback(async () => {
     try {
-      const result = await apiAdminUsers.contadorAtivos();
-      setContadorAtivos(result.total || 0);
-    } catch (err) {
-      console.error("Erro ao carregar contador", err);
+      const at = await apiAdminUsers.contadorAtivos();
+      setContadorAtivos(at.total || 0);
+
+      const ina = await apiAdminUsers.listar({ status: 'inativos', page: 1, pageSize: 1, busca: '' });
+      setContadorInativos(ina.total || 0);
+
+      const tod = await apiAdminUsers.listar({ status: 'todos', page: 1, pageSize: 1, busca: '' });
+      setContadorTodos(tod.total || 0);
+    } catch (e) {
+      console.error("Erro ao carregar contadores", e);
     }
   }, []);
 
   useEffect(() => {
     carregarUsuarios();
-    carregarContador();
-  }, [carregarUsuarios, carregarContador]);
+  }, [carregarUsuarios]);
+
+  useEffect(() => {
+    carregarContadores();
+  }, [carregarContadores]);
 
   useEffect(() => {
     carregarUsuarios();
@@ -156,15 +159,16 @@ export default function AdminUsersPage() {
     setModalAberto(false);
     setUsuarioSelecionado(null);
     setModalContent(null);
-    setAvisoReset(null); // limpa também
+    setAvisoReset(null);
   };
 
   const handleSave = async (dadosUsuario) => {
     try {
       await apiAdminUsers.atualizar(usuarioSelecionado.user_id, dadosUsuario);
       fecharModal();
-      carregarUsuarios();
-      carregarContador();
+      setPage(1);
+      await carregarUsuarios();
+      await carregarContadores();
     } catch (error) {
       console.error('Erro ao salvar usuário', error);
       const mensagem = error.response?.data?.error || 'Falha ao salvar. Verifique os dados e tente novamente.';
@@ -178,8 +182,8 @@ export default function AdminUsersPage() {
     if (window.confirm(confirmMessage)) {
       try {
         await apiAdminUsers.ativarDesativar(usuario.user_id, novoStatus);
-        carregarUsuarios();
-        carregarContador();
+        await carregarUsuarios();
+        await carregarContadores();
       } catch (error) {
         console.error('Erro ao alterar status', error);
         alert('Falha ao alterar status.');
@@ -187,9 +191,8 @@ export default function AdminUsersPage() {
     }
   };
 
-  // ========= NOVO: função pra extrair minutos a partir da resposta da API pública =========
   const extrairMinutosRestantes = (resp) => {
-    if (!resp) return 30; // fallback
+    if (!resp) return 30;
     if (typeof resp.expires_in_minutes === "number") return resp.expires_in_minutes;
     if (resp.expires_at) {
       const exp = new Date(resp.expires_at).getTime();
@@ -200,7 +203,6 @@ export default function AdminUsersPage() {
     return 30;
   };
 
-  // ========= ALTERADO: Resetar senha agora dispara a API pública de esqueci-senha =========
   const handleResetSenha = async (usuario) => {
     const nomeCompleto = `${usuario.firstname || ''} ${usuario.lastname || ''}`.trim();
     const labelPessoa = nomeCompleto || (usuario.email || 'Usuário');
@@ -213,9 +215,7 @@ export default function AdminUsersPage() {
     }
 
     try {
-      // Chama a API pública: ela dispara o e-mail e retorna expiração
       const resp = await solicitarRedefinicaoSenha({ email: usuario.email });
-
       const minutos = extrairMinutosRestantes(resp);
       const nomeOuEmail = resp?.name || labelPessoa || usuario.email;
 
@@ -224,7 +224,6 @@ export default function AdminUsersPage() {
       setModalAberto(true);
     } catch (error) {
       console.error('Erro ao solicitar redefinição de senha', error);
-      // mensagem neutra (sem revelar se o e-mail existe)
       alert('Se o e-mail existir, enviaremos as instruções.');
     }
   };
@@ -235,28 +234,46 @@ export default function AdminUsersPage() {
         <header className="users-header">
           <h1>Usuários do App</h1>
           <div className="users-actions">
-            <div className="badge">
-              <p className="ped">Ativos</p>
-              <span className="count">{contadorAtivos}</span>
+            {/* Botões de filtro (iguais aos de empresas) */}
+            <div className="status-buttons">
+              <button
+                className={`btn ${status === 'todos' ? "btn-primary" : "btn-outline"}`}
+                onClick={() => { setStatus('todos'); setPage(1); }}
+              >
+                Todos
+                <span className="count">{contadorTodos}</span>
+              </button>
+
+              <button
+                className={`btn ${status === 'ativos' ? "btn-success" : "btn-outline"}`}
+                onClick={() => { setStatus('ativos'); setPage(1); }}
+              >
+                Ativos
+                <span className="count">{contadorAtivos}</span>
+              </button>
+
+              <button
+                className={`btn ${status === 'inativos' ? "btn-danger" : "btn-outline"}`}
+                onClick={() => { setStatus('inativos'); setPage(1); }}
+              >
+                Inativos
+                <span className="count">{contadorInativos}</span>
+              </button>
             </div>
           </div>
         </header>
 
         <div className="users-filters">
           <form onSubmit={handleBusca} className="search-form">
-            <input 
-              type="text" 
-              placeholder="Buscar por Nome, Sobrenome, Email ou CPF..." 
+            <input
+              type="text"
+              placeholder="Buscar por Nome, Sobrenome, Email, CPF, Empresa e Cargo..."
               value={busca}
               onChange={e => setBusca(e.target.value)}
             />
             <button type="submit"><Search size={20} /></button>
           </form>
-          <select value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}>
-            <option value="todos">Todos</option>
-            <option value="ativos">Ativos</option>
-            <option value="inativos">Inativos</option>
-          </select>
+          {/* removido o <select> de status — os botões acima controlam o filtro */}
         </div>
 
         <div className="users-card">
@@ -291,23 +308,23 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="acoes-cell">
                         <div className="acoes" onClick={(ev) => ev.stopPropagation()}>
-                          <button 
-                            className="btn-icon btn-edit" 
-                            onClick={() => abrirModalForm(u)} 
+                          <button
+                            className="btn-icon btn-edit"
+                            onClick={() => abrirModalForm(u)}
                             title="Editar"
                           >
                             <Edit size={16} />
                           </button>
-                          <button 
-                            className="btn-icon btn-reset" 
-                            onClick={() => handleResetSenha(u)} 
+                          <button
+                            className="btn-icon btn-reset"
+                            onClick={() => handleResetSenha(u)}
                             title="Enviar redefinição por e-mail"
                           >
                             <Key size={16} />
                           </button>
-                          <button 
+                          <button
                             className={`btn-icon ${u.status ? 'btn-deactivate' : 'btn-activate'}`}
-                            onClick={() => handleStatusToggle(u)} 
+                            onClick={() => handleStatusToggle(u)}
                             title={u.status ? 'Desativar' : 'Ativar'}
                           >
                             <Power size={16} />
@@ -321,7 +338,7 @@ export default function AdminUsersPage() {
             </table>
           </div>
 
-          {/* Cards para mobile */}
+          {/* Cards mobile */}
           <div className="cards-container">
             {loading ? (
               <div className="center">Carregando...</div>
@@ -347,19 +364,13 @@ export default function AdminUsersPage() {
                     <p><strong>Cargo:</strong> {u.cargo_nome || 'Sem cargo'}</p>
                   </div>
                   <div className="card-acoes" onClick={(ev) => ev.stopPropagation()}>
-                    <button 
-                      className="btn btn-edit" 
-                      onClick={() => abrirModalForm(u)}
-                    >
+                    <button className="btn btn-edit" onClick={() => abrirModalForm(u)}>
                       <Edit size={16} /> Editar
                     </button>
-                    <button 
-                      className="btn btn-reset" 
-                      onClick={() => handleResetSenha(u)}
-                    >
+                    <button className="btn btn-reset" onClick={() => handleResetSenha(u)}>
                       <Key size={16} /> Enviar Redefinição
                     </button>
-                    <button 
+                    <button
                       className={`btn ${u.status ? 'btn-deactivate' : 'btn-activate'}`}
                       onClick={() => handleStatusToggle(u)}
                     >
@@ -403,7 +414,7 @@ export default function AdminUsersPage() {
   );
 }
 
-// Componente para o formulário de edição
+// Form de edição
 const FormUsuario = ({ usuario, onSave, onClose }) => {
   const [dados, setDados] = useState(usuario || {});
   const [empresas, setEmpresas] = useState([]);
@@ -433,16 +444,11 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
     if (name === 'cpf') {
       const cpfFormatado = formatarCPF(value);
       setDados(prev => ({ ...prev, [name]: cpfFormatado }));
-      
-      if (cpfFormatado && !validarCPF(cpfFormatado)) {
-        setErroCPF('CPF inválido');
-      } else {
-        setErroCPF('');
-      }
+      if (cpfFormatado && !validarCPF(cpfFormatado)) setErroCPF('CPF inválido');
+      else setErroCPF('');
     } else {
       setDados(prev => ({ ...prev, [name]: value }));
     }
@@ -450,12 +456,10 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
     if (dados.cpf && !validarCPF(dados.cpf)) {
       alert('CPF inválido. Por favor, corrija antes de salvar.');
       return;
     }
-    
     onSave(dados);
   };
 
@@ -486,9 +490,9 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
           </div>
           <div className="form-field">
             <label>CPF</label>
-            <input 
-              name="cpf" 
-              value={dados.cpf || ''} 
+            <input
+              name="cpf"
+              value={dados.cpf || ''}
               onChange={handleChange}
               placeholder="000.000.000-00"
               className={erroCPF ? 'input-error' : ''}
@@ -533,7 +537,7 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
   );
 };
 
-// Componente para exibir detalhes do usuário
+// Detalhes
 const DetalhesUsuario = ({ usuario, onClose }) => {
   const formatarData = (data) => {
     if (!data) return 'N/A';
