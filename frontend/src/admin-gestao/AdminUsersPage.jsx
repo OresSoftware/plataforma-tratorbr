@@ -79,11 +79,14 @@ export default function AdminUsersPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // agora usando os mesmos filtros da página de empresas
+  // filtros
   const [status, setStatus] = useState('ativos'); // 'todos' | 'ativos' | 'inativos'
-
   const [busca, setBusca] = useState('');
   const [termoBuscado, setTermoBuscado] = useState('');
+
+  // NOVO: filtro simples por intervalo de datas (YYYY-MM-DD)
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
 
   // contadores
   const [contadorAtivos, setContadorAtivos] = useState(0);
@@ -99,7 +102,13 @@ export default function AdminUsersPage() {
   const carregarUsuarios = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await apiAdminUsers.listar({ status, page, busca: termoBuscado });
+      const result = await apiAdminUsers.listar({
+        status,
+        page,
+        busca: termoBuscado,
+        date_from: dateFrom || undefined,
+        date_to:   dateTo   || undefined,
+      });
       setUsuarios(result.data || []);
       setTotalPages(Math.ceil(result.total / result.pageSize));
     } catch (err) {
@@ -107,9 +116,9 @@ export default function AdminUsersPage() {
       alert('Falha ao carregar usuários.');
     }
     setLoading(false);
-  }, [status, page, termoBuscado]);
+  }, [status, page, termoBuscado, dateFrom, dateTo]);
 
-  // carrega contadores (ativos via endpoint; inativos e todos via listar pageSize=1)
+  // contadores (ativos via endpoint; inativos e todos via listar pageSize=1)
   const carregarContadores = useCallback(async () => {
     try {
       const at = await apiAdminUsers.contadorAtivos();
@@ -141,6 +150,20 @@ export default function AdminUsersPage() {
     e.preventDefault();
     setPage(1);
     setTermoBuscado(busca);
+  };
+
+  // NOVO: submeter o filtro de datas (bem simples)
+  const handleFilterDates = (e) => {
+    e.preventDefault();
+    setPage(1);
+    carregarUsuarios();
+  };
+
+  const handleClearDates = () => {
+    setDateFrom('');
+    setDateTo('');
+    setPage(1);
+    carregarUsuarios();
   };
 
   const abrirModalDetalhes = (usuario) => {
@@ -264,6 +287,7 @@ export default function AdminUsersPage() {
         </header>
 
         <div className="users-filters">
+          {/* Busca por texto */}
           <form onSubmit={handleBusca} className="search-form">
             <input
               type="text"
@@ -273,7 +297,28 @@ export default function AdminUsersPage() {
             />
             <button type="submit"><Search size={20} /></button>
           </form>
-          {/* removido o <select> de status — os botões acima controlam o filtro */}
+
+          {/* NOVO: filtro simples por data (De / Até) */}
+          <form onSubmit={handleFilterDates} className="date-range-form">
+            <label>De</label>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+            />
+            <label>Até</label>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+            />
+        
+            {(dateFrom || dateTo) && (
+              <button type="button" className="btn btn-secondary" onClick={handleClearDates}>
+                Limpar
+              </button>
+            )}
+          </form>
         </div>
 
         <div className="users-card">

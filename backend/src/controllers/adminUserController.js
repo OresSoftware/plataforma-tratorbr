@@ -2,8 +2,11 @@
 const pool = require("../config/db");
 const bcrypt = require('bcrypt');
 
-// Função auxiliar para remover caracteres não numéricos
+// Helpers
 const soNumeros = (str) => String(str || '').replace(/\D/g, '');
+
+// aceita apenas YYYY-MM-DD
+const isISODate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s || '').trim());
 
 // GET /api/admin/users
 async function listarUsuarios(req, res) {
@@ -11,20 +14,22 @@ async function listarUsuarios(req, res) {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
     const pageSize = Math.min(100, Math.max(5, parseInt(req.query.pageSize || "20", 10)));
     const offset = (page - 1) * pageSize;
+
     const status = String(req.query.status || 'todos').toLowerCase(); // 'todos' | 'ativos' | 'inativos'
     const busca = String(req.query.busca || '').trim();
+
+    // NOVO: filtro por período (date_added)
+    const dateFrom = String(req.query.date_from || '').trim();
+    const dateTo   = String(req.query.date_to   || '').trim();
 
     const where = ["1=1"];
     const params = [];
 
     // Filtro por status
-    if (status === 'ativos') {
-      where.push('u.status = 1');
-    } else if (status === 'inativos') {
-      where.push('u.status = 0');
-    }
+    if (status === 'ativos')   where.push('u.status = 1');
+    if (status === 'inativos') where.push('u.status = 0');
 
-    // Filtro de busca (NOME/SOBRENOME/NOME COMPLETO/EMAIL/CPF/EMPRESA/CARGO)
+    // Filtro por busca (NOME/SOBRENOME/NOME COMPLETO/EMAIL/CPF/EMPRESA/CARGO)
     if (busca) {
       const like = `%${busca}%`;
       const cpfDigits = soNumeros(busca);
@@ -35,18 +40,31 @@ async function listarUsuarios(req, res) {
         "CONCAT(u.firstname, ' ', u.lastname) LIKE ?",
         "u.email LIKE ?",
         "e.fantasia LIKE ?",
-        "c.name LIKE ?"
+        "c.name LIKE ?",
       ];
       const subParams = [like, like, like, like, like, like];
 
-      // só adiciona o filtro de CPF se tiver número na busca
       if (cpfDigits) {
+        // remove pontuação/espacos do CPF na comparação
         subCondicoes.push("REPLACE(REPLACE(REPLACE(u.cpf, '.', ''), '-', ''), ' ', '') LIKE ?");
         subParams.push(`%${cpfDigits}%`);
       }
 
       where.push(`(${subCondicoes.join(" OR ")})`);
       params.push(...subParams);
+    }
+
+    // NOVO: filtro de data (date_added) inclusivo
+    // aceita YYYY-MM-DD; se apenas um lado vier, aplica >= ou <=
+    if (dateFrom && isISODate(dateFrom) && dateTo && isISODate(dateTo)) {
+      where.push("u.date_added BETWEEN ? AND ?");
+      params.push(`${dateFrom} 00:00:00`, `${dateTo} 23:59:59`);
+    } else if (dateFrom && isISODate(dateFrom)) {
+      where.push("u.date_added >= ?");
+      params.push(`${dateFrom} 00:00:00`);
+    } else if (dateTo && isISODate(dateTo)) {
+      where.push("u.date_added <= ?");
+      params.push(`${dateTo} 23:59:59`);
     }
 
     const whereSql = where.join(' AND ');
@@ -71,7 +89,7 @@ async function listarUsuarios(req, res) {
       [...params, pageSize, offset]
     );
 
-    // Contar total de registros (usa as mesmas JOINs para refletir os filtros de empresa/cargo)
+    // Contar total de registros (mesmas JOINs para refletir filtros de empresa/cargo e datas)
     const [[{ total }]] = await pool.query(
       `SELECT COUNT(*) AS total
          FROM ocbr_user u
@@ -116,7 +134,7 @@ async function buscarUsuarioPorId(req, res) {
       return res.status(404).json({ ok: false, error: 'Usuário não encontrado.' });
     }
 
-    // Não retornar senha
+    // Remover campos sensíveis
     delete user.password;
     delete user.salt;
     delete user.tmp_password;
@@ -132,7 +150,7 @@ async function buscarUsuarioPorId(req, res) {
 async function atualizarUsuario(req, res) {
   try {
     const { id } = req.params;
-    const payload = req.body;
+    const payload = { ...req.body };
 
     // Remover campos que não devem ser atualizados diretamente
     delete payload.user_id;
@@ -180,7 +198,6 @@ async function atualizarUsuario(req, res) {
     res.status(500).json({ ok: false, error: "Erro ao atualizar usuário." });
   }
 }
-
 
 // PATCH /api/admin/users/:id/status
 async function ativarDesativarUsuario(req, res) {
@@ -247,7 +264,6 @@ async function resetarSenha(req, res) {
     );
 
     // TODO: enviar e-mail com a nova senha ao usuário
-
     res.json({
       ok: true,
       message: `Senha resetada com sucesso! Nova senha: ${novaSenha}`,

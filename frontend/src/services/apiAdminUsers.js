@@ -2,10 +2,20 @@
 import { api } from "../lib/api";
 
 export const apiAdminUsers = {
-  async listar({ status = "todos", page = 1, pageSize = 20, busca = '' } = {}) {
-    const { data } = await api.get("/admin/users", {
-      params: { status, page, pageSize, busca },
-    });
+  async listar({
+    status = "todos",
+    page = 1,
+    pageSize = 20,
+    busca = "",
+    date_from,   // YYYY-MM-DD
+    date_to,     // YYYY-MM-DD
+  } = {}) {
+    const params = { status, page, pageSize };
+    if (busca) params.busca = busca;
+    if (date_from) params.date_from = date_from;
+    if (date_to) params.date_to = date_to;
+
+    const { data } = await api.get("/admin/users", { params });
     return data;
   },
 
@@ -30,7 +40,7 @@ export const apiAdminUsers = {
   },
 
   async contadorAtivos() {
-    const { data } = await api.get('/admin/users/contador/ativos');
+    const { data } = await api.get("/admin/users/contador/ativos");
     return data;
   },
 };
