@@ -1,3 +1,4 @@
+// backend/src/controllers/adminEnterpriseController.js
 const pool = require("../config/db");
 
 // Helpers
@@ -25,9 +26,7 @@ const isCNPJ = (value = "") => {
   return cnpj.endsWith(String(dv1) + String(dv2));
 };
 
-/* =========================================================================
-   Inscrição Estadual (IE) - Normalização e validação mínima
-   ========================================================================= */
+//  Inscrição Estadual (IE) - Normalização e validação mínima
 const normalizeIE = (value = "") => String(value || "").trim();
 const onlyDigits = (s = "") => String(s).replace(/\D/g, "");
 
@@ -46,11 +45,8 @@ function prepararIEParaSalvar(ieRaw = "") {
   if (ie.toUpperCase() === "ISENTO") return "ISENTO";
   return onlyDigits(ie);
 }
-// ========================================================================
 
-/* =========================================================================
-   UF & Duplicidade de IE por UF
-   ========================================================================= */
+//  UF & Duplicidade de IE por UF
 async function getUFByCityId(cityId) {
   if (!cityId) return null;
   const [[row]] = await pool.query(
@@ -78,12 +74,9 @@ async function existeIEDuplicadaMesmaUF({ ie, uf, ignorarEnterpriseId = null }) 
   const [[dup]] = await pool.query(sql, params);
   return !!dup;
 }
-// ========================================================================
 
-/* =========================================================================
-   GET /api/admin/enterprises
-   - Filtro + SCORE (campo calculado no SELECT — não existe no UPDATE)
-   ========================================================================= */
+//  GET /api/admin/enterprises | EMPRESAS
+//  - Filtro + SCORE (campo calculado no SELECT — não existe no UPDATE)
 async function listarEmpresas(req, res) {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
@@ -243,7 +236,6 @@ async function criarEmpresa(req, res) {
   try {
     const dados = { ...req.body };
 
-    // limpar campos que não pertencem à tabela
     delete dados.enterprise_id;
     delete dados.score;
     delete dados.cidade_nome;
@@ -321,9 +313,8 @@ async function atualizarEmpresa(req, res) {
     const { id } = req.params;
     const payload = { ...req.body };
 
-    // Remover campos que não pertencem à tabela
     delete payload.enterprise_id;
-    delete payload.score;         // <— IMPORTANTE (campo calculado)
+    delete payload.score;         
     delete payload.cidade_nome;
     delete payload.cidade_uf;
     delete payload.created_at;
@@ -488,6 +479,122 @@ async function listarUsuariosDaEmpresa(req, res) {
   }
 }
 
+// GET /api/admin/enterprises/:id/cobranca | ENDEREÇO DE COBRANÇA (ocbr_enterprise_cobranca)
+async function obterEnderecoCobranca(req, res) {
+  try {
+    const enterpriseId = Number(req.params.id);
+    if (!enterpriseId) return res.status(400).json({ ok: false, error: "ID inválido." });
+
+    const [rows] = await pool.query(`
+      SELECT cb.*, ci.name AS cidade_nome, ci.code AS cidade_uf
+        FROM ocbr_enterprise_cobranca cb
+        LEFT JOIN ocbr_city ci ON cb.city_id = ci.city_id
+       WHERE cb.enterprise_id = ?
+       LIMIT 1
+    `, [enterpriseId]);
+
+    res.json({ ok: true, data: rows[0] || null });
+  } catch (e) {
+    console.error("obterEnderecoCobranca:", e);
+    res.status(500).json({ ok: false, error: "Erro ao obter endereço de cobrança." });
+  }
+}
+
+// PUT /api/admin/enterprises/:id/cobranca  (upsert)
+async function salvarEnderecoCobranca(req, res) {
+  try {
+    const enterpriseId = Number(req.params.id);
+    if (!enterpriseId) return res.status(400).json({ ok: false, error: "ID inválido." });
+
+    const input = req.body || {};
+
+    // garante que a empresa existe
+    const [[emp]] = await pool.query(
+      'SELECT enterprise_id, endereco, numero, complemento, bairro, cep, city_id FROM ocbr_enterprise WHERE enterprise_id = ? LIMIT 1',
+      [enterpriseId]
+    );
+    if (!emp) {
+      return res.status(404).json({ ok: false, error: 'Empresa não encontrada.' });
+    }
+
+    let toSave;
+
+    if (input.same_as_enterprise) {
+      // Copiar do endereço principal da empresa
+      toSave = {
+        endereco:    emp.endereco || null,
+        numero:      emp.numero || null,
+        complemento: emp.complemento || null,
+        bairro:      emp.bairro || null,
+        cep:         emp.cep ? String(emp.cep).slice(0, 10) : null,
+        city_id:     emp.city_id || null,
+        updated_at:  new Date()
+      };
+    } else {
+      // Usar o payload enviado
+      toSave = {
+        endereco:    input.endereco ?? null,
+        numero:      input.numero ?? null,
+        complemento: input.complemento ?? null,
+        bairro:      input.bairro ?? null,
+        cep:         input.cep ? String(input.cep).slice(0, 10) : null,
+        city_id:     input.city_id ?? null,
+        updated_at:  new Date()
+      };
+    }
+
+    // verifica se já existe cobrança
+    const [[existe]] = await pool.query(
+      'SELECT cobranca_id FROM ocbr_enterprise_cobranca WHERE enterprise_id = ? LIMIT 1',
+      [enterpriseId]
+    );
+
+    if (existe) {
+      await pool.query(
+        'UPDATE ocbr_enterprise_cobranca SET ? WHERE enterprise_id = ?',
+        [toSave, enterpriseId]
+      );
+    } else {
+      await pool.query(
+        'INSERT INTO ocbr_enterprise_cobranca SET ?',
+        [{ ...toSave, enterprise_id: enterpriseId, created_at: new Date() }]
+      );
+    }
+
+    // retorna o registro atualizado
+    const [rows] = await pool.query(`
+      SELECT cb.*, ci.name AS cidade_nome, ci.code AS cidade_uf
+        FROM ocbr_enterprise_cobranca cb
+        LEFT JOIN ocbr_city ci ON cb.city_id = ci.city_id
+       WHERE cb.enterprise_id = ?
+       LIMIT 1
+    `, [enterpriseId]);
+
+    res.json({ ok: true, message: 'Endereço de cobrança salvo com sucesso!', data: rows[0] || null });
+  } catch (e) {
+    console.error("salvarEnderecoCobranca:", e);
+    res.status(500).json({ ok: false, error: "Erro ao salvar endereço de cobrança." });
+  }
+}
+
+// DELETE /api/admin/enterprises/:id/cobranca
+async function removerEnderecoCobranca(req, res) {
+  try {
+    const enterpriseId = Number(req.params.id);
+    if (!enterpriseId) return res.status(400).json({ ok: false, error: "ID inválido." });
+
+    await pool.query(
+      'DELETE FROM ocbr_enterprise_cobranca WHERE enterprise_id = ?',
+      [enterpriseId]
+    );
+
+    res.json({ ok: true, message: 'Endereço de cobrança removido.' });
+  } catch (e) {
+    console.error("removerEnderecoCobranca:", e);
+    res.status(500).json({ ok: false, error: "Erro ao remover endereço de cobrança." });
+  }
+}
+
 module.exports = {
   listarEmpresas,
   buscarEmpresaPorId,
@@ -496,4 +603,7 @@ module.exports = {
   ativarDesativarEmpresa,
   contadorAtivos,
   listarUsuariosDaEmpresa,
+  obterEnderecoCobranca,
+  salvarEnderecoCobranca,
+  removerEnderecoCobranca,
 };

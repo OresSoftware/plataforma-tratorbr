@@ -1,3 +1,4 @@
+// frontend/src/admin-gestao/AdminEnterprisesPage.jsx
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import { apiAdminEnterprises } from "../services/apiAdminEnterprises";
@@ -139,7 +140,7 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel =
   }, [searchTerm, onSearchChange]);
 
   const handleSelect = (cityId) => {
-    onChange({ target: { name: 'city_id', value: Number(cityId)} });
+    onChange({ target: { name: 'city_id', value: Number(cityId) } });
     setIsOpen(false);
     setSearchTerm('');
   };
@@ -197,7 +198,8 @@ const limparEmpresaPayload = (dados) => {
     "cidade_nome",
     "cidade_uf",
     "created_at",
-    "updated_at"
+    "updated_at",
+    "__cobrancaDraft" // não enviar meta do draft
   ];
   const out = {};
   for (const [k, v] of Object.entries(dados || {})) {
@@ -291,14 +293,32 @@ export default function AdminEnterprisesPage() {
     setModalContent(null);
   };
 
+  // salva empresa e, se houver rascunho de cobrança, salva depois
   const handleSave = async (dadosEmpresa) => {
     try {
       const payload = limparEmpresaPayload(dadosEmpresa);
-      if (empresaSelecionada?.enterprise_id) {
-        await apiAdminEnterprises.atualizar(empresaSelecionada.enterprise_id, payload);
+      let enterpriseId = empresaSelecionada?.enterprise_id;
+
+      if (enterpriseId) {
+        await apiAdminEnterprises.atualizar(enterpriseId, payload);
       } else {
-        await apiAdminEnterprises.criar(payload);
+        const resp = await apiAdminEnterprises.criar(payload);
+        enterpriseId = resp.id || resp.enterprise_id;
       }
+
+      // sempre enviar o endereço de cobrança quando há draft (same ou different)
+      if (dadosEmpresa.__cobrancaDraft && enterpriseId) {
+        const draft = dadosEmpresa.__cobrancaDraft;
+        await api.put(`/admin/enterprises/${enterpriseId}/cobranca`, {
+          endereco: draft.endereco ?? null,
+          numero: draft.numero ?? null,
+          complemento: draft.complemento ?? null,
+          bairro: draft.bairro ?? null,
+          cep: draft.cep ?? null,
+          city_id: draft.city_id ?? null,
+        });
+      }
+
       fecharModal();
       setPage(1);
       await carregarEmpresas();
@@ -505,12 +525,180 @@ export default function AdminEnterprisesPage() {
   );
 }
 
+/* ====================== SUBCOMPONENTE: Endereço de Cobrança (com rádio) ======================= */
+const BillingAddressInline = ({
+  enterpriseId,
+  draft,
+  setDraft,
+  mainAddr, // {endereco, numero, complemento, bairro, cep, city_id}
+}) => {
+  const [mode, setMode] = useState('same'); // 'same' | 'different'
+  const [cidades, setCidades] = useState([]);
+  const [labelCidadeAtual, setLabelCidadeAtual] = useState('');
+
+  // carrega cidades para dropdown de cobrança
+  const carregarCidades = React.useCallback(async (busca) => {
+    try {
+      const { data } = await api.get('/admin/cities', { params: { busca } });
+      setCidades(data.data || []);
+    } catch (e) {
+      console.error('Erro ao carregar cidades', e);
+    }
+  }, []);
+
+  useEffect(() => { carregarCidades(''); }, [carregarCidades]);
+
+  // Se estiver editando empresa, tentar trazer endereço de cobrança existente
+  useEffect(() => {
+    const fetchAtual = async () => {
+      if (!enterpriseId) return;
+      try {
+        const { data } = await api.get(`/admin/enterprises/${enterpriseId}/cobranca`);
+        if (data?.ok && data.data) {
+          setMode('different'); // já existia endereço distinto (vamos mostrar os campos)
+          setDraft({
+            endereco: data.data.endereco || '',
+            numero: data.data.numero || '',
+            complemento: data.data.complemento || '',
+            bairro: data.data.bairro || '',
+            cep: data.data.cep || '',
+            city_id: data.data.city_id || null,
+            __remove: false,
+          });
+          if (data.data.cidade_nome || data.data.cidade_uf) {
+            setLabelCidadeAtual(
+              `${data.data.cidade_nome || ''}${data.data.cidade_nome && data.data.cidade_uf ? ' - ' : ''}${data.data.cidade_uf || ''}`
+            );
+          }
+        }
+      } catch {
+        // sem cobrança existente
+      }
+    };
+    fetchAtual();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enterpriseId]);
+
+  // quando modo = "same", manter draft sincronizado com endereço principal
+  // ATENÇÃO: sempre cria draft (mesmo se vazio), para garantirmos que será criado/atualizado na tabela de cobrança
+  useEffect(() => {
+    if (mode !== 'same') return;
+    const same = {
+      endereco: mainAddr?.endereco || '',
+      numero: mainAddr?.numero || '',
+      complemento: mainAddr?.complemento || '',
+      bairro: mainAddr?.bairro || '',
+      cep: mainAddr?.cep || '',
+      city_id: mainAddr?.city_id || null,
+      __remove: false,
+    };
+    setDraft(same);
+  }, [mode, mainAddr, setDraft]);
+
+  const handleModeChange = (e) => {
+    const value = e.target.value;
+    setMode(value);
+    if (value === 'different') {
+      // inicia campos LIMPOS ao escolher "Endereço diferente"
+      setDraft({ endereco: '', numero: '', complemento: '', bairro: '', cep: '', city_id: null, __remove: false });
+    } else {
+      // "same" sincroniza via useEffect acima
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    let v = value;
+    if (name === 'cep') v = formatCEP(value);
+    setDraft(prev => ({ ...(prev || {}), [name]: v, __remove: false }));
+  };
+
+  const handleCityChange = (e) => {
+    setDraft(prev => ({ ...(prev || {}), city_id: Number(e.target.value), __remove: false }));
+  };
+
+  return (
+    <div className="billing-inline">
+      <div className="billing-header">
+        <span>Endereço de Cobrança</span>
+      </div>
+
+      <div className="billing-mode">
+        <label className="radio">
+          <input
+            type="radio"
+            name="billingMode"
+            value="same"
+            checked={mode === 'same'}
+            onChange={handleModeChange}
+          />
+          <span>O mesmo cadastrado acima</span>
+        </label>
+
+        <label className="radio" style={{ marginLeft: 16 }}>
+          <input
+            type="radio"
+            name="billingMode"
+            value="different"
+            checked={mode === 'different'}
+            onChange={handleModeChange}
+          />
+          <span>Endereço diferente</span>
+        </label>
+      </div>
+
+      {mode === 'different' && (
+        <div className="billing-body">
+          <div className="form-grid">
+            <div className="form-field full-width">
+              <label>Endereço (Cobrança)</label>
+              <input name="endereco" value={draft?.endereco || ''} onChange={handleChange} />
+            </div>
+            <div className="form-field">
+              <label>Número</label>
+              <input name="numero" value={draft?.numero || ''} onChange={handleChange} />
+            </div>
+            <div className="form-field">
+              <label>Complemento</label>
+              <input name="complemento" value={draft?.complemento || ''} onChange={handleChange} />
+            </div>
+            <div className="form-field">
+              <label>Bairro</label>
+              <input name="bairro" value={draft?.bairro || ''} onChange={handleChange} />
+            </div>
+            <div className="form-field">
+              <label>CEP</label>
+              <input name="cep" value={draft?.cep || ''} onChange={handleChange} placeholder="00000-000" />
+            </div>
+            <div className="form-field">
+              <label>Cidade (Cobrança)</label>
+              <CityDropdown
+                value={Number(draft?.city_id) || ''}
+                onChange={handleCityChange}
+                cidades={cidades}
+                onSearchChange={carregarCidades}
+                currentLabel={labelCidadeAtual}
+              />
+            </div>
+          </div>
+
+          <span className="hint">As alterações serão salvas junto com a empresa.</span>
+        </div>
+      )}
+    </div>
+  );
+};
+/* ============================================================================ */
+
 // Formulário de criação/edição com validação de CNPJ
 const FormEmpresa = ({ empresa, onSave, onClose }) => {
   const [dados, setDados] = useState(empresa || { ativo: 1, inscricao_estadual: "" });
   const [cidades, setCidades] = useState([]);
   const [cnpjTouched, setCnpjTouched] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  // rascunho do endereço de cobrança (salvo junto no submit)
+  const [cobrancaDraft, setCobrancaDraft] = useState(null);
 
   useEffect(() => {
     carregarCidades('');
@@ -554,7 +742,7 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
     }
     setIsSaving(true);
     try {
-      const payload = { ...dados, cnpj: cnpjDigits };
+      const payload = { ...dados, cnpj: cnpjDigits, __cobrancaDraft: cobrancaDraft || undefined };
       await onSave(payload);
     } finally {
       setIsSaving(false);
@@ -563,6 +751,16 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
 
   const cnpjDigits = sanitizeCNPJ(dados.cnpj);
   const cnpjValido = cnpjDigits.length === 14 && isCNPJ(cnpjDigits);
+
+  // endereço principal para caso "same"
+  const mainAddr = {
+    endereco: dados.endereco,
+    numero: dados.numero,
+    complemento: dados.complemento,
+    bairro: dados.bairro,
+    cep: dados.cep,
+    city_id: Number(dados.city_id) || null,
+  };
 
   return (
     <form onSubmit={handleSubmit} className="modal-form">
@@ -689,6 +887,14 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
             />
           </div>
         </div>
+
+        {/* ===== Endereço de Cobrança com rádio ===== */}
+        <BillingAddressInline
+          enterpriseId={empresa?.enterprise_id || null}
+          draft={cobrancaDraft}
+          setDraft={setCobrancaDraft}
+          mainAddr={mainAddr}
+        />
       </div>
 
       <div className="modal-actions">
@@ -708,6 +914,7 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
 
   useEffect(() => {
     carregarUsuarios();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const carregarUsuarios = async () => {

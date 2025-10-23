@@ -8,25 +8,41 @@ const {
   ativarDesativarEmpresa,
   contadorAtivos,
   listarUsuariosDaEmpresa,
+  obterEnderecoCobranca,
+  salvarEnderecoCobranca,
+  removerEnderecoCobranca,
 } = require("../controllers/adminEnterpriseController");
 
 const router = express.Router();
 
+// Contador de empresas ativas
 router.get("/contador/ativos", contadorAtivos);
-router.get('/:id/users', listarUsuariosDaEmpresa);
-// GET /api/admin/enterprises?status=ativos&page=1&pageSize=20&busca=termo
+
+// --- Rotas específicas DEVEM vir antes de "/:id" para não serem ofuscadas --- //
+
+// Listar usuários vinculados à empresa
+router.get("/:id/users", listarUsuariosDaEmpresa);
+
+// Endereço de cobrança (ocbr_enterprise_cobranca)
+router.get("/:id/cobranca", obterEnderecoCobranca);     // ler
+router.put("/:id/cobranca", salvarEnderecoCobranca);     // criar/atualizar (upsert)
+router.delete("/:id/cobranca", removerEnderecoCobranca); // remover
+
+// --------------------------------------------------------------------------- //
+
+// Listar empresas (com filtros, paginação e busca)
 router.get("/", listarEmpresas);
 
-// GET /api/admin/enterprises/:id
+// Buscar uma empresa específica
 router.get("/:id", buscarEmpresaPorId);
 
-// POST /api/admin/enterprises
+// Criar nova empresa
 router.post("/", criarEmpresa);
 
-// PUT /api/admin/enterprises/:id
+// Atualizar dados da empresa
 router.put("/:id", atualizarEmpresa);
 
-// PATCH /api/admin/enterprises/:id/status
+// Ativar / Desativar empresa
 router.patch("/:id/status", ativarDesativarEmpresa);
 
 module.exports = router;

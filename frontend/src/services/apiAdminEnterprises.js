@@ -39,4 +39,17 @@ export const apiAdminEnterprises = {
     return data;
   },
 
+  async getCobranca(enterpriseId) {
+    const { data } = await api.get(`/admin/enterprises/${enterpriseId}/cobranca`);
+    return data;
+  },
+  async upsertCobranca(enterpriseId, payload) {
+    const { data } = await api.put(`/admin/enterprises/${enterpriseId}/cobranca`, payload);
+    return data;
+  },
+  async deleteCobranca(enterpriseId) {
+    const { data } = await api.delete(`/admin/enterprises/${enterpriseId}/cobranca`);
+    return data;
+  },
+
 };
