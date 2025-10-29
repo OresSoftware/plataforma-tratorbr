@@ -7,6 +7,7 @@ const adminContatoRoutes = require('./adminContatoRoutes');
 const adminEnterpriseRoutes = require('./adminEnterpriseRoutes'); 
 const cityController = require('../controllers/cityController');
 const adminUserRoutes = require('./adminUserRoutes');
+const adminLogoRoutes = require('./adminLogoRoutes');
 
 
 const router = express.Router();
@@ -65,6 +66,9 @@ router.get('/ocupacoes', verificarAdmin, cityController.listarOcupacoes);
 
 // ---- Rotas de Usuários do App (PROTEGIDAS) ---- //
 router.use('/users', verificarAdmin, adminUserRoutes);
+
+// ---- Rotas de Logos (PROTEGIDAS) ---- //
+router.use('/', verificarAdmin, adminLogoRoutes); 
 
 
 module.exports = router;

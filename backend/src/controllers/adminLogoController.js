@@ -1,0 +1,51 @@
+// backend/src/controllers/adminLogoController.js
+const fs = require("fs");
+const path = require("path");
+const { getManufacturerDir, ensureDirSync } = require("../utils/paths");
+
+function isImageName(name) {
+  return /\.(png|jpe?g|webp|gif|svg)$/i.test(name);
+}
+
+// GET /api/admin/logos
+async function listarLogos(req, res) {
+  try {
+    const dir = getManufacturerDir();
+    ensureDirSync(dir);
+
+    const files = fs.readdirSync(dir)
+      .filter((f) => isImageName(f))
+      .sort((a, b) => a.localeCompare(b));
+
+    // devolve só os nomes de arquivo; o front monta /images/manufacturer/<nome>
+    res.json({ ok: true, data: files });
+  } catch (e) {
+    console.error("listarLogos:", e);
+    res.status(500).json({ ok: false, error: "Falha ao listar logos." });
+  }
+}
+
+// POST /api/admin/upload/logo  (form-data: file)
+async function uploadLogo(req, res) {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ ok: false, error: "Nenhum arquivo enviado." });
+    }
+    // nome final salvo pelo multer
+    const filename = req.file.filename;
+    // caminho público para exibir (opcional; o front já sabe montar)
+    const publicUrl = path.posix.join("/images/manufacturer/", filename);
+
+    res.status(201).json({
+      ok: true,
+      filename,
+      url: publicUrl,
+      message: "Logo enviada com sucesso.",
+    });
+  } catch (e) {
+    console.error("uploadLogo:", e);
+    res.status(500).json({ ok: false, error: "Falha no upload." });
+  }
+}
+
+module.exports = { listarLogos, uploadLogo };

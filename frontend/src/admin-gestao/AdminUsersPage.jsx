@@ -45,6 +45,16 @@ const validarCPF = (cpf) => {
   return true;
 };
 
+const formatarData = (dataISO) => {
+  if (!dataISO) return 'N/A';
+  const data = new Date(dataISO);
+  return data.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit', 
+    year: 'numeric'
+  });
+};
+
 // Modal aviso reset
 const ModalAvisoReset = ({ nomeOuEmail, minutos, onClose }) => {
   return (
@@ -328,6 +338,7 @@ export default function AdminUsersPage() {
                 <tr>
                   <th>Nome</th>
                   <th>Email</th>
+                  <th>Data de Cadastro</th>
                   <th>Empresa</th>
                   <th>Cargo</th>
                   <th>Status</th>
@@ -336,14 +347,15 @@ export default function AdminUsersPage() {
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={6} className="center">Carregando...</td></tr>
+                  <tr><td colSpan={7} className="center">Carregando...</td></tr>
                 ) : usuarios.length === 0 ? (
-                  <tr><td colSpan={6} className="center">Nenhum usuário encontrado.</td></tr>
+                  <tr><td colSpan={7} className="center">Nenhum usuário encontrado.</td></tr>
                 ) : (
                   usuarios.map((u) => (
                     <tr key={u.user_id} className="table-row" onClick={() => abrirModalDetalhes(u)}>
                       <td className="nome-cell">{u.firstname} {u.lastname}</td>
                       <td>{u.email || 'N/A'}</td>
+                      <td>{formatarData(u.date_added)}</td>
                       <td>{u.empresa_nome || 'Sem empresa'}</td>
                       <td>{u.cargo_nome || 'Sem cargo'}</td>
                       <td>
@@ -407,6 +419,7 @@ export default function AdminUsersPage() {
                   <div className="card-info">
                     <p><strong>Empresa:</strong> {u.empresa_nome || 'Sem empresa'}</p>
                     <p><strong>Cargo:</strong> {u.cargo_nome || 'Sem cargo'}</p>
+                     <p><strong>Cadastrado em:</strong> {formatarData(u.date_added)}</p>
                   </div>
                   <div className="card-acoes" onClick={(ev) => ev.stopPropagation()}>
                     <button className="btn btn-edit" onClick={() => abrirModalForm(u)}>

@@ -6,6 +6,7 @@ import { api } from "../lib/api";
 import AdminLayout from '../components/AdminLayout';
 import "./style/AdminEnterprisesPage.css";
 import { Search, PlusCircle, ChevronLeft, ChevronRight, Edit, Power, ChevronDown } from 'lucide-react';
+import LogoSelector from './components/LogoSelector';
 
 /** ===================== CNPJ UTILS (sanitize, validate, format) ===================== */
 const sanitizeCNPJ = (value = "") => String(value).replace(/\D/g, "").slice(0, 14);
@@ -69,6 +70,25 @@ const formatCEP = (value) => {
   return numbers
     .replace(/(\d{5})(\d)/, '$1-$2')
     .slice(0, 9);
+};
+
+/** ===================== LOGO from /public/images/manufacturer ===================== */
+// Fallback oficial: sua_logo_aqui.png (garante que existe em /public/images/manufacturer)
+const FALLBACK_LOGO = '/images/manufacturer/sua_logo_aqui.png';
+
+// monta caminho fixo para a pasta pública, nunca URL externa
+const getLogoSrc = (fileName) => {
+  if (!fileName) return FALLBACK_LOGO;
+  const onlyFile = String(fileName).split('/').pop().trim();
+  return `/images/manufacturer/${onlyFile}`;
+};
+
+// evita loop de erro: só aplica fallback 1x por <img>
+const onImgError = (e) => {
+  const img = e.currentTarget;
+  if (img.dataset.fallbackApplied === '1') return;
+  img.dataset.fallbackApplied = '1';
+  img.src = FALLBACK_LOGO;
 };
 
 /* =================== Modal “estrito” (não fecha fora/ESC) =================== */
@@ -418,11 +438,13 @@ export default function AdminEnterprisesPage() {
                   empresas.map((e) => (
                     <tr key={e.enterprise_id} className="table-row" onClick={() => abrirModalDetalhes(e)}>
                       <td>
-                        {e.logo ? (
-                          <img src={e.logo} alt={e.fantasia} className="logo-thumb" />
-                        ) : (
-                          <div className="logo-placeholder">Sem logo</div>
-                        )}
+                        <img
+                          src={getLogoSrc(e.logo)}
+                          alt={e.fantasia || 'Logo'}
+                          className="logo-thumb"
+                          onError={onImgError}
+                          loading="lazy"
+                        />
                       </td>
                       <td className="nome-cell">{e.fantasia || 'N/A'}</td>
                       <td>{e.cnpj ? formatCNPJ(e.cnpj) : 'N/A'}</td>
@@ -468,7 +490,13 @@ export default function AdminEnterprisesPage() {
               empresas.map((e) => (
                 <div key={e.enterprise_id} className="enterprise-card-mobile" onClick={() => abrirModalDetalhes(e)}>
                   <div className="card-header">
-                    {e.logo && <img src={e.logo} alt={e.fantasia} className="logo-thumb-mobile" />}
+                    <img
+                      src={getLogoSrc(e.logo)}
+                      alt={e.fantasia || 'Logo'}
+                      className="logo-thumb-mobile"
+                      onError={onImgError}
+                      loading="lazy"
+                    />
                     <div>
                       <h3>{e.fantasia || 'N/A'}</h3>
                       <span className={`status-badge ${e.ativo ? 'status-ativo' : 'status-inativo'}`}>
@@ -576,11 +604,9 @@ const BillingAddressInline = ({
       }
     };
     fetchAtual();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enterpriseId]);
+  }, [enterpriseId, setDraft]);
 
   // quando modo = "same", manter draft sincronizado com endereço principal
-  // ATENÇÃO: sempre cria draft (mesmo se vazio), para garantirmos que será criado/atualizado na tabela de cobrança
   useEffect(() => {
     if (mode !== 'same') return;
     const same = {
@@ -601,8 +627,6 @@ const BillingAddressInline = ({
     if (value === 'different') {
       // inicia campos LIMPOS ao escolher "Endereço diferente"
       setDraft({ endereco: '', numero: '', complemento: '', bairro: '', cep: '', city_id: null, __remove: false });
-    } else {
-      // "same" sincroniza via useEffect acima
     }
   };
 
@@ -866,24 +890,23 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
             <label>Site</label>
             <input type="url" name="site" value={dados.site || ''} onChange={handleChange} />
           </div>
+
+          {/* Logo agora é nome de arquivo na pasta /images/manufacturer */}
           <div className="form-field full-width">
-            <label>Logo (URL)</label>
-            <input
-              type="url"
-              name="logo"
+            <LogoSelector
               value={dados.logo || ''}
               onChange={handleChange}
-              placeholder="https://exemplo.com/logo.png"
+              label="Logo *"
+              name="logo"
             />
           </div>
           <div className="form-field full-width">
-            <label>Logo Representada (URL)</label>
-            <input
-              type="url"
-              name="representada_logo"
+            <LogoSelector
               value={dados.representada_logo || ''}
               onChange={handleChange}
-              placeholder="https://exemplo.com/representada.png"
+              label="Logo Representada"
+              name="representada_logo"
+              nomeFantasia={dados.fantasia || ''}
             />
           </div>
         </div>
@@ -937,16 +960,24 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
 
       <div className="modal-body">
         <div className="logos-container">
-          {empresa.logo && (
-            <div className="logo-detail">
-              <label>Logo:</label>
-              <img src={empresa.logo} alt="Logo" />
-            </div>
-          )}
+          <div className="logo-detail">
+            <label>Logo:</label>
+            <img
+              src={getLogoSrc(empresa.logo)}
+              alt="Logo"
+              onError={onImgError}
+              loading="lazy"
+            />
+          </div>
           {empresa.representada_logo && (
             <div className="logo-detail">
               <label>Logo Representada:</label>
-              <img src={empresa.representada_logo} alt="Logo Representada" />
+              <img
+                src={getLogoSrc(empresa.representada_logo)}
+                alt="Logo Representada"
+                onError={onImgError}
+                loading="lazy"
+              />
             </div>
           )}
         </div>
