@@ -169,7 +169,7 @@ const LogoSelector = ({ value, onChange, label, name }) => {
 
   const getLogoSrc = (fileName) => {
     if (!fileName) return '';
-    return `/images/manufacturer/${fileName}`;
+    return `./images/manufacturer/${fileName}`;
   };
 
   const getLogoDisplayName = (fileName) => {
