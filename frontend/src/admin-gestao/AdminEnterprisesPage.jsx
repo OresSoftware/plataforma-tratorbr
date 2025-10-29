@@ -73,17 +73,14 @@ const formatCEP = (value) => {
 };
 
 /** ===================== LOGO from /public/images/manufacturer ===================== */
-// Fallback oficial: sua_logo_aqui.png (garante que existe em /public/images/manufacturer)
 const FALLBACK_LOGO = '/images/manufacturer/sua_logo_aqui.png';
 
-// monta caminho fixo para a pasta pública, nunca URL externa
 const getLogoSrc = (fileName) => {
   if (!fileName) return FALLBACK_LOGO;
   const onlyFile = String(fileName).split('/').pop().trim();
   return `/images/manufacturer/${onlyFile}`;
 };
 
-// evita loop de erro: só aplica fallback 1x por <img>
 const onImgError = (e) => {
   const img = e.currentTarget;
   if (img.dataset.fallbackApplied === '1') return;
@@ -149,15 +146,16 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel =
         setIsOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // 🔧 dispara busca apenas quando o menu está aberto (com debounce)
   useEffect(() => {
+    if (!isOpen) return;
     const timer = setTimeout(() => onSearchChange(searchTerm), 300);
     return () => clearTimeout(timer);
-  }, [searchTerm, onSearchChange]);
+  }, [isOpen, searchTerm, onSearchChange]);
 
   const handleSelect = (cityId) => {
     onChange({ target: { name: 'city_id', value: Number(cityId) } });
@@ -219,7 +217,7 @@ const limparEmpresaPayload = (dados) => {
     "cidade_uf",
     "created_at",
     "updated_at",
-    "__cobrancaDraft" // não enviar meta do draft
+    "__cobrancaDraft"
   ];
   const out = {};
   for (const [k, v] of Object.entries(dados || {})) {
@@ -237,13 +235,10 @@ export default function AdminEnterprisesPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // filtro: 'todos' | 'ativos' | 'inativos'
   const [status, setStatus] = useState('ativos');
-
   const [busca, setBusca] = useState('');
   const [termoBuscado, setTermoBuscado] = useState('');
 
-  // contadores para os botões
   const [contadorAtivos, setContadorAtivos] = useState(0);
   const [contadorInativos, setContadorInativos] = useState(0);
   const [contadorTodos, setContadorTodos] = useState(0);
@@ -313,7 +308,6 @@ export default function AdminEnterprisesPage() {
     setModalContent(null);
   };
 
-  // salva empresa e, se houver rascunho de cobrança, salva depois
   const handleSave = async (dadosEmpresa) => {
     try {
       const payload = limparEmpresaPayload(dadosEmpresa);
@@ -326,7 +320,6 @@ export default function AdminEnterprisesPage() {
         enterpriseId = resp.id || resp.enterprise_id;
       }
 
-      // sempre enviar o endereço de cobrança quando há draft (same ou different)
       if (dadosEmpresa.__cobrancaDraft && enterpriseId) {
         const draft = dadosEmpresa.__cobrancaDraft;
         await api.put(`/admin/enterprises/${enterpriseId}/cobranca`, {
@@ -558,13 +551,12 @@ const BillingAddressInline = ({
   enterpriseId,
   draft,
   setDraft,
-  mainAddr, // {endereco, numero, complemento, bairro, cep, city_id}
+  mainAddr,
 }) => {
   const [mode, setMode] = useState('same'); // 'same' | 'different'
   const [cidades, setCidades] = useState([]);
   const [labelCidadeAtual, setLabelCidadeAtual] = useState('');
 
-  // carrega cidades para dropdown de cobrança
   const carregarCidades = React.useCallback(async (busca) => {
     try {
       const { data } = await api.get('/admin/cities', { params: { busca } });
@@ -576,14 +568,13 @@ const BillingAddressInline = ({
 
   useEffect(() => { carregarCidades(''); }, [carregarCidades]);
 
-  // Se estiver editando empresa, tentar trazer endereço de cobrança existente
   useEffect(() => {
     const fetchAtual = async () => {
       if (!enterpriseId) return;
       try {
         const { data } = await api.get(`/admin/enterprises/${enterpriseId}/cobranca`);
         if (data?.ok && data.data) {
-          setMode('different'); // já existia endereço distinto (vamos mostrar os campos)
+          setMode('different');
           setDraft({
             endereco: data.data.endereco || '',
             numero: data.data.numero || '',
@@ -606,7 +597,6 @@ const BillingAddressInline = ({
     fetchAtual();
   }, [enterpriseId, setDraft]);
 
-  // quando modo = "same", manter draft sincronizado com endereço principal
   useEffect(() => {
     if (mode !== 'same') return;
     const same = {
@@ -625,7 +615,6 @@ const BillingAddressInline = ({
     const value = e.target.value;
     setMode(value);
     if (value === 'different') {
-      // inicia campos LIMPOS ao escolher "Endereço diferente"
       setDraft({ endereco: '', numero: '', complemento: '', bairro: '', cep: '', city_id: null, __remove: false });
     }
   };
@@ -724,18 +713,20 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
   // rascunho do endereço de cobrança (salvo junto no submit)
   const [cobrancaDraft, setCobrancaDraft] = useState(null);
 
-  useEffect(() => {
-    carregarCidades('');
-  }, []);
-
-  const carregarCidades = async (busca) => {
+  // 🔧 memoiza a função de busca para o CityDropdown
+  const carregarCidades = React.useCallback(async (busca) => {
     try {
       const { data } = await api.get('/admin/cities', { params: { busca } });
       setCidades(data.data || []);
     } catch (error) {
       console.error('Erro ao carregar cidades', error);
     }
-  };
+  }, []);
+
+  // carrega lista inicial apenas uma vez
+  useEffect(() => {
+    carregarCidades('');
+  }, [carregarCidades]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -776,7 +767,6 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
   const cnpjDigits = sanitizeCNPJ(dados.cnpj);
   const cnpjValido = cnpjDigits.length === 14 && isCNPJ(cnpjDigits);
 
-  // endereço principal para caso "same"
   const mainAddr = {
     endereco: dados.endereco,
     numero: dados.numero,
@@ -862,7 +852,7 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
           <div className="form-field">
             <label>Cidade</label>
             <CityDropdown
-              value={Number(dados.city_id) || ''}
+              value={dados.city_id ? Number(dados.city_id) : ''}   // mantém '' quando não selecionado
               onChange={handleChange}
               cidades={cidades}
               onSearchChange={carregarCidades}
@@ -996,7 +986,7 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
             <span>{empresa.cnpj || 'N/A'}</span>
           </div>
 
-          <div className="detail-item">
+        <div className="detail-item">
             <label>Inscrição Estadual:</label>
             <span>{empresa.inscricao_estadual || 'N/A'}</span>
           </div>
