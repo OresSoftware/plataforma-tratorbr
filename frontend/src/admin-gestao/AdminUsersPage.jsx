@@ -8,6 +8,140 @@ import "./style/AdminUsersPage.css";
 import { Search, ChevronLeft, ChevronRight, Edit, Power, Key, User } from 'lucide-react';
 import { solicitarRedefinicaoSenha } from "../services/apiPublicAuth";
 
+// ===== Select pesquisável (com busca + lista rolável de 5 itens) =====
+const SearchableSelect = ({
+  options = [],
+  value,
+  onChange,
+  getLabel = (o) => o?.label ?? '',
+  getValue = (o) => o?.value ?? '',
+  placeholder = 'Selecione...',
+  maxVisible = 5,
+  allowClear = true,
+}) => {
+  const [open, setOpen] = useState(false);
+  const [term, setTerm] = useState('');
+  const [highlight, setHighlight] = useState(-1);
+  const wrapRef = React.useRef(null);
+  const inputRef = React.useRef(null);
+
+  const selected = options.find((o) => String(getValue(o)) === String(value)) || null;
+  const norm = (s) => String(s || '').toLowerCase();
+  const filtered = options.filter((o) => norm(getLabel(o)).includes(norm(term.trim())));
+
+  useEffect(() => {
+    const onClickOutside = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) {
+        setOpen(false);
+        setTerm('');
+        setHighlight(-1);
+      }
+    };
+    document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (open && inputRef.current) inputRef.current.focus();
+  }, [open]);
+
+  const handleKeyDown = (e) => {
+    if (!open && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown')) {
+      setOpen(true);
+      return;
+    }
+    if (!open) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlight((h) => Math.min(h + 1, filtered.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlight((h) => Math.max(h - 1, 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const opt = filtered[highlight] ?? filtered[0];
+      if (opt) {
+        onChange(String(getValue(opt)));
+        setOpen(false);
+        setTerm('');
+        setHighlight(-1);
+      }
+    } else if (e.key === 'Escape') {
+      setOpen(false);
+      setTerm('');
+      setHighlight(-1);
+    }
+  };
+
+  const handlePick = (opt) => {
+    onChange(String(getValue(opt)));
+    setOpen(false);
+    setTerm('');
+    setHighlight(-1);
+  };
+
+  const clearSelection = (e) => {
+    e.stopPropagation();
+    onChange('');
+  };
+
+  return (
+    <div className="ss-wrap" ref={wrapRef} onKeyDown={handleKeyDown}>
+      <button
+        type="button"
+        className={`ss-control ${open ? 'ss-open' : ''}`}
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span className={`ss-value ${selected ? '' : 'ss-placeholder'}`}>
+          {selected ? getLabel(selected) : placeholder}
+        </span>
+        <span className="ss-actions">
+          {allowClear && selected && (
+            <span className="ss-clear" title="Limpar" onClick={clearSelection}>×</span>
+          )}
+          <span className="ss-caret">▾</span>
+        </span>
+      </button>
+
+      {open && (
+        <div className="ss-dropdown" role="listbox" onMouseDown={(e) => e.preventDefault()}>
+          <div className="ss-search">
+            <input
+              ref={inputRef}
+              value={term}
+              onChange={(e) => { setTerm(e.target.value); setHighlight(-1); }}
+              placeholder="Buscar..."
+            />
+          </div>
+          <ul
+            className="ss-options"
+            style={{ maxHeight: `${maxVisible * 40}px`, overflowY: 'auto' }}
+          >
+            {filtered.length === 0 ? (
+              <li className="ss-empty" aria-disabled="true">Nenhum resultado</li>
+            ) : (
+              filtered.map((opt, idx) => (
+                <li
+                  key={getValue(opt)}
+                  className={`ss-option ${String(getValue(opt)) === String(value) ? 'is-selected' : ''} ${idx === highlight ? 'is-highlighted' : ''}`}
+                  onMouseEnter={() => setHighlight(idx)}
+                  onClick={() => handlePick(opt)}
+                  role="option"
+                >
+                  {getLabel(opt)}
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Modal genérico
 const Modal = ({ children, onClose }) => (
   <div className="modal-overlay" onClick={onClose}>
@@ -48,11 +182,7 @@ const validarCPF = (cpf) => {
 const formatarData = (dataISO) => {
   if (!dataISO) return 'N/A';
   const data = new Date(dataISO);
-  return data.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit', 
-    year: 'numeric'
-  });
+  return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 };
 
 // Modal aviso reset
@@ -94,9 +224,22 @@ export default function AdminUsersPage() {
   const [busca, setBusca] = useState('');
   const [termoBuscado, setTermoBuscado] = useState('');
 
-  // NOVO: filtro simples por intervalo de datas (YYYY-MM-DD)
+  // Datas (YYYY-MM-DD)
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+
+  // Ordenação
+  const [sort, setSort] = useState('date_desc');
+
+  // Filtros adicionais
+  const [enterpriseId, setEnterpriseId] = useState('');
+  const [cargoId, setCargoId] = useState('');
+  const [cityId, setCityId] = useState('');
+
+  // opções para selects
+  const [empresas, setEmpresas] = useState([]);
+  const [cargos, setCargos] = useState([]);
+  const [cidades, setCidades] = useState([]);
 
   // contadores
   const [contadorAtivos, setContadorAtivos] = useState(0);
@@ -106,8 +249,26 @@ export default function AdminUsersPage() {
   const [modalAberto, setModalAberto] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
-
   const [avisoReset, setAvisoReset] = useState(null);
+
+  // carregar opções dos selects
+  useEffect(() => {
+    const loadOptions = async () => {
+      try {
+        const [empRes, carRes, cidRes] = await Promise.all([
+          api.get('/admin/enterprises', { params: { status: 'ativos', pageSize: 1000 } }),
+          api.get('/admin/cargos'),
+          api.get('/admin/cities', { params: { pageSize: 1000 } }),
+        ]);
+        setEmpresas(empRes.data.data || []);
+        setCargos(carRes.data.data || []);
+        setCidades(cidRes.data.data || []); // esperado: [{ city_id, name, code }]
+      } catch (e) {
+        console.error('Erro ao carregar filtros', e);
+      }
+    };
+    loadOptions();
+  }, []);
 
   const carregarUsuarios = useCallback(async () => {
     setLoading(true);
@@ -117,7 +278,11 @@ export default function AdminUsersPage() {
         page,
         busca: termoBuscado,
         date_from: dateFrom || undefined,
-        date_to:   dateTo   || undefined,
+        date_to: dateTo || undefined,
+        enterprise_id: enterpriseId || undefined,
+        cargo_id: cargoId || undefined,
+        city_id: cityId || undefined,
+        sort,
       });
       setUsuarios(result.data || []);
       setTotalPages(Math.ceil(result.total / result.pageSize));
@@ -126,9 +291,9 @@ export default function AdminUsersPage() {
       alert('Falha ao carregar usuários.');
     }
     setLoading(false);
-  }, [status, page, termoBuscado, dateFrom, dateTo]);
+  }, [status, page, termoBuscado, dateFrom, dateTo, enterpriseId, cargoId, cityId, sort]);
 
-  // contadores (ativos via endpoint; inativos e todos via listar pageSize=1)
+  // contadores
   const carregarContadores = useCallback(async () => {
     try {
       const at = await apiAdminUsers.contadorAtivos();
@@ -144,29 +309,14 @@ export default function AdminUsersPage() {
     }
   }, []);
 
-  useEffect(() => {
-    carregarUsuarios();
-  }, [carregarUsuarios]);
-
-  useEffect(() => {
-    carregarContadores();
-  }, [carregarContadores]);
-
-  useEffect(() => {
-    carregarUsuarios();
-  }, [termoBuscado]);
+  useEffect(() => { carregarUsuarios(); }, [carregarUsuarios]);
+  useEffect(() => { carregarContadores(); }, [carregarContadores]);
+  useEffect(() => { carregarUsuarios(); }, [termoBuscado]);
 
   const handleBusca = (e) => {
     e.preventDefault();
     setPage(1);
     setTermoBuscado(busca);
-  };
-
-  // NOVO: submeter o filtro de datas (bem simples)
-  const handleFilterDates = (e) => {
-    e.preventDefault();
-    setPage(1);
-    carregarUsuarios();
   };
 
   const handleClearDates = () => {
@@ -181,13 +331,11 @@ export default function AdminUsersPage() {
     setModalContent('details');
     setModalAberto(true);
   };
-
   const abrirModalForm = (usuario = null) => {
     setUsuarioSelecionado(usuario);
     setModalContent('form');
     setModalAberto(true);
   };
-
   const fecharModal = () => {
     setModalAberto(false);
     setUsuarioSelecionado(null);
@@ -241,17 +389,14 @@ export default function AdminUsersPage() {
     const labelPessoa = nomeCompleto || (usuario.email || 'Usuário');
     const confirmMessage = `Deseja enviar o e-mail de redefinição de senha para ${labelPessoa}?`;
     if (!window.confirm(confirmMessage)) return;
-
     if (!usuario.email) {
       alert("Este usuário não possui e-mail cadastrado.");
       return;
     }
-
     try {
       const resp = await solicitarRedefinicaoSenha({ email: usuario.email });
       const minutos = extrairMinutosRestantes(resp);
       const nomeOuEmail = resp?.name || labelPessoa || usuario.email;
-
       setAvisoReset({ nomeOuEmail, minutos });
       setModalContent('aviso');
       setModalAberto(true);
@@ -267,69 +412,116 @@ export default function AdminUsersPage() {
         <header className="users-header">
           <h1>Usuários do App</h1>
           <div className="users-actions">
-            {/* Botões de filtro (iguais aos de empresas) */}
             <div className="status-buttons">
               <button
                 className={`btn ${status === 'todos' ? "btn-primary" : "btn-outline"}`}
                 onClick={() => { setStatus('todos'); setPage(1); }}
               >
-                Todos
-                <span className="count">{contadorTodos}</span>
+                Todos <span className="count">{contadorTodos}</span>
               </button>
-
               <button
                 className={`btn ${status === 'ativos' ? "btn-success" : "btn-outline"}`}
                 onClick={() => { setStatus('ativos'); setPage(1); }}
               >
-                Ativos
-                <span className="count">{contadorAtivos}</span>
+                Ativos <span className="count">{contadorAtivos}</span>
               </button>
-
               <button
                 className={`btn ${status === 'inativos' ? "btn-danger" : "btn-outline"}`}
                 onClick={() => { setStatus('inativos'); setPage(1); }}
               >
-                Inativos
-                <span className="count">{contadorInativos}</span>
+                Inativos <span className="count">{contadorInativos}</span>
               </button>
             </div>
           </div>
         </header>
 
-        <div className="users-filters">
-          {/* Busca por texto */}
-          <form onSubmit={handleBusca} className="search-form">
-            <input
-              type="text"
-              placeholder="Buscar por Nome, Sobrenome, Email, CPF, Empresa e Cargo..."
-              value={busca}
-              onChange={e => setBusca(e.target.value)}
-            />
-            <button type="submit"><Search size={20} /></button>
-          </form>
+        {/* ======= FILTROS ======= */}
+        <section className="filters-card">
+          {/* Linha 1: Ordem | Cidade | Empresa | Cargo */}
+          <div className="filters-row top-row">
+            <div className="filter-col">
+              <select value={sort} onChange={(e) => { setSort(e.target.value); setPage(1); }}>
+                <option value="date_desc">Últimos cadastros</option>
+                <option value="date_asc">Primeiros cadastros</option>
+                <option value="name_asc">A–Z (Nome)</option>
+                <option value="name_desc">Z–A (Nome)</option>
+              </select>
+            </div>
 
-          {/* NOVO: filtro simples por data (De / Até) */}
-          <form onSubmit={handleFilterDates} className="date-range-form">
-            <label>De</label>
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-            />
-            <label>Até</label>
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-            />
-        
-            {(dateFrom || dateTo) && (
-              <button type="button" className="btn btn-secondary" onClick={handleClearDates}>
-                Limpar
+            {/* <div className="filter-col">
+              <SearchableSelect
+                options={cidades}
+                value={cityId}
+                onChange={(val)=>{ setCityId(val); setPage(1); }}
+                getLabel={(ci) => ci?.code ? `${ci.name} - ${ci.code}` : `${ci?.name ?? ''}`}
+                getValue={(ci) => String(ci?.city_id)}
+                placeholder="Cidade"
+                maxVisible={5}
+              />
+            </div> */}
+
+            <div className="filter-col">
+              <SearchableSelect
+                options={empresas}
+                value={enterpriseId}
+                onChange={(val) => { setEnterpriseId(val); setPage(1); }}
+                getLabel={(e) => e?.fantasia ?? ''}
+                getValue={(e) => String(e?.enterprise_id)}
+                placeholder="Empresa"
+                maxVisible={5}
+              />
+            </div>
+
+            <div className="filter-col">
+              <select value={cargoId} onChange={(e) => { setCargoId(e.target.value); setPage(1); }}>
+                <option value="">Cargo</option>
+                {cargos.map(c => (
+                  <option key={c.cargo_id} value={c.cargo_id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Linha 2: Busca | De | Até | Limpar data */}
+          <div className="filters-row bottom-row">
+            <form className="search-col" onSubmit={handleBusca}>
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Nome, Sobrenome, E-mail, CPF, Cargo, Empresa..."
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+              />
+              <button type="submit" className="search-btn">
+                <Search size={18} />
               </button>
-            )}
-          </form>
-        </div>
+            </form>
+
+            <div className="date-col">
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                placeholder="dd/mm/aaaa"
+              />
+            </div>
+
+            <div className="date-col">
+              <input
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                placeholder="dd/mm/aaaa"
+              />
+            </div>
+
+            <div className="clear-col">
+              <button type="button" className="btn-clear-date" onClick={handleClearDates}>
+                Limpar data
+              </button>
+            </div>
+          </div>
+        </section>
 
         <div className="users-card">
           <div className="table-container">
@@ -341,6 +533,7 @@ export default function AdminUsersPage() {
                   <th>Data de Cadastro</th>
                   <th>Empresa</th>
                   <th>Cargo</th>
+                  {/* Cidade REMOVIDA da listagem */}
                   <th>Status</th>
                   <th>Ações</th>
                 </tr>
@@ -358,6 +551,7 @@ export default function AdminUsersPage() {
                       <td>{formatarData(u.date_added)}</td>
                       <td>{u.empresa_nome || 'Sem empresa'}</td>
                       <td>{u.cargo_nome || 'Sem cargo'}</td>
+                      {/* Coluna de cidade removida */}
                       <td>
                         <span className={`status-badge ${u.status ? 'status-ativo' : 'status-inativo'}`}>
                           {u.status ? 'Ativo' : 'Inativo'}
@@ -365,18 +559,10 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="acoes-cell">
                         <div className="acoes" onClick={(ev) => ev.stopPropagation()}>
-                          <button
-                            className="btn-icon btn-edit"
-                            onClick={() => abrirModalForm(u)}
-                            title="Editar"
-                          >
+                          <button className="btn-icon btn-edit" onClick={() => abrirModalForm(u)} title="Editar">
                             <Edit size={16} />
                           </button>
-                          <button
-                            className="btn-icon btn-reset"
-                            onClick={() => handleResetSenha(u)}
-                            title="Enviar redefinição por e-mail"
-                          >
+                          <button className="btn-icon btn-reset" onClick={() => handleResetSenha(u)} title="Enviar redefinição por e-mail">
                             <Key size={16} />
                           </button>
                           <button
@@ -419,7 +605,8 @@ export default function AdminUsersPage() {
                   <div className="card-info">
                     <p><strong>Empresa:</strong> {u.empresa_nome || 'Sem empresa'}</p>
                     <p><strong>Cargo:</strong> {u.cargo_nome || 'Sem cargo'}</p>
-                     <p><strong>Cadastrado em:</strong> {formatarData(u.date_added)}</p>
+                    {/* Linha de cidade REMOVIDA dos cards */}
+                    <p><strong>Cadastrado em:</strong> {formatarData(u.date_added)}</p>
                   </div>
                   <div className="card-acoes" onClick={(ev) => ev.stopPropagation()}>
                     <button className="btn btn-edit" onClick={() => abrirModalForm(u)}>
@@ -599,11 +786,8 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
 const DetalhesUsuario = ({ usuario, onClose }) => {
   const formatarData = (data) => {
     if (!data) return 'N/A';
-    try {
-      return new Date(data).toLocaleString('pt-BR');
-    } catch {
-      return 'N/A';
-    }
+    try { return new Date(data).toLocaleString('pt-BR'); }
+    catch { return 'N/A'; }
   };
 
   return (
@@ -615,64 +799,23 @@ const DetalhesUsuario = ({ usuario, onClose }) => {
 
       <div className="modal-body">
         <div className="details-grid">
-          <div className="detail-item">
-            <label>Nome:</label>
-            <span>{usuario.firstname || 'N/A'}</span>
-          </div>
-          <div className="detail-item">
-            <label>Sobrenome:</label>
-            <span>{usuario.lastname || 'N/A'}</span>
-          </div>
-          <div className="detail-item full-width">
-            <label>Email:</label>
-            <span>{usuario.email || 'N/A'}</span>
-          </div>
-          <div className="detail-item">
-            <label>Telefone:</label>
-            <span>{usuario.fone || 'N/A'}</span>
-          </div>
-          <div className="detail-item">
-            <label>CPF:</label>
-            <span>{usuario.cpf || 'N/A'}</span>
-          </div>
-          <div className="detail-item">
-            <label>Empresa:</label>
-            <span>{usuario.empresa_nome || 'Sem empresa'}</span>
-          </div>
-          <div className="detail-item">
-            <label>Cargo:</label>
-            <span>{usuario.cargo_nome || 'Sem cargo'}</span>
-          </div>
-          <div className="detail-item">
-            <label>Ramo de Atividade:</label>
-            <span>{usuario.ocupacao_nome || 'Não informado'}</span>
-          </div>
-          <div className="detail-item">
-            <label>Cidade:</label>
-            <span>{usuario.cidade_nome ? `${usuario.cidade_nome} - ${usuario.cidade_uf}` : 'N/A'}</span>
-          </div>
+          <div className="detail-item"><label>Nome:</label><span>{usuario.firstname || 'N/A'}</span></div>
+          <div className="detail-item"><label>Sobrenome:</label><span>{usuario.lastname || 'N/A'}</span></div>
+          <div className="detail-item full-width"><label>Email:</label><span>{usuario.email || 'N/A'}</span></div>
+          <div className="detail-item"><label>Telefone:</label><span>{usuario.fone || 'N/A'}</span></div>
+          <div className="detail-item"><label>CPF:</label><span>{usuario.cpf || 'N/A'}</span></div>
+          <div className="detail-item"><label>Empresa:</label><span>{usuario.empresa_nome || 'Sem empresa'}</span></div>
+          <div className="detail-item"><label>Cargo:</label><span>{usuario.cargo_nome || 'Sem cargo'}</span></div>
+          <div className="detail-item"><label>Ramo de Atividade:</label><span>{usuario.ocupacao_nome || 'Não informado'}</span></div>
+          <div className="detail-item"><label>Cidade:</label><span>{usuario.cidade_nome ? `${usuario.cidade_nome} - ${usuario.cidade_uf}` : 'N/A'}</span></div>
           <div className="detail-item">
             <label>Status:</label>
-            <span className={`status-badge ${usuario.status ? 'status-ativo' : 'status-inativo'}`}>
-              {usuario.status ? 'Ativo' : 'Inativo'}
-            </span>
+            <span className={`status-badge ${usuario.status ? 'status-ativo' : 'status-inativo'}`}>{usuario.status ? 'Ativo' : 'Inativo'}</span>
           </div>
-          <div className="detail-item">
-            <label>Plano Válido Até:</label>
-            <span>{formatarData(usuario.plano_valido)}</span>
-          </div>
-          <div className="detail-item">
-            <label>Device ID:</label>
-            <span>{usuario.device_id || 'N/A'}</span>
-          </div>
-          <div className="detail-item">
-            <label>Data de Cadastro:</label>
-            <span>{formatarData(usuario.date_added)}</span>
-          </div>
-          <div className="detail-item">
-            <label>Última Modificação:</label>
-            <span>{formatarData(usuario.date_modified)}</span>
-          </div>
+          <div className="detail-item"><label>Plano Válido Até:</label><span>{formatarData(usuario.plano_valido)}</span></div>
+          <div className="detail-item"><label>Device ID:</label><span>{usuario.device_id || 'N/A'}</span></div>
+          <div className="detail-item"><label>Data de Cadastro:</label><span>{formatarData(usuario.date_added)}</span></div>
+          <div className="detail-item"><label>Última Modificação:</label><span>{formatarData(usuario.date_modified)}</span></div>
         </div>
       </div>
     </div>
