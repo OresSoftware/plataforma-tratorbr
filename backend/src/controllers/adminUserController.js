@@ -4,11 +4,12 @@ const bcrypt = require('bcrypt');
 
 // Helpers
 const soNumeros = (str) => String(str || '').replace(/\D/g, '');
-
 // aceita apenas YYYY-MM-DD
 const isISODate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s || '').trim());
 
-// GET /api/admin/users
+/**
+ * GET /api/admin/users
+ */
 async function listarUsuarios(req, res) {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
@@ -18,18 +19,35 @@ async function listarUsuarios(req, res) {
     const status = String(req.query.status || 'todos').toLowerCase(); // 'todos' | 'ativos' | 'inativos'
     const busca = String(req.query.busca || '').trim();
 
-    // NOVO: filtro por período (date_added)
+    // filtros por relacionamento
+    const enterpriseId = parseInt(req.query.enterprise_id ?? '', 10);
+    const cargoId      = parseInt(req.query.cargo_id ?? '', 10);
+    const cityId       = parseInt(req.query.city_id ?? '', 10);
+
+    // período (date_added)
     const dateFrom = String(req.query.date_from || '').trim();
     const dateTo   = String(req.query.date_to   || '').trim();
+
+    // Ordenação
+    const rawSort = String(req.query.sort || 'name_asc').toLowerCase();
+    let orderSql = 'u.firstname ASC, u.lastname ASC';
+    if (rawSort === 'name_desc') orderSql = 'u.firstname DESC, u.lastname DESC';
+    else if (rawSort === 'date_asc') orderSql = 'u.date_added ASC, u.user_id ASC';
+    else if (rawSort === 'date_desc') orderSql = 'u.date_added DESC, u.user_id DESC';
 
     const where = ["1=1"];
     const params = [];
 
-    // Filtro por status
+    // status
     if (status === 'ativos')   where.push('u.status = 1');
     if (status === 'inativos') where.push('u.status = 0');
 
-    // Filtro por busca (NOME/SOBRENOME/NOME COMPLETO/EMAIL/CPF/EMPRESA/CARGO)
+    // empresa/cargo/cidade
+    if (!Number.isNaN(enterpriseId)) { where.push('u.enterprise_id = ?'); params.push(enterpriseId); }
+    if (!Number.isNaN(cargoId))      { where.push('u.cargo_id = ?');      params.push(cargoId); }
+    if (!Number.isNaN(cityId))       { where.push('u.city_id = ?');       params.push(cityId); }
+
+    // busca
     if (busca) {
       const like = `%${busca}%`;
       const cpfDigits = soNumeros(busca);
@@ -45,7 +63,6 @@ async function listarUsuarios(req, res) {
       const subParams = [like, like, like, like, like, like];
 
       if (cpfDigits) {
-        // remove pontuação/espacos do CPF na comparação
         subCondicoes.push("REPLACE(REPLACE(REPLACE(u.cpf, '.', ''), '-', ''), ' ', '') LIKE ?");
         subParams.push(`%${cpfDigits}%`);
       }
@@ -54,8 +71,7 @@ async function listarUsuarios(req, res) {
       params.push(...subParams);
     }
 
-    // NOVO: filtro de data (date_added) inclusivo
-    // aceita YYYY-MM-DD; se apenas um lado vier, aplica >= ou <=
+    // data (inclusivo)
     if (dateFrom && isISODate(dateFrom) && dateTo && isISODate(dateTo)) {
       where.push("u.date_added BETWEEN ? AND ?");
       params.push(`${dateFrom} 00:00:00`, `${dateTo} 23:59:59`);
@@ -69,7 +85,7 @@ async function listarUsuarios(req, res) {
 
     const whereSql = where.join(' AND ');
 
-    // Buscar usuários com informações relacionadas
+    // dados
     const [rows] = await pool.query(
       `SELECT 
          u.*,
@@ -82,21 +98,21 @@ async function listarUsuarios(req, res) {
        LEFT JOIN ocbr_enterprise e ON u.enterprise_id = e.enterprise_id
        LEFT JOIN ocbr_cargo      c ON u.cargo_id      = c.cargo_id
        LEFT JOIN ocbr_ocupacao   o ON u.ocupacao_id   = o.ocupacao_id
-       LEFT JOIN ocbr_city      ci ON u.city_id       = ci.city_id
+       LEFT JOIN ocbr_city       ci ON u.city_id       = ci.city_id
        WHERE ${whereSql}
-       ORDER BY u.firstname ASC
+       ORDER BY ${orderSql}
        LIMIT ? OFFSET ?`,
       [...params, pageSize, offset]
     );
 
-    // Contar total de registros (mesmas JOINs para refletir filtros de empresa/cargo e datas)
+    // total
     const [[{ total }]] = await pool.query(
       `SELECT COUNT(*) AS total
          FROM ocbr_user u
          LEFT JOIN ocbr_enterprise e ON u.enterprise_id = e.enterprise_id
          LEFT JOIN ocbr_cargo      c ON u.cargo_id      = c.cargo_id
          LEFT JOIN ocbr_ocupacao   o ON u.ocupacao_id   = o.ocupacao_id
-         LEFT JOIN ocbr_city      ci ON u.city_id       = ci.city_id
+         LEFT JOIN ocbr_city       ci ON u.city_id       = ci.city_id
         WHERE ${whereSql}`,
       params
     );
@@ -108,7 +124,9 @@ async function listarUsuarios(req, res) {
   }
 }
 
-// GET /api/admin/users/:id
+/**
+ * GET /api/admin/users/:id
+ */
 async function buscarUsuarioPorId(req, res) {
   try {
     const { id } = req.params;
@@ -125,7 +143,7 @@ async function buscarUsuarioPorId(req, res) {
        LEFT JOIN ocbr_enterprise e ON u.enterprise_id = e.enterprise_id
        LEFT JOIN ocbr_cargo      c ON u.cargo_id      = c.cargo_id
        LEFT JOIN ocbr_ocupacao   o ON u.ocupacao_id   = o.ocupacao_id
-       LEFT JOIN ocbr_city      ci ON u.city_id       = ci.city_id
+       LEFT JOIN ocbr_city       ci ON u.city_id       = ci.city_id
        WHERE u.user_id = ?`,
       [id]
     );
@@ -146,7 +164,9 @@ async function buscarUsuarioPorId(req, res) {
   }
 }
 
-// PUT /api/admin/users/:id
+/**
+ * PUT /api/admin/users/:id
+ */
 async function atualizarUsuario(req, res) {
   try {
     const { id } = req.params;
@@ -199,7 +219,9 @@ async function atualizarUsuario(req, res) {
   }
 }
 
-// PATCH /api/admin/users/:id/status
+/**
+ * PATCH /api/admin/users/:id/status
+ */
 async function ativarDesativarUsuario(req, res) {
   try {
     const { id } = req.params;
@@ -234,7 +256,9 @@ async function ativarDesativarUsuario(req, res) {
   }
 }
 
-// POST /api/admin/users/:id/reset-password
+/**
+ * POST /api/admin/users/:id/reset-password
+ */
 async function resetarSenha(req, res) {
   try {
     const { id } = req.params;
@@ -276,7 +300,9 @@ async function resetarSenha(req, res) {
   }
 }
 
-// GET /api/admin/users/contador/ativos
+/**
+ * GET /api/admin/users/contador/ativos
+ */
 async function contadorAtivos(req, res) {
   try {
     const [[{ total }]] = await pool.query(
@@ -289,6 +315,64 @@ async function contadorAtivos(req, res) {
   }
 }
 
+/**
+ * GET /api/admin/cities
+ * Lista de cidades para os filtros do front.
+ * Query params:
+ *  - q        : termo (nome da cidade OU UF)
+ *  - uf       : filtra por UF exata (ex.: SP)
+ *  - page     : padrão 1
+ *  - pageSize : padrão 50, máx 1000, mín 5
+ * Retorno: { ok, data: [{ city_id, name, code }], page, pageSize, total }
+ */
+async function listarCidades(req, res) {
+  try {
+    const page = Math.max(1, parseInt(req.query.page || "1", 10));
+    const pageSize = Math.min(1000, Math.max(5, parseInt(req.query.pageSize || "50", 10)));
+    const offset = (page - 1) * pageSize;
+
+    const q = String(req.query.q || '').trim();
+    const uf = String(req.query.uf || '').trim().toUpperCase();
+
+    const where = ["1=1"];
+    const params = [];
+
+    if (q) {
+      const like = `%${q}%`;
+      where.push("(ci.name LIKE ? OR ci.code LIKE ?)");
+      params.push(like, like);
+    }
+
+    if (uf) {
+      where.push("ci.code = ?");
+      params.push(uf);
+    }
+
+    const whereSql = where.join(" AND ");
+
+    const [rows] = await pool.query(
+      `SELECT ci.city_id, ci.name, ci.code
+         FROM ocbr_city ci
+        WHERE ${whereSql}
+        ORDER BY ci.name ASC
+        LIMIT ? OFFSET ?`,
+      [...params, pageSize, offset]
+    );
+
+    const [[{ total }]] = await pool.query(
+      `SELECT COUNT(*) AS total
+         FROM ocbr_city ci
+        WHERE ${whereSql}`,
+      params
+    );
+
+    res.json({ ok: true, data: rows, page, pageSize, total });
+  } catch (e) {
+    console.error("listarCidades:", e);
+    res.status(500).json({ ok: false, error: "Erro ao listar cidades." });
+  }
+}
+
 module.exports = {
   listarUsuarios,
   buscarUsuarioPorId,
@@ -296,4 +380,6 @@ module.exports = {
   ativarDesativarUsuario,
   resetarSenha,
   contadorAtivos,
+  // novo export:
+  listarCidades,
 };

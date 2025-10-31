@@ -1,7 +1,8 @@
-// backend/src/routes/adminUserRoutes.js
 const express = require('express');
 const router = express.Router();
 const adminUserController = require('../controllers/adminUserController');
+
+// ==================== USUÁRIOS ====================
 
 // GET /api/admin/users/contador/ativos (deve vir ANTES de /:id)
 router.get('/contador/ativos', adminUserController.contadorAtivos);
@@ -20,5 +21,9 @@ router.patch('/:id/status', adminUserController.ativarDesativarUsuario);
 
 // POST /api/admin/users/:id/reset-password
 router.post('/:id/reset-password', adminUserController.resetarSenha);
+
+// ==================== CIDADES ====================
+// GET /api/admin/users/cities
+router.get('/cities/listar', adminUserController.listarCidades);
 
 module.exports = router;
