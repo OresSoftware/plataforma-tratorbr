@@ -235,7 +235,7 @@ const LogoSelector = ({ value, onChange, label, name }) => {
             }}
             style={{ width: '18px', height: '18px' }}
           />
-          <span style={{ fontSize: '14px', fontWeight: '500' }}>Não encontrei minha logo</span>
+          <span style={{ fontSize: '14px', fontWeight: '500' }}>Não encontrei a logo</span>
         </label>
       </div>
 

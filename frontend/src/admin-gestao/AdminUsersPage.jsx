@@ -142,6 +142,121 @@ const SearchableSelect = ({
   );
 };
 
+// ===== Dropdown simples (SEM busca) — mesmo visual do SearchableSelect =====
+const SimpleSelect = ({
+  options = [],
+  value,
+  onChange,
+  getLabel = (o) => o?.label ?? '',
+  getValue = (o) => o?.value ?? '',
+  placeholder = 'Selecione...',
+  maxVisible = 5,
+  allowClear = true,
+}) => {
+  const [open, setOpen] = useState(false);
+  const [highlight, setHighlight] = useState(-1);
+  const wrapRef = React.useRef(null);
+
+  const selected = options.find((o) => String(getValue(o)) === String(value)) || null;
+
+  useEffect(() => {
+    const onClickOutside = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) {
+        setOpen(false);
+        setHighlight(-1);
+      }
+    };
+    document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, []);
+
+  const handleKeyDown = (e) => {
+    if (!open && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown')) {
+      setOpen(true);
+      return;
+    }
+    if (!open) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlight((h) => Math.min(h + 1, options.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlight((h) => Math.max(h - 1, 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const opt = options[highlight] ?? options[0];
+      if (opt) {
+        onChange(String(getValue(opt)));
+        setOpen(false);
+        setHighlight(-1);
+      }
+    } else if (e.key === 'Escape') {
+      setOpen(false);
+      setHighlight(-1);
+    }
+  };
+
+  const handlePick = (opt) => {
+    onChange(String(getValue(opt)));
+    setOpen(false);
+    setHighlight(-1);
+  };
+
+  const clearSelection = (e) => {
+    e.stopPropagation();
+    onChange('');
+  };
+
+  return (
+    <div className="ss-wrap" ref={wrapRef} onKeyDown={handleKeyDown}>
+      <button
+        type="button"
+        className={`ss-control ${open ? 'ss-open' : ''}`}
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span className={`ss-value ${selected ? '' : 'ss-placeholder'}`}>
+          {selected ? getLabel(selected) : placeholder}
+        </span>
+        <span className="ss-actions">
+          {allowClear && selected && (
+            <span className="ss-clear" title="Limpar" onClick={clearSelection}>×</span>
+          )}
+          <span className="ss-caret">▾</span>
+        </span>
+      </button>
+
+      {open && (
+        <div className="ss-dropdown" role="listbox" onMouseDown={(e) => e.preventDefault()}>
+          {/* sem barra de busca */}
+          <ul
+            className="ss-options"
+            style={{ maxHeight: `${maxVisible * 40}px`, overflowY: 'auto' }}
+          >
+            {options.length === 0 ? (
+              <li className="ss-empty" aria-disabled="true">Sem itens</li>
+            ) : (
+              options.map((opt, idx) => (
+                <li
+                  key={getValue(opt)}
+                  className={`ss-option ${String(getValue(opt)) === String(value) ? 'is-selected' : ''} ${idx === highlight ? 'is-highlighted' : ''}`}
+                  onMouseEnter={() => setHighlight(idx)}
+                  onClick={() => handlePick(opt)}
+                  role="option"
+                >
+                  {getLabel(opt)}
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Modal genérico
 const Modal = ({ children, onClose }) => (
   <div className="modal-overlay" onClick={onClose}>
@@ -440,25 +555,19 @@ export default function AdminUsersPage() {
           {/* Linha 1: Ordem | Cidade | Empresa | Cargo */}
           <div className="filters-row top-row">
             <div className="filter-col">
-              <select value={sort} onChange={(e) => { setSort(e.target.value); setPage(1); }}>
-                <option value="date_desc">Últimos cadastros</option>
-                <option value="date_asc">Primeiros cadastros</option>
-                <option value="name_asc">A–Z (Nome)</option>
-                <option value="name_desc">Z–A (Nome)</option>
-              </select>
-            </div>
-
-            {/* <div className="filter-col">
-              <SearchableSelect
-                options={cidades}
-                value={cityId}
-                onChange={(val)=>{ setCityId(val); setPage(1); }}
-                getLabel={(ci) => ci?.code ? `${ci.name} - ${ci.code}` : `${ci?.name ?? ''}`}
-                getValue={(ci) => String(ci?.city_id)}
-                placeholder="Cidade"
-                maxVisible={5}
+              <SimpleSelect
+                value={sort}
+                onChange={(val) => { setSort(val); setPage(1); }}
+                options={[
+                  { value: 'date_desc', label: 'Últimos cadastros' },
+                  { value: 'date_asc',  label: 'Primeiros cadastros' },
+                  { value: 'name_asc',  label: 'A–Z (Nome)' },
+                  { value: 'name_desc', label: 'Z–A (Nome)' },
+                ]}
+                placeholder="Ordenar por"
+                maxVisible={4}
               />
-            </div> */}
+            </div>
 
             <div className="filter-col">
               <SearchableSelect
@@ -473,12 +582,13 @@ export default function AdminUsersPage() {
             </div>
 
             <div className="filter-col">
-              <select value={cargoId} onChange={(e) => { setCargoId(e.target.value); setPage(1); }}>
-                <option value="">Cargo</option>
-                {cargos.map(c => (
-                  <option key={c.cargo_id} value={c.cargo_id}>{c.name}</option>
-                ))}
-              </select>
+              <SimpleSelect
+                value={cargoId}
+                onChange={(val) => { setCargoId(val); setPage(1); }}
+                options={cargos.map(c => ({ value: String(c.cargo_id), label: c.name }))}
+                placeholder="Cargo"
+                maxVisible={6}
+              />
             </div>
           </div>
 
