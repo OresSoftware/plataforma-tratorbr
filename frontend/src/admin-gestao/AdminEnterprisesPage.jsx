@@ -208,6 +208,99 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel =
 };
 /* ============================================================================ */
 
+/* ====== NOVO: Dropdown de Matrizes ativas (autocomplete simples) ====== */
+const MatrizDropdown = ({ value, onChange, currentLabel = '' }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [options, setOptions] = useState([]);
+  const dropdownRef = useRef(null);
+
+  // buscar matrizes
+  const fetchOptions = useCallback(async (q) => {
+    try {
+      const { data } = await api.get('/admin/enterprises/matrizes', { params: { search: q || '' } });
+      const rows = Array.isArray(data) ? data : data?.data || [];
+      setOptions(rows);
+    } catch (e) {
+      console.error('Erro ao carregar matrizes', e);
+      setOptions([]);
+    }
+  }, []);
+
+  useEffect(() => { if (isOpen) fetchOptions(''); }, [isOpen, fetchOptions]);
+
+  // debounce de busca
+  useEffect(() => {
+    if (!isOpen) return;
+    const t = setTimeout(() => fetchOptions(searchTerm), 250);
+    return () => clearTimeout(t);
+  }, [isOpen, searchTerm, fetchOptions]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find(o => String(o.id) === String(value));
+
+  const label = selectedOption
+    ? `${selectedOption.fantasia || selectedOption.razao} | CNPJ - ${formatCNPJ(selectedOption.cnpj || '')}`
+    : 'Selecione uma Matriz';
+
+
+  const handleSelect = (opt) => {
+    onChange({ target: { name: 'matriz_id', value: Number(opt.id) } });
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="city-dropdown" ref={dropdownRef}>
+      <div className="city-dropdown-trigger" onClick={() => setIsOpen(!isOpen)}>
+        <span>{label}</span>
+        <ChevronDown size={18} className={isOpen ? 'rotate' : ''} />
+      </div>
+
+      {isOpen && (
+        <div className="city-dropdown-menu">
+          <div className="city-dropdown-search">
+            <Search size={16} />
+            <input
+              type="text"
+              placeholder="Buscar Matriz (nome/razão/CNPJ)"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              autoFocus
+            />
+          </div>
+          <div className="city-dropdown-list">
+            {options.length === 0 ? (
+              <div className="city-dropdown-empty">Nenhuma matriz encontrada</div>
+            ) : (
+              options.slice(0, 100).map(opt => (
+                <div
+                  key={opt.id}
+                  className={`city-dropdown-item ${String(opt.id) === String(value) ? 'selected' : ''}`}
+                  onClick={() => handleSelect(opt)}
+                >
+                  <div className="text-sm font-semibold">
+                    <strong>Matriz - </strong>{(opt.fantasia || opt.razao) ?? '—'} | <strong>CNPJ - </strong> {formatCNPJ(opt.cnpj || '')}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+/* ============================================================================ */
+
 /* ====== NOVO: limpeza de payload antes do POST/PUT ====== */
 const limparEmpresaPayload = (dados) => {
   const removidos = [
@@ -224,6 +317,80 @@ const limparEmpresaPayload = (dados) => {
     if (!removidos.includes(k)) out[k] = v;
   }
   return out;
+};
+
+const MFTag = ({ tipo }) => {
+  const isMatriz = String(tipo).toLowerCase() === 'matriz';
+  const bg = isMatriz ? '#15383E' : '#409535';
+  const letra = isMatriz ? 'M' : 'F';
+  return (
+    <span
+      title={isMatriz ? 'Matriz' : 'Filial'}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 22,
+        height: 22,
+        borderRadius: '50%',
+        fontSize: 12,
+        fontWeight: 700,
+        color: '#fff',
+        background: bg,
+        marginRight: 8,
+        flex: '0 0 auto'
+      }}
+    >
+      {letra}
+    </span>
+  );
+};
+
+
+/* =================== Componente FilterDropdown =================== */
+const FilterDropdown = ({ label, value, options, onChange, placeholder = "Selecione..." }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find(opt => opt.value === value);
+  const displayLabel = selectedOption ? selectedOption.label : placeholder;
+
+  return (
+    <div className="filter-dropdown" ref={dropdownRef}>
+      <div className="filter-dropdown-trigger" onClick={() => setIsOpen(!isOpen)}>
+        <span className="filter-label">{label}</span>
+        <span className="filter-value">{displayLabel}</span>
+        <ChevronDown size={18} className={isOpen ? 'rotate' : ''} />
+      </div>
+
+      {isOpen && (
+        <div className="filter-dropdown-menu">
+          {options.map(opt => (
+            <div
+              key={opt.value}
+              className={`filter-dropdown-item ${opt.value === value ? 'selected' : ''}`}
+              onClick={() => {
+                onChange(opt.value);
+                setIsOpen(false);
+              }}
+            >
+              {opt.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default function AdminEnterprisesPage() {
@@ -247,10 +414,24 @@ export default function AdminEnterprisesPage() {
   const [modalContent, setModalContent] = useState(null);
   const [empresaSelecionada, setEmpresaSelecionada] = useState(null);
 
+  // NOVOS ESTADOS PARA FILTRAGEM
+  const [ordenacao, setOrdenacao] = useState('');
+  const [tipoFiltro, setTipoFiltro] = useState('');
+  const [cidadeFiltro, setCidadeFiltro] = useState(0);
+  const [listaCidades, setListaCidades] = useState([]);
+  const [searchCidade, setSearchCidade] = useState('');
+
   const carregarEmpresas = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await apiAdminEnterprises.listar({ status, page, busca: termoBuscado });
+      const result = await apiAdminEnterprises.listar({
+        status,
+        page,
+        busca: termoBuscado,
+        order: ordenacao,      // NOVO
+        tipo: tipoFiltro,      // NOVO
+        city_id: cidadeFiltro  // NOVO
+      });
       setEmpresas(result.data || []);
       setTotalPages(Math.ceil(result.total / result.pageSize));
     } catch (err) {
@@ -258,7 +439,7 @@ export default function AdminEnterprisesPage() {
       alert('Falha ao carregar empresas.');
     }
     setLoading(false);
-  }, [status, page, termoBuscado]);
+  }, [status, page, termoBuscado, ordenacao, tipoFiltro, cidadeFiltro]);
 
   const carregarContadores = useCallback(async () => {
     try {
@@ -274,6 +455,23 @@ export default function AdminEnterprisesPage() {
       console.error("Erro ao carregar contadores", err);
     }
   }, []);
+
+  const carregarCidades = useCallback(async (search = '') => {
+    try {
+      const { data } = await api.get('/admin/cities', {
+        params: { busca: search, limit: 100 }
+      });
+      setListaCidades(data?.data || []);
+    } catch (err) {
+      console.error("Erro ao carregar cidades", err);
+      setListaCidades([]);
+    }
+  }, []);
+
+  // Carregar cidades ao montar o componente
+  useEffect(() => {
+    carregarCidades('');
+  }, [carregarCidades]);
 
   useEffect(() => {
     carregarEmpresas();
@@ -358,6 +556,15 @@ export default function AdminEnterprisesPage() {
     }
   };
 
+  const limparFiltros = () => {
+    setOrdenacao('');
+    setTipoFiltro('');
+    setCidadeFiltro(0);
+    setBusca('');
+    setTermoBuscado('');
+    setPage(1);
+  };
+
   return (
     <AdminLayout>
       <div className="enterprise-wrap">
@@ -396,17 +603,74 @@ export default function AdminEnterprisesPage() {
           </div>
         </header>
 
-        <div className="enterprise-filters">
-          <form onSubmit={handleBusca} className="search-form">
-            <input
-              type="text"
-              placeholder="Buscar por Razão, Fantasia, CNPJ, Bairro, Cidade, UF ou IE..."
-              value={busca}
-              onChange={e => e.target.value.length <= 100 && setBusca(e.target.value)}
-            />
-            <button type="submit"><Search size={20} /></button>
-          </form>
-        </div>
+        <section className="filters-card">
+          
+            <div className="filters-row top-row">
+              {/* Dropdown Ordenar */}
+              <div className="filter-col">
+              <FilterDropdown
+                value={ordenacao}
+                onChange={(val) => { setOrdenacao(val); setPage(1); }}
+                options={[
+                  { value: 'az', label: 'A-Z' },
+                  { value: 'za', label: 'Z-A' },
+                  { value: 'oldest', label: 'Primeiros Cadastros' },
+                  { value: 'newest', label: 'Últimos Cadastros' }
+                ]}
+                placeholder="Ordenar"
+              />
+              </div>
+
+              <div className="filter-col">
+              {/* Dropdown Tipo */}
+              <FilterDropdown value={tipoFiltro}
+                onChange={(val) => {
+                  setTipoFiltro(val);
+                  setPage(1);
+                }}
+                options={[
+                  { value: 'matriz', label: 'Matriz' },
+                  { value: 'filial', label: 'Filial' }
+                ]}
+                placeholder="Tipo"
+              />
+              </div>
+
+              {/* Dropdown Cidade */}
+              <div className="filter-col">
+
+                <CityDropdown
+                  value={cidadeFiltro}
+                  onChange={(e) => {
+                    setCidadeFiltro(e.target.value);
+                    setPage(1);
+                  }}
+                  cidades={listaCidades}
+                  onSearchChange={(term) => {
+                    setSearchCidade(term);
+                    carregarCidades(term);
+                  }}
+                  currentLabel=""
+                />
+              </div>
+            </div>
+
+            {/* Barra de Pesquisa */}
+            <div className="filter-col">
+              <form onSubmit={handleBusca} className="search-form-new">
+                <input
+                  type="text"
+                  placeholder="Nome, Cidade, CNPJ..."
+                  value={busca}
+                  onChange={e => e.target.value.length <= 100 && setBusca(e.target.value)}
+                />
+                <button type="submit" className="search-button">
+                  <Search size={20} />
+                </button>
+              </form>
+            </div>
+          
+        </section>
 
         <div className="enterprise-card">
           <div className="table-container">
@@ -444,6 +708,7 @@ export default function AdminEnterprisesPage() {
                       <td>{e.inscricao_estadual || 'N/A'}</td>
                       <td>{e.cidade_nome ? `${e.cidade_nome} - ${e.cidade_uf}` : 'N/A'}</td>
                       <td>
+                        <MFTag tipo={e.matriz_filial} />
                         <span className={`status-badge ${e.ativo ? 'status-ativo' : 'status-inativo'}`}>
                           {e.ativo ? 'Ativo' : 'Inativo'}
                         </span>
@@ -491,10 +756,12 @@ export default function AdminEnterprisesPage() {
                       loading="lazy"
                     />
                     <div>
+
                       <h3>{e.fantasia || 'N/A'}</h3>
                       <span className={`status-badge ${e.ativo ? 'status-ativo' : 'status-inativo'}`}>
                         {e.ativo ? 'Ativo' : 'Inativo'}
                       </span>
+
                     </div>
                   </div>
                   <div className="card-info">
@@ -703,15 +970,24 @@ const BillingAddressInline = ({
 };
 /* ============================================================================ */
 
-// Formulário de criação/edição com validação de CNPJ
+// Formulário de criação/edição
 const FormEmpresa = ({ empresa, onSave, onClose }) => {
-  const [dados, setDados] = useState(empresa || { ativo: 1, inscricao_estadual: "" });
+  const [dados, setDados] = useState(() => ({
+    ativo: 1,
+    inscricao_estadual: "",
+    matriz_filial: empresa?.matriz_filial || "Matriz",
+    matriz_id: empresa?.matriz_id ?? null,
+    ...empresa,
+  }));
   const [cidades, setCidades] = useState([]);
   const [cnpjTouched, setCnpjTouched] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   // rascunho do endereço de cobrança (salvo junto no submit)
   const [cobrancaDraft, setCobrancaDraft] = useState(null);
+
+  // estado auxiliar para exibir rótulo da matriz atual (em edição)
+  const [matrizLabel, setMatrizLabel] = useState('');
 
   // 🔧 memoiza a função de busca para o CityDropdown
   const carregarCidades = React.useCallback(async (busca) => {
@@ -727,6 +1003,20 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
   useEffect(() => {
     carregarCidades('');
   }, [carregarCidades]);
+
+  // pré-carrega label da matriz atual em edição (se houver)
+  useEffect(() => {
+    (async () => {
+      try {
+        if (empresa?.matriz_filial === 'Filial' && empresa?.matriz_id) {
+          const { data } = await api.get('/admin/enterprises/matrizes', { params: { search: '' } });
+          const rows = Array.isArray(data) ? data : data?.data || [];
+          const hit = rows.find(r => String(r.id) === String(empresa.matriz_id));
+          if (hit) setMatrizLabel(hit.fantasia || hit.razao || `ID ${hit.id}`);
+        }
+      } catch (e) { /* noop */ }
+    })();
+  }, [empresa]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -748,6 +1038,17 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
     setDados(prev => ({ ...prev, [name]: formattedValue }));
   };
 
+  // NOVO: mudar tipo (Matriz/Filial)
+  const handleTipoChange = (e) => {
+    const tipo = e.target.value;
+    if (tipo === 'Matriz') {
+      setDados(prev => ({ ...prev, matriz_filial: 'Matriz', matriz_id: null }));
+      setMatrizLabel('');
+    } else {
+      setDados(prev => ({ ...prev, matriz_filial: 'Filial' }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const cnpjDigits = sanitizeCNPJ(dados.cnpj);
@@ -757,7 +1058,12 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
     }
     setIsSaving(true);
     try {
-      const payload = { ...dados, cnpj: cnpjDigits, __cobrancaDraft: cobrancaDraft || undefined };
+      const payload = {
+        ...dados,
+        cnpj: cnpjDigits,
+        matriz_id: dados.matriz_filial === 'Matriz' ? null : dados.matriz_id ?? null,
+        __cobrancaDraft: cobrancaDraft || undefined,
+      };
       await onSave(payload);
     } finally {
       setIsSaving(false);
@@ -784,6 +1090,50 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
       </div>
 
       <div className="modal-body">
+        {/* ========= NOVO BLOCO: Tipo (Matriz/Filial) + Matriz ========= */}
+        <div className="form-grid">
+          <div className="form-field full-width">
+            <label>Tipo *</label>
+            <div className="radio-group">
+              <label className="radio">
+                <input
+                  type="radio"
+                  name="matriz_filial"
+                  value="Matriz"
+                  checked={dados.matriz_filial === 'Matriz'}
+                  onChange={handleTipoChange}
+                />
+                <span>Matriz</span>
+              </label>
+              <label className="radio" style={{ marginLeft: 16 }}>
+                <input
+                  type="radio"
+                  name="matriz_filial"
+                  value="Filial"
+                  checked={dados.matriz_filial === 'Filial'}
+                  onChange={handleTipoChange}
+                />
+                <span>Filial</span>
+              </label>
+            </div>
+          </div>
+
+          {dados.matriz_filial === 'Filial' && (
+            <div className="form-field full-width">
+              <label>Matriz *</label>
+              <MatrizDropdown
+                value={dados.matriz_id || ''}
+                onChange={(e) => {
+                  setDados(prev => ({ ...prev, matriz_id: e.target.value ? Number(e.target.value) : null }));
+                }}
+                currentLabel={matrizLabel}
+              />
+              <small className="hint">Selecione a Matriz ativa à qual esta Filial pertence.</small>
+            </div>
+          )}
+        </div>
+        {/* ============================================================= */}
+
         <div className="form-grid">
           <div className="form-field">
             <label>Razão Social *</label>
@@ -922,13 +1272,23 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
 
 // Detalhes
 const DetalhesEmpresa = ({ empresa, onClose }) => {
+  const [aba, setAba] = useState('usuarios');
   const [usuarios, setUsuarios] = useState([]);
   const [loadingUsuarios, setLoadingUsuarios] = useState(true);
+
+  const [filiais, setFiliais] = useState([]);
+  const [loadingFiliais, setLoadingFiliais] = useState(false);
 
   useEffect(() => {
     carregarUsuarios();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (aba === 'filiais' && empresa?.matriz_filial === 'Matriz') {
+      carregarFiliais();
+    }
+  }, [aba, empresa?.enterprise_id, empresa?.matriz_filial]);
 
   const carregarUsuarios = async () => {
     try {
@@ -938,6 +1298,19 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
       console.error('Erro ao carregar usuários', error);
     } finally {
       setLoadingUsuarios(false);
+    }
+  };
+
+  const carregarFiliais = async () => {
+    setLoadingFiliais(true);
+    try {
+      const { data } = await api.get(`/admin/enterprises/${empresa.enterprise_id}/filiais`);
+      setFiliais(Array.isArray(data?.data) ? data.data : []);
+    } catch (e) {
+      console.error('Erro ao carregar filiais', e);
+      setFiliais([]);
+    } finally {
+      setLoadingFiliais(false);
     }
   };
 
@@ -972,6 +1345,8 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
           )}
         </div>
 
+
+
         <div className="details-grid">
           <div className="detail-item">
             <label>Nome Fantasia:</label>
@@ -986,7 +1361,7 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
             <span>{empresa.cnpj || 'N/A'}</span>
           </div>
 
-        <div className="detail-item">
+          <div className="detail-item">
             <label>Inscrição Estadual:</label>
             <span>{empresa.inscricao_estadual || 'N/A'}</span>
           </div>
@@ -1031,29 +1406,90 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
               {empresa.ativo ? 'Ativo' : 'Inativo'}
             </span>
           </div>
+          <div className="detail-item">
+            <label>Tipo:</label>
+            <span>
+              {empresa.matriz_filial === 'Matriz'
+                ? 'Matriz'
+                : `Filial${empresa.matriz_nome ? ` | Matriz: ${empresa.matriz_nome}` : ''}`}
+            </span>
+          </div>
         </div>
 
         <div className="usuarios-vinculados">
-          <h3>Usuários Vinculados ({usuarios.length})</h3>
-          {loadingUsuarios ? (
-            <p className="loading-text">Carregando usuários...</p>
-          ) : usuarios.length === 0 ? (
-            <p className="empty-text">Nenhum usuário vinculado a esta empresa.</p>
-          ) : (
-            <div className="usuarios-list">
-              {usuarios.map((u) => (
-                <div key={u.user_id} className="usuario-item">
-                  <div className="usuario-info">
-                    <strong>{u.firstname} {u.lastname}</strong>
-                    <span className="usuario-email">{u.email}</span>
-                    {u.cargo_nome && <span className="usuario-cargo">{u.cargo_nome}</span>}
-                  </div>
-                  <span className={`status-badge-small ${u.status ? 'status-ativo' : 'status-inativo'}`}>
-                    {u.status ? 'Ativo' : 'Inativo'}
-                  </span>
+          <div className="tabs-inline" style={{ display: 'flex', gap: 8, marginTop: 16, marginBottom: 8 }}>
+            <button
+              type="button"
+              className={`btn ${aba === 'usuarios' ? 'btn-primary' : 'btn-outline'}`}
+              onClick={() => setAba('usuarios')}
+            >
+              Usuários
+            </button>
+            <button
+              type="button"
+              className={`btn ${aba === 'filiais' ? 'btn-primary' : 'btn-outline'}`}
+              onClick={() => setAba('filiais')}
+            >
+              Filiais
+            </button>
+          </div>
+          {aba === 'usuarios' ? (
+            <>
+              <h3>Usuários Vinculados ({usuarios.length})</h3>
+              {loadingUsuarios ? (
+                <p className="loading-text">Carregando usuários...</p>
+              ) : usuarios.length === 0 ? (
+                <p className="empty-text">Nenhum usuário vinculado a esta empresa.</p>
+              ) : (
+                <div className="usuarios-list">
+                  {usuarios.map((u) => (
+                    <div key={u.user_id} className="usuario-item">
+                      <div className="usuario-info">
+                        <strong>{u.firstname} {u.lastname}</strong>
+                        <span className="usuario-email">{u.email}</span>
+                        {u.cargo_nome && <span className="usuario-cargo">{u.cargo_nome}</span>}
+                      </div>
+                      <span className={`status-badge-small ${u.status ? 'status-ativo' : 'status-inativo'}`}>
+                        {u.status ? 'Ativo' : 'Inativo'}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              )}
+            </>
+          ) : (
+            <>
+              <h3>Filiais Vinculadas</h3>
+
+              {/* se a empresa NÃO for Matriz, apenas avisa */}
+              {empresa.matriz_filial !== 'Matriz' ? (
+                <p className="empty-text">
+                  Esta empresa é uma <strong>Filial</strong>{empresa.matriz_nome ? ` da Matriz ${empresa.matriz_nome}` : ''} e não possui filiais.
+                </p>
+              ) : loadingFiliais ? (
+                <p className="loading-text">Carregando filiais...</p>
+              ) : filiais.length === 0 ? (
+                <p className="empty-text">Nenhuma filial cadastrada para esta Matriz.</p>
+              ) : (
+                <div className="filiais-list">
+                  {filiais.map((f) => (
+                    <div key={f.enterprise_id} className="filial-item">
+                      <div className="filial-info">
+                        <strong>{f.fantasia || 'N/A'}</strong>
+
+                        <span className="filial-cnpj">CNPJ | {f.cnpj ? formatCNPJ(f.cnpj) : 'N/A'}</span>
+                        <span className="filial-cidade">Cidade | {f.cidade_nome ? `${f.cidade_nome} - ${f.cidade_uf}` : 'N/A'}
+                        </span>
+
+                      </div>
+                      <span className={`status-badge-small ${f.ativo ? 'status-ativo' : 'status-inativo'}`}>
+                        {f.ativo ? 'Ativo' : 'Inativo'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
