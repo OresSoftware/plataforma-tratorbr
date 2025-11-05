@@ -11,6 +11,8 @@ const {
   obterEnderecoCobranca,
   salvarEnderecoCobranca,
   removerEnderecoCobranca,
+  listarMatrizesAtivas, 
+  listarFiliaisDaMatriz,
 } = require("../controllers/adminEnterpriseController");
 
 const router = express.Router();
@@ -20,15 +22,20 @@ router.get("/contador/ativos", contadorAtivos);
 
 // --- Rotas específicas DEVEM vir antes de "/:id" para não serem ofuscadas --- //
 
+// NOVO: Autocomplete de Matrizes ativas (para o formulário de Filial)
+// Ex.: GET /api/admin/enterprises/matrizes?search=acme
+router.get("/matrizes", listarMatrizesAtivas);
+
 // Listar usuários vinculados à empresa
 router.get("/:id/users", listarUsuariosDaEmpresa);
+
+// Listar filiais de uma Matriz
+router.get("/:id/filiais", listarFiliaisDaMatriz);
 
 // Endereço de cobrança (ocbr_enterprise_cobranca)
 router.get("/:id/cobranca", obterEnderecoCobranca);     // ler
 router.put("/:id/cobranca", salvarEnderecoCobranca);     // criar/atualizar (upsert)
 router.delete("/:id/cobranca", removerEnderecoCobranca); // remover
-
-// --------------------------------------------------------------------------- //
 
 // Listar empresas (com filtros, paginação e busca)
 router.get("/", listarEmpresas);

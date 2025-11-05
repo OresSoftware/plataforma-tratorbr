@@ -2,9 +2,17 @@
 import { api } from "../lib/api";
 
 export const apiAdminEnterprises = {
-  async listar({ status = "todos", page = 1, pageSize = 20, busca = '' } = {}) {
+  async listar({ 
+    status = "todos", 
+    page = 1, 
+    pageSize = 20, 
+    busca = '',
+    order = '',      // NOVO: 'az' | 'za' | 'oldest' | 'newest'
+    tipo = '',       // NOVO: 'matriz' | 'filial' | ''
+    city_id = 0      // NOVO: filtro por cidade
+  } = {}) {
     const { data } = await api.get("/admin/enterprises", {
-      params: { status, page, pageSize, busca },
+      params: { status, page, pageSize, busca, order, tipo, city_id },
     });
     return data;
   },
@@ -43,10 +51,12 @@ export const apiAdminEnterprises = {
     const { data } = await api.get(`/admin/enterprises/${enterpriseId}/cobranca`);
     return data;
   },
+  
   async upsertCobranca(enterpriseId, payload) {
     const { data } = await api.put(`/admin/enterprises/${enterpriseId}/cobranca`, payload);
     return data;
   },
+  
   async deleteCobranca(enterpriseId) {
     const { data } = await api.delete(`/admin/enterprises/${enterpriseId}/cobranca`);
     return data;

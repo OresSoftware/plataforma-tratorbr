@@ -1,7 +1,7 @@
 // backend/src/controllers/adminEnterpriseController.js
 const pool = require("../config/db");
 
-// Helpers
+/* ==================== Helpers gerais ==================== */
 const soNumeros = (str) => String(str || '').replace(/\D/g, '');
 
 // Validação de CNPJ (DV oficial)
@@ -16,8 +16,8 @@ const isCNPJ = (value = "") => {
     return resto < 2 ? 0 : 11 - resto;
   };
 
-  const pesos1 = [5,4,3,2,9,8,7,6,5,4,3,2];
-  const pesos2 = [6,5,4,3,2,9,8,7,6,5,4,3,2];
+  const pesos1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  const pesos2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
   const base12 = cnpj.slice(0, 12);
   const dv1 = calcDV(base12, pesos1);
@@ -26,7 +26,7 @@ const isCNPJ = (value = "") => {
   return cnpj.endsWith(String(dv1) + String(dv2));
 };
 
-//  Inscrição Estadual (IE) - Normalização e validação mínima
+// IE – normalização e validação mínima
 const normalizeIE = (value = "") => String(value || "").trim();
 const onlyDigits = (s = "") => String(s).replace(/\D/g, "");
 
@@ -46,7 +46,7 @@ function prepararIEParaSalvar(ieRaw = "") {
   return onlyDigits(ie);
 }
 
-//  UF & Duplicidade de IE por UF
+// UF por city_id + duplicidade IE por UF
 async function getUFByCityId(cityId) {
   if (!cityId) return null;
   const [[row]] = await pool.query(
@@ -75,8 +75,40 @@ async function existeIEDuplicadaMesmaUF({ ie, uf, ignorarEnterpriseId = null }) 
   return !!dup;
 }
 
-//  GET /api/admin/enterprises | EMPRESAS
-//  - Filtro + SCORE (campo calculado no SELECT — não existe no UPDATE)
+/* ======= Helpers para Matriz / Filial ======= */
+async function isMatrizAtiva(matrizId) {
+  if (!matrizId) return false;
+  const [[row]] = await pool.query(
+    `SELECT 1
+       FROM ocbr_enterprise
+      WHERE enterprise_id = ?
+        AND matriz_filial = 'Matriz'
+        AND ativo = 1
+      LIMIT 1`,
+    [matrizId]
+  );
+  return !!row;
+}
+
+async function countFiliaisByMatriz(matrizId) {
+  if (!matrizId) return 0;
+  const [[row]] = await pool.query(
+    `SELECT COUNT(*) AS qt
+       FROM ocbr_enterprise
+      WHERE matriz_id = ?`,
+    [matrizId]
+  );
+  return row?.qt ?? 0;
+}
+
+/* ==================== LISTAR EMPRESAS (com filtros) ==================== */
+// GET /api/admin/enterprises
+// Query params suportados:
+// - status: 'ativos' | 'inativos' | 'todos'
+// - busca: string (razao, fantasia, cidade, uf, bairro, IE, CNPJ)
+// - order: 'az' | 'za' | 'oldest' | 'newest' (padrão = por score)
+// - tipo: 'matriz' | 'filial' | '' (ambos)
+// - city_id: number
 async function listarEmpresas(req, res) {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
@@ -85,17 +117,28 @@ async function listarEmpresas(req, res) {
 
     const status = String(req.query.status || 'todos').toLowerCase();
     const buscaRaw = String(req.query.busca || '').trim();
+    const order = String(req.query.order || '').toLowerCase();      // az | za | oldest | newest
+    const tipo = String(req.query.tipo || '').toLowerCase();        // matriz | filial
+    const cityIdFilter = Number(req.query.city_id || 0);            // city_id
 
     const like = `%${buscaRaw}%`;
     const cnpjDigits = soNumeros(buscaRaw);
-    const ieDigits   = soNumeros(buscaRaw);
+    const ieDigits = soNumeros(buscaRaw);
     const buscaIsento = buscaRaw.toUpperCase() === 'ISENTO';
 
     const where = ['1=1'];
     const paramsWhere = [];
 
-    if (status === 'ativos')   where.push('e.ativo = 1');
+    if (status === 'ativos') where.push('e.ativo = 1');
     if (status === 'inativos') where.push('e.ativo = 0');
+
+    if (tipo === 'matriz') where.push(`e.matriz_filial = 'Matriz'`);
+    if (tipo === 'filial') where.push(`e.matriz_filial = 'Filial'`);
+
+    if (cityIdFilter > 0) {
+      where.push('e.city_id = ?');
+      paramsWhere.push(cityIdFilter);
+    }
 
     if (buscaRaw) {
       const blocos = [];
@@ -135,6 +178,7 @@ async function listarEmpresas(req, res) {
 
     const whereSql = where.join(' AND ');
 
+    // Score (para ordenar quando não há critério explícito)
     const pesos = {
       fantasia: 10,
       razao: 9,
@@ -149,12 +193,13 @@ async function listarEmpresas(req, res) {
     };
 
     const paramsScore = [];
-    const eqCNPJ   = cnpjDigits && cnpjDigits.length === 14 ? cnpjDigits : '__NO_MATCH__';
-    const eqIE     = ieDigits   && ieDigits.length   >= 2   ? ieDigits   : '__NO_MATCH__';
+    const eqCNPJ = cnpjDigits && cnpjDigits.length === 14 ? cnpjDigits : '__NO_MATCH__';
+    const eqIE = ieDigits && ieDigits.length >= 2 ? ieDigits : '__NO_MATCH__';
     const likeCNPJ = cnpjDigits ? `%${cnpjDigits}%` : '__NO_MATCH__';
-    const likeIE   = ieDigits   ? `%${ieDigits}%`   : '__NO_MATCH__';
+    const likeIE = ieDigits ? `%${ieDigits}%` : '__NO_MATCH__';
     const isentoChave = buscaIsento ? 'ISENTO' : '__NO_MATCH__';
 
+    // Mesmo se busca for vazia, passamos valores; MySQL tratará "LIKE '%%'"
     paramsScore.push(like, like, like, like, like);
     paramsScore.push(eqCNPJ, likeCNPJ, eqIE, likeIE, isentoChave);
 
@@ -173,17 +218,26 @@ async function listarEmpresas(req, res) {
       ) AS score
     `;
 
+    // ORDER BY
+    let orderSql = 'ORDER BY score DESC, e.fantasia ASC';
+    if (order === 'az') orderSql = 'ORDER BY e.fantasia ASC';
+    else if (order === 'za') orderSql = 'ORDER BY e.fantasia DESC';
+    else if (order === 'oldest') orderSql = 'ORDER BY e.enterprise_id ASC';
+    else if (order === 'newest') orderSql = 'ORDER BY e.enterprise_id DESC';
+
     const [rows] = await pool.query(
       `
       SELECT 
         e.*,
         c.name AS cidade_nome,
         c.code AS cidade_uf,
+        m.fantasia AS matriz_nome,
         ${scoreExpr}
       FROM ocbr_enterprise e
       LEFT JOIN ocbr_city c ON e.city_id = c.city_id
+      LEFT JOIN ocbr_enterprise m ON m.enterprise_id = e.matriz_id
       WHERE ${whereSql}
-      ORDER BY score DESC, e.fantasia ASC
+      ${orderSql}
       LIMIT ? OFFSET ?
       `,
       [...paramsScore, ...paramsWhere, pageSize, offset]
@@ -206,6 +260,7 @@ async function listarEmpresas(req, res) {
   }
 }
 
+/* ==================== BUSCAR POR ID ==================== */
 // GET /api/admin/enterprises/:id
 async function buscarEmpresaPorId(req, res) {
   try {
@@ -213,9 +268,10 @@ async function buscarEmpresaPorId(req, res) {
     if (!id) return res.status(400).json({ ok: false, error: "ID inválido." });
 
     const [rows] = await pool.query(
-      `SELECT e.*, c.name as cidade_nome, c.code as cidade_uf
+      `SELECT e.*, c.name as cidade_nome, c.code as cidade_uf, m.fantasia AS matriz_nome 
          FROM ocbr_enterprise e
          LEFT JOIN ocbr_city c ON e.city_id = c.city_id
+         LEFT JOIN ocbr_enterprise m ON m.enterprise_id = e.matriz_id 
         WHERE e.enterprise_id = ?`,
       [id]
     );
@@ -231,18 +287,53 @@ async function buscarEmpresaPorId(req, res) {
   }
 }
 
+/* ==================== LISTAR MATRIZES ATIVAS (autocomplete) ==================== */
+// GET /api/admin/enterprises/matrizes
+async function listarMatrizesAtivas(req, res) {
+  try {
+    const { search } = req.query;
+    const like = `%${(search || '').trim()}%`;
+
+    const params = [];
+    let where = `matriz_filial = 'Matriz' AND ativo = 1`;
+
+    if (search && search.trim() !== '') {
+      where += ` AND (fantasia LIKE ? OR razao LIKE ? OR cnpj LIKE ?)`;
+      params.push(like, like, like);
+    }
+
+    const [rows] = await pool.query(
+      `SELECT enterprise_id AS id, fantasia, razao, cnpj
+         FROM ocbr_enterprise
+        WHERE ${where}
+        ORDER BY fantasia, razao
+        LIMIT 50`,
+      params
+    );
+
+    res.json({ ok: true, data: rows });
+  } catch (e) {
+    console.error("listarMatrizesAtivas:", e);
+    res.status(500).json({ ok: false, error: "Erro ao listar matrizes." });
+  }
+}
+
+/* ==================== CRIAR EMPRESA ==================== */
 // POST /api/admin/enterprises
 async function criarEmpresa(req, res) {
   try {
     const dados = { ...req.body };
 
+    // Campos que não podem vir no INSERT direto
     delete dados.enterprise_id;
     delete dados.score;
     delete dados.cidade_nome;
     delete dados.cidade_uf;
+    delete dados.matriz_nome;      // importante: alias, não existe na tabela
     delete dados.created_at;
     delete dados.updated_at;
 
+    // Regras básicas
     if (!dados.fantasia || !dados.razao || !dados.cnpj) {
       return res.status(400).json({
         ok: false,
@@ -267,6 +358,7 @@ async function criarEmpresa(req, res) {
 
     dados.cnpj = cnpj;
 
+    // IE
     if (dados.inscricao_estadual !== undefined) {
       if (!validarIEMinima(dados.inscricao_estadual)) {
         return res.status(422).json({ ok: false, error: 'Inscrição Estadual inválida.' });
@@ -291,6 +383,28 @@ async function criarEmpresa(req, res) {
       }
     }
 
+    // Regras de MATRIZ/FILIAL no CREATE
+    const tipo = dados.matriz_filial;
+    if (tipo !== 'Matriz' && tipo !== 'Filial') {
+      return res.status(400).json({ ok: false, error: 'Tipo deve ser "Matriz" ou "Filial".' });
+    }
+
+    if (tipo === 'Matriz') {
+      dados.matriz_id = null; // sempre nulo para Matriz
+    } else {
+      // Filial
+      if (dados.matriz_id == null) {
+        return res.status(400).json({ ok: false, error: 'Selecione a Matriz para cadastrar uma Filial.' });
+      }
+      if (Number(dados.matriz_id) === Number(dados.enterprise_id)) {
+        return res.status(400).json({ ok: false, error: 'Uma empresa não pode ser Matriz de si mesma.' });
+      }
+      const okMatriz = await isMatrizAtiva(dados.matriz_id);
+      if (!okMatriz) {
+        return res.status(400).json({ ok: false, error: 'A empresa informada não é uma Matriz ativa.' });
+      }
+    }
+
     const [result] = await pool.query(
       'INSERT INTO ocbr_enterprise SET ?',
       [dados]
@@ -307,19 +421,32 @@ async function criarEmpresa(req, res) {
   }
 }
 
+/* ==================== ATUALIZAR EMPRESA ==================== */
 // PUT /api/admin/enterprises/:id
 async function atualizarEmpresa(req, res) {
   try {
     const { id } = req.params;
     const payload = { ...req.body };
 
+    // Remover campos que não devem ir ao UPDATE
     delete payload.enterprise_id;
-    delete payload.score;         
+    delete payload.score;
     delete payload.cidade_nome;
     delete payload.cidade_uf;
+    delete payload.matriz_nome;    // importante: alias, não existe na tabela
     delete payload.created_at;
     delete payload.updated_at;
 
+    // Estado atual
+    const [[empAtual]] = await pool.query(
+      'SELECT enterprise_id, matriz_filial, matriz_id, city_id, inscricao_estadual FROM ocbr_enterprise WHERE enterprise_id = ? LIMIT 1',
+      [id]
+    );
+    if (!empAtual) {
+      return res.status(404).json({ ok: false, error: 'Empresa não encontrada.' });
+    }
+
+    // CNPJ
     if (payload.cnpj !== undefined) {
       const cnpj = soNumeros(payload.cnpj);
       if (!isCNPJ(cnpj)) {
@@ -340,6 +467,7 @@ async function atualizarEmpresa(req, res) {
       payload.cnpj = cnpj;
     }
 
+    // IE
     if (payload.inscricao_estadual !== undefined) {
       if (!validarIEMinima(payload.inscricao_estadual)) {
         return res.status(422).json({ ok: false, error: 'Inscrição Estadual inválida.' });
@@ -353,19 +481,11 @@ async function atualizarEmpresa(req, res) {
 
     let cityIdFinal = payload.city_id;
     if (cityIdFinal === undefined) {
-      const [[empAtual]] = await pool.query(
-        'SELECT city_id FROM ocbr_enterprise WHERE enterprise_id = ? LIMIT 1',
-        [id]
-      );
-      cityIdFinal = empAtual ? empAtual.city_id : null;
+      cityIdFinal = empAtual.city_id ?? null;
     }
     let ieFinal = payload.inscricao_estadual;
     if (ieFinal === undefined) {
-      const [[empAtualIE]] = await pool.query(
-        'SELECT inscricao_estadual FROM ocbr_enterprise WHERE enterprise_id = ? LIMIT 1',
-        [id]
-      );
-      ieFinal = empAtualIE ? empAtualIE.inscricao_estadual : null;
+      ieFinal = empAtual.inscricao_estadual ?? null;
     }
     if (ieFinal && String(ieFinal).toUpperCase() !== 'ISENTO' && cityIdFinal) {
       const uf = await getUFByCityId(cityIdFinal);
@@ -394,6 +514,61 @@ async function atualizarEmpresa(req, res) {
       return res.status(422).json({ ok: false, error: "CNPJ não pode ser vazio." });
     }
 
+    // Regras de MATRIZ/FILIAL no UPDATE
+    const tipoAtual = empAtual.matriz_filial;
+    const tipoNovo = Object.prototype.hasOwnProperty.call(payload, 'matriz_filial')
+      ? payload.matriz_filial
+      : tipoAtual;
+
+    if (tipoNovo !== 'Matriz' && tipoNovo !== 'Filial') {
+      return res.status(400).json({ ok: false, error: 'Tipo deve ser "Matriz" ou "Filial".' });
+    }
+
+    // Autorreferência
+    if (payload.matriz_id != null && Number(payload.matriz_id) === Number(id)) {
+      return res.status(400).json({ ok: false, error: 'Uma empresa não pode ser Matriz de si mesma.' });
+    }
+
+    // Filial -> Matriz: limpar vínculo
+    if (tipoAtual === 'Filial' && tipoNovo === 'Matriz') {
+      payload.matriz_id = null;
+    }
+
+    // Matriz -> Filial
+    if (tipoAtual === 'Matriz' && tipoNovo === 'Filial') {
+      const qtd = await countFiliaisByMatriz(id);
+      if (qtd > 0) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Não é possível transformar esta Matriz em Filial pois existem Filiais vinculadas.'
+        });
+      }
+      if (payload.matriz_id == null) {
+        return res.status(400).json({ ok: false, error: 'Selecione a Matriz ao transformar em Filial.' });
+      }
+      const okMatriz = await isMatrizAtiva(payload.matriz_id);
+      if (!okMatriz) {
+        return res.status(400).json({ ok: false, error: 'A empresa selecionada não é uma Matriz ativa.' });
+      }
+    }
+
+    // Permanece/virando Filial: garantir vínculo
+    if (tipoNovo === 'Filial') {
+      const matrizId = payload.matriz_id != null ? payload.matriz_id : empAtual.matriz_id;
+      if (matrizId == null) {
+        return res.status(400).json({ ok: false, error: 'Selecione a Matriz para uma Filial.' });
+      }
+      const okMatriz = await isMatrizAtiva(matrizId);
+      if (!okMatriz) {
+        return res.status(400).json({ ok: false, error: 'A empresa informada não é uma Matriz ativa.' });
+      }
+    }
+
+    // Permanece/virando Matriz: limpar vínculo
+    if (tipoNovo === 'Matriz') {
+      payload.matriz_id = null;
+    }
+
     await pool.query('UPDATE ocbr_enterprise SET ? WHERE enterprise_id = ?', [payload, id]);
 
     res.json({ ok: true, message: 'Empresa atualizada com sucesso!' });
@@ -403,6 +578,7 @@ async function atualizarEmpresa(req, res) {
   }
 }
 
+/* ==================== ATIVAR/DESATIVAR ==================== */
 // PATCH /api/admin/enterprises/:id/status
 async function ativarDesativarEmpresa(req, res) {
   try {
@@ -438,6 +614,7 @@ async function ativarDesativarEmpresa(req, res) {
   }
 }
 
+/* ==================== CONTADOR ATIVOS ==================== */
 // GET /api/admin/enterprises/contador/ativos
 async function contadorAtivos(req, res) {
   try {
@@ -451,6 +628,7 @@ async function contadorAtivos(req, res) {
   }
 }
 
+/* ==================== USUÁRIOS DA EMPRESA ==================== */
 // GET /api/admin/enterprises/:id/users
 async function listarUsuariosDaEmpresa(req, res) {
   try {
@@ -479,7 +657,37 @@ async function listarUsuariosDaEmpresa(req, res) {
   }
 }
 
-// GET /api/admin/enterprises/:id/cobranca | ENDEREÇO DE COBRANÇA (ocbr_enterprise_cobranca)
+/* ==================== FILIAIS DA MATRIZ ==================== */
+// GET /api/admin/enterprises/:id/filiais
+async function listarFiliaisDaMatriz(req, res) {
+  try {
+    const { id } = req.params;
+
+    const [rows] = await pool.query(
+      `SELECT 
+         e.enterprise_id,
+         e.fantasia,
+         e.cnpj,
+         e.ativo,
+         e.matriz_filial,
+         c.name AS cidade_nome,
+         c.code AS cidade_uf
+       FROM ocbr_enterprise e
+       LEFT JOIN ocbr_city c ON e.city_id = c.city_id
+       WHERE e.matriz_id = ?
+       ORDER BY e.fantasia ASC`,
+      [id]
+    );
+
+    res.json({ ok: true, data: rows });
+  } catch (e) {
+    console.error("listarFiliaisDaMatriz:", e);
+    res.status(500).json({ ok: false, error: "Erro ao listar filiais." });
+  }
+}
+
+/* ==================== COBRANÇA (GET/PUT/DELETE) ==================== */
+// GET /api/admin/enterprises/:id/cobranca
 async function obterEnderecoCobranca(req, res) {
   try {
     const enterpriseId = Number(req.params.id);
@@ -522,24 +730,24 @@ async function salvarEnderecoCobranca(req, res) {
     if (input.same_as_enterprise) {
       // Copiar do endereço principal da empresa
       toSave = {
-        endereco:    emp.endereco || null,
-        numero:      emp.numero || null,
+        endereco: emp.endereco || null,
+        numero: emp.numero || null,
         complemento: emp.complemento || null,
-        bairro:      emp.bairro || null,
-        cep:         emp.cep ? String(emp.cep).slice(0, 10) : null,
-        city_id:     emp.city_id || null,
-        updated_at:  new Date()
+        bairro: emp.bairro || null,
+        cep: emp.cep ? String(emp.cep).slice(0, 10) : null,
+        city_id: emp.city_id || null,
+        updated_at: new Date()
       };
     } else {
       // Usar o payload enviado
       toSave = {
-        endereco:    input.endereco ?? null,
-        numero:      input.numero ?? null,
+        endereco: input.endereco ?? null,
+        numero: input.numero ?? null,
         complemento: input.complemento ?? null,
-        bairro:      input.bairro ?? null,
-        cep:         input.cep ? String(input.cep).slice(0, 10) : null,
-        city_id:     input.city_id ?? null,
-        updated_at:  new Date()
+        bairro: input.bairro ?? null,
+        cep: input.cep ? String(input.cep).slice(0, 10) : null,
+        city_id: input.city_id ?? null,
+        updated_at: new Date()
       };
     }
 
@@ -595,14 +803,17 @@ async function removerEnderecoCobranca(req, res) {
   }
 }
 
+/* ==================== EXPORTS ==================== */
 module.exports = {
   listarEmpresas,
   buscarEmpresaPorId,
+  listarMatrizesAtivas,
   criarEmpresa,
   atualizarEmpresa,
   ativarDesativarEmpresa,
   contadorAtivos,
   listarUsuariosDaEmpresa,
+  listarFiliaisDaMatriz,
   obterEnderecoCobranca,
   salvarEnderecoCobranca,
   removerEnderecoCobranca,
