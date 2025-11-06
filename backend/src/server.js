@@ -10,7 +10,6 @@ const adminRoutes = require("./routes/adminRoutes");
 const contatoRoutes = require("./routes/contatoRoutes");
 const publicRoutes = require("./routes/publicRoutes");
 const adminEnterpriseRoutes = require("./routes/adminEnterpriseRoutes");
-const adminRelatoriosRoutes = require("./routes/adminRelatorios");
 
 const app = express();
 
@@ -92,7 +91,6 @@ app.use("/api/admin/enterprises", adminEnterpriseRoutes);
 app.use("/api/public", publicRoutes);  
 app.use("/api/admin", adminRoutes);
 app.use("/api/contatos", contatoRoutes);
-app.use("/api/admin/relatorios", adminRelatoriosRoutes); 
 
 // ---------- Tratamento básico de erros (inclui erro de CORS) ----------
 app.use((err, req, res, next) => {

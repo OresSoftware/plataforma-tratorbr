@@ -7,7 +7,6 @@ import "./style/AdminDashboardPage.css";
 import { apiAdminEnterprises } from "../services/apiAdminEnterprises";
 import { apiAdminUsers } from "../services/apiAdminUsers";
 import { apiAdminContatos } from "../services/apiAdminContatos";
-import RelatorioCard from './components/RelatorioCard';
 
 // Gráficos
 import {
@@ -332,7 +331,7 @@ function AdminDashboardPage() {
             </div>
           </div>
         </div>
-        {/* <RelatorioCard /> */}
+
       </div>
     </AdminLayout>
   );
