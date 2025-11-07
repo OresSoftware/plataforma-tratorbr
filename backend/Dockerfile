@@ -10,7 +10,6 @@ WORKDIR /app
 # ambiente padrão (pode sobrescrever no compose)
 ENV NODE_ENV=production
 ENV PORT=3069
-ENV MANUFACTURER_DIR=/usr/share/nginx/html/images/manufacturer
 
 # copie manifestos e instale deps de produção (cache eficiente)
 COPY package*.json ./

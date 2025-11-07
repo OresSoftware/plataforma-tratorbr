@@ -54,7 +54,7 @@ app.get("/healthz", (req, res) => res.status(200).send("ok"));
  */
 const manufacturerDir =
   process.env.MANUFACTURER_DIR ||
-  path.resolve(__dirname, "/usr/share/nginx/html/images/manufacturer");
+  path.resolve(__dirname, "../frontend/public/images/manufacturer");
 
 app.use(
   "/images/manufacturer",
