@@ -3,11 +3,13 @@ const path = require("path");
 const fs = require("fs");
 
 function getManufacturerDir() {
-  // Ajuste este resolve se sua árvore for diferente.
-  // Ele sobe 2 níveis a partir de /backend/src/utils/paths.js até /backend
-  // e então navega para /frontend/public/images/manufacturer
-  const dir = path.resolve(__dirname, "../../../frontend/public/images/manufacturer");
-  return dir;
+  // 1º: se houver variável de ambiente, usa ela (produção)
+  const envDir = process.env.LOGO_DIR;
+  if (envDir && envDir.trim()) {
+    return envDir.trim();
+  }
+  // 2º: fallback (desenvolvimento): dentro do repo
+  return path.resolve(__dirname, "../../../frontend/public/images/manufacturer");
 }
 
 function ensureDirSync(dir) {
