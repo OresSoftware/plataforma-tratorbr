@@ -6,7 +6,7 @@ function getManufacturerDir() {
   // Ajuste este resolve se sua árvore for diferente.
   // Ele sobe 2 níveis a partir de /backend/src/utils/paths.js até /backend
   // e então navega para /frontend/public/images/manufacturer
-  const dir = path.resolve(__dirname, "../../../frontend/public/images/manufacturer");
+  const dir = path.resolve(__dirname, "/usr/share/nginx/html/images/manufacturer");
   return dir;
 }
 
