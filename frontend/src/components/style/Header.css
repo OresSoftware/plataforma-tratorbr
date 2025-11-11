@@ -9,12 +9,14 @@ body {
 
 .header {
   background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  /* border-bottom: 1px solid #e5e7eb; */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   z-index: 1000;
   height: 80px;
+  position: fixed;
+  width: 100%;
 }
 
 .header-container {
@@ -91,8 +93,6 @@ body {
 .user-area img {
   width: 20px;
   height: 20px;
-
-
   transition: transform 0.3s ease;
 }
 

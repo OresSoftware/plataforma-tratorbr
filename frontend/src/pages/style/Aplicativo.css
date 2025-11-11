@@ -1164,7 +1164,7 @@ div#planos {
   justify-content: center;
   margin-bottom: 80px;
   gap: 50px;
-  margin-top: 60px;
+  margin-top: 130px;
   align-items: center;
 }
 
@@ -1325,6 +1325,7 @@ div#planos {
 @media (max-width: 1027px) {
   .section-trator {
     flex-direction: column-reverse;
+    margin-top: 120px;
   }
 }
 
@@ -1972,4 +1973,9 @@ div#recurso-card-6 {
     width: 100%;
   }
 
+}
+
+.titulo{
+  margin-bottom: -15px;
+  font-size: 18px;
 }

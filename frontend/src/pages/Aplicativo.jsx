@@ -87,6 +87,14 @@ const PlanosPage = () => {
     {
       pergunta: "Como posso cancelar minha assinatura?",
       resposta: "Você pode cancelar sua assinatura a qualquer momento entrando em contato conosco via WhatsApp ou email. Não há taxas de cancelamento e o processo é simples e rápido."
+    },
+    {
+      pergunta: "Quais máquinas estão no banco de dados?",
+      resposta: "Nosso Banco de Dados é o maior e mais completo do Brasil, contendo praticamente todas as marcas e modelos de máquinas agrícolas comercializadas no Brasil."
+    },
+    {
+      pergunta: "Como posso cancelar minha assinatura?",
+      resposta: "Você pode cancelar sua assinatura a qualquer momento entrando em contato conosco via WhatsApp ou email. Não há taxas de cancelamento e o processo é simples e rápido."
     }
   ];
 
@@ -133,7 +141,7 @@ const PlanosPage = () => {
             <h2>Conectando o campo à tecnologia</h2>
             <p>Com o app TratorBR, agricultores e concessionários ganham uma nova{" "}<br />forma de se conectar, negociar, e gerenciar suas máquinas com <br />eficiência e agilidade. Tudo na palma da mão.</p>
             <div className='botoesApp'>
-              <button className='entrarGestor'><img src="" alt="" />Acessar Painel</button>
+              <a href="/admin/login"><button className='entrarGestor'><img src="" alt="" />Acessar Painel</button></a>
 
               <a href="https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20preciso%20de%20suporte%20na%20plataforma%20de%20gestão." target="_blank" rel="noopener noreferrer"><button className='suporteApp'>Suporte</button></a>
             </div>
@@ -264,19 +272,21 @@ const PlanosPage = () => {
               <div className="context-item">
                 <img src={img_um} alt="Trator no campo" className="context-image" />
                 <div className="context-overlay">
+                  <h2 className='titulo'><strong>Concessionários</strong></h2>
                   <p>Conectamos o melhor preço e qualidade, gerencia suas análises
                     de um só lugar e ainda te dá a certeza de todas as informações do seu estoque no
                     campo.</p>
-                  <button className="context-btn">Saiba mais</button>
+                  <a href="/contato"><button className="context-btn">Saiba mais</button></a>
                 </div>
               </div>
               <div className="context-item">
                 <img src={img_dois} alt="Agricultor trabalhando" className="context-image" />
                 <div className="context-overlay">
+                  <h2 className='titulo'><strong>Agricultor</strong></h2>
                   <p>Venda suas máquinas no preço de mercado, encontre
                     concessionários perto de você e negocie com segurança direto no
                     app.</p>
-                  <button className="context-btn">Saiba mais</button>
+                  <a href="/contato"><button className="context-btn">Saiba mais</button></a>
                 </div>
               </div>
             </div>
@@ -360,7 +370,7 @@ const PlanosPage = () => {
           </div>
         </section>
 
-        
+
         {/* Modal de Formulário */}
         {mostrarFormulario && (
           <div className="modal-overlay" onClick={handleFecharFormulario}>
@@ -426,11 +436,11 @@ const PlanosPage = () => {
             </div>
           </div>
         )}
-          </div>
-          <WhatsappFlutuante />
-          <VoltarAoTopoBtn />
-          <Footer />
       </div>
+      <WhatsappFlutuante />
+      <VoltarAoTopoBtn />
+      <Footer />
+    </div>
 
   );
 };
