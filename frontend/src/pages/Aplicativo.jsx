@@ -140,11 +140,11 @@ const PlanosPage = () => {
             </div>
             <h2>Conectando o campo à tecnologia</h2>
             <p>Com o app TratorBR, agricultores e concessionários ganham uma nova{" "}<br />forma de se conectar, negociar, e gerenciar suas máquinas com <br />eficiência e agilidade. Tudo na palma da mão.</p>
-            <div className='botoesApp'>
+            {/* <div className='botoesApp'>
               <a href="/admin/login"><button className='entrarGestor'><img src="" alt="" />Acessar Painel</button></a>
 
               <a href="https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20preciso%20de%20suporte%20na%20plataforma%20de%20gestão." target="_blank" rel="noopener noreferrer"><button className='suporteApp'>Suporte</button></a>
-            </div>
+            </div> */}
           </div>
           <div className="phones">
             <img src={iph15} alt="Tela App TratorBR Web" />

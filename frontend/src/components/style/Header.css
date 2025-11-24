@@ -34,6 +34,7 @@ body {
   align-items: center;
   text-decoration: none;
   gap: 0.75rem;
+  width: 350px;
 }
 
 .logo-mark {
@@ -84,10 +85,10 @@ body {
   display: flex;
   align-items: center;
   gap: 1rem;
-  width: 200px;
+  width: 350px;
+  height: auto;
   flex-direction: row-reverse;
-
-
+  gap: 10px
 }
 
 .user-area img {
@@ -570,7 +571,8 @@ body {
 /* Esconde os links por padrão */
 .mobile-dropdown-item .mobile-nav-link {
   display: none;
-  padding-left: 30px; /* dá um recuo pra diferenciar do botão */
+  padding-left: 30px;
+  /* dá um recuo pra diferenciar do botão */
   transition: all 0.5s ease;
 }
 
@@ -610,7 +612,8 @@ body {
 
 /* Mostra suavemente quando ativo */
 .mobile-dropdown-item.active .mobile-dropdown-content {
-  max-height: 200px; /* valor suficiente para os links caberem */
+  max-height: 200px;
+  /* valor suficiente para os links caberem */
   transition: max-height 0.4s ease-in-out;
 }
 
@@ -629,4 +632,73 @@ body {
 
 .arrow.rotate {
   transform: rotate(180deg);
+}
+
+.admin-suporte {
+  background-color: #F3F5F5;
+  padding: 0.80rem 1rem;
+  border-radius: 20px 0 20px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  text-align: center;
+  -webkit-transition: max-width 0.3s ease-in-out, padding 0.3s ease-in-out;
+  transition: max-width 0.3s ease-in-out, padding 0.3s ease-in-out;
+}
+
+.admin-suporte-texto {
+  max-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: max-width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+  color: #15383E;
+  margin-left: 0;
+  line-height: 30px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.admin-suporte:hover .admin-suporte-texto {
+  max-width: 150px;
+  margin-left: 0.75rem;
+}
+
+.admin-suporte a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-suporte img {
+  width: 30px;
+  height: auto;
+}
+
+.admin-btn {
+  background-color: #15383E;
+  color: white;
+  padding: 0.80rem 1.4rem;
+  border-radius: 20px 0 20px 20px;
+  font-weight: 600;
+  font-size: 16px;
+  font-family: 'Montserrat', sans-serif;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.admin-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.9s ease;
+}
+
+.admin-btn:hover::before {
+  left: 100%;
 }
