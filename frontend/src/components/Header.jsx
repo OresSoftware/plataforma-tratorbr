@@ -77,11 +77,17 @@ const Header = () => {
 
         {/* Área de Usuário Simplificada */}
         <div className="user-area">
-          <a href="https://www.instagram.com/tratorbr.oficial/" target="_blank" rel="noopener noreferrer"><img src="/footer/instagram.png" alt="Instagram" /></a>
-          <a href="https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar?" target="_blank" rel="noopener noreferrer"><img src="/footer/whatsapp.png" alt="WhatsApp" /></a>
-          {/* <Link to="/admin/login" className="admin-btn">
-            Área Admin
-          </Link> */}
+          {/* <a href="https://www.instagram.com/tratorbr.oficial/" target="_blank" rel="noopener noreferrer"><img src="/footer/instagram.png" alt="Instagram" /></a>
+          <a href="https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar?" target="_blank" rel="noopener noreferrer"><img src="/footer/whatsapp.png" alt="WhatsApp" /></a> */}
+          <Link to="/admin/login" target="_blank" className="admin-btn">
+            Acessar Painel
+          </Link>
+
+          <div className="admin-suporte">
+            <a href="https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar%20com%20o%20aplicativo?" target="_blank" rel="noopener noreferrer"><img src="/footer/suporte.png" alt="WhatsApp" />
+              <span className="admin-suporte-texto">Suporte</span>
+            </a>
+          </div>
         </div>
 
         {/*(Mobile) */}
