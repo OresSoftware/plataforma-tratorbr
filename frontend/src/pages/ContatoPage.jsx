@@ -7,9 +7,9 @@ import { FaPhoneAlt, FaMapMarkerAlt, FaEnvelope, } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
-import Calendly from '../components/CalendlyEmbed';
+import CalendlyLink from "../components/CalendlyLink";
 import './style/ContatoPage.css';
-import CalendlyBadge from '../components/CalendlyBadge';
+
 
 const EMAIL_PUBLICO = import.meta.env.VITE_CONTATO_EMAIL || "contato@tratorbr.com.br";
 
@@ -74,7 +74,6 @@ export default function ContatoPage() {
 
   return (
     <main className="contato-wrapper">
-      <CalendlyBadge />
       <Header />
 
       {/* CONTATO  */}
@@ -120,73 +119,23 @@ export default function ContatoPage() {
             {okMsg && <p className="okmsg">{okMsg}</p>}
           </form>
         </div>
-        {/* 
-        <Calendly /> */}
       </section>
 
+      <section className="cta-section-agendamento">
+        <div className="container-sobre">
+          <div className="cta-content">
+            <h2 className="cta-title-agendamento">Pronto para revolucionar sua gestão rural?</h2>
+            <p className="cta-description">
+              Junte-se a centenas de produtores que já transformaram
+              sua gestão com a TratorBR.
+            </p>
 
-
-      {/* AGENDE UMA REUNIÃO  */}
-      {/* <section className="excluir-conta-container">
-
-        <div className="excluir-conta-main">
-          <Calendly />
-          <div className="excluir-conta-info">
-            <h2>Deseja agendar uma reuniao?</h2>
-            <p>Eaê! 👋<br></br>Bem-vindo ao TratorBR!</p>
-            <p>Você está prestes a agendar uma reunião comigo para explorar como podemos potencializar sua estratégia de avaliação e precificação de máquinas agrícolas!</p>
+            <button className='agendamento-button'>
+              <CalendlyLink />
+            </button>
           </div>
         </div>
-      </section> */}
-
-      {/* <section className="excluir-conta-container">
-        <div className="excluir-conta-main">
-          <div className="excluir-conta-info">
-            <h2>Em que podemos te ajudar?</h2>
-            <p>Encaminhe dúvidas, solicite um orçamento e saiba quais as melhores soluções em máquinas e tecnologias agrícolas disponíveis para você. Temos um time especializado para te atender.</p>
-          </div>
-
-          <div className="agendamento-dois ">
-            <div className="contato-card-1">
-              <h2 className='conth2'>Fale com a TratorBR!</h2>
-              <div className='divsoria-dois'></div>
-              <form onSubmit={onSubmit} noValidate>
-                <input type="text" name="empresa" autoComplete="off" value={form.empresa} onChange={(e) => setForm({ ...form, empresa: e.target.value })} className="hp" tabIndex={-1} aria-hidden="true" />
-
-                <div className="form-grid">
-                  <div className="field field--full">
-                    <input type="text" placeholder="Seu Nome" value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} aria-invalid={!!errors.nome} className="form-input" />
-                    {errors.nome && <small className="err">{errors.nome}</small>}
-                  </div>
-
-                  <div className="field">
-                    <input type="email" placeholder="Seu Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} aria-invalid={!!errors.email} className="form-input" />
-                    {errors.email && <small className="err">{errors.email}</small>}
-                  </div>
-
-                  <div className="field">
-                    <input inputMode="tel" placeholder="Seu WhatsApp" value={form.telefone} onChange={(e) => setForm({ ...form, telefone: maskTelefone(e.target.value) })} aria-invalid={!!errors.telefone} className="form-input" />
-                    {errors.telefone && <small className="err">{errors.telefone}</small>}
-                  </div>
-
-                  <div className="field field--full">
-                    <textarea rows={5} placeholder="Mensagem" value={form.mensagem} onChange={(e) => setForm({ ...form, mensagem: e.target.value })} aria-invalid={!!errors.mensagem} className="form-textarea" />
-                    {errors.mensagem && <small className="err">{errors.mensagem}</small>}
-                  </div>
-                </div>
-
-                <div className="form-actions">
-                  <button className="btn-enviar" type="submit" disabled={enviando}>
-                    {enviando ? "Enviando..." : "Enviar"}
-                  </button>
-                </div>
-
-                {okMsg && <p className="okmsg">{okMsg}</p>}
-              </form>
-            </div>
-          </div>
-        </div>
-      </section> */}
+      </section>
 
       {/* MAPA */}
       <section className="contato-onde">
@@ -219,14 +168,10 @@ export default function ContatoPage() {
             </div>
 
             <a
-              className="whatsapp-btn-ajuda"
-              href={'https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar?'}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <FaWhatsapp className="nav-icon" size={22} />
+              className="whatsapp-btn-ajuda" href={'https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar?'} target="_blank" rel="noreferrer"> <FaWhatsapp className="nav-icon" size={22} />
               Chamar no WhatsApp
             </a>
+
           </div>
 
           <div className="onde-mapa">
@@ -242,10 +187,7 @@ export default function ContatoPage() {
         </div>
       </section>
 
-
-
-
-      {/* <WhatsappFlutuante /> */}
+      <WhatsappFlutuante />
       <VoltarAoTopoBtn />
       <Footer />
     </main>
