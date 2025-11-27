@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 
-const CALENDLY_URL = 'https://calendly.com/administrativo-tratorbr/reuniao-de-apresentacao-tratorbr';
+const CALENDLY_URL = 'https://calendly.com/tratorbr/tratorbr';
 
-const CalendlyLink = ({ linkText = 'Agende a sua Reunião' }) => {
+const CalendlyLink = ({ linkText = 'Agende a sua Demonstração' }) => {
 
   useEffect(() => {
     const link = document.createElement('link');
