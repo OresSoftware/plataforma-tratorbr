@@ -1175,6 +1175,7 @@ div#planos {
   font-family: 'Ethnocentric', sans-serif;
   color: #15383E;
   line-height: 1.1;
+  margin-top: 60px;
 }
 
 .section-trator p {
@@ -1190,6 +1191,12 @@ div#planos {
   align-items: center;
   margin-top: 20px;
   margin-bottom: -45px;
+}
+
+.imgLogo{
+  width: auto;
+  height: 55px;
+  margin-left: 15px;
 }
 
 .logo-container h1 {
@@ -1287,7 +1294,7 @@ div#planos {
   .section-trator h2 {
     font-size: 24px;
     text-align: center;
-    margin-top: -4px;
+    margin-top: 10px;
   }
 
   .section-trator p {
@@ -1302,8 +1309,13 @@ div#planos {
     line-height: 1;
   }
 
-  .logo-container img {
+  .imgApp {
     width: 50px;
+  }
+
+  .imgLogo{
+    height: 25px;
+    width: auto;
   }
 
   .logo-container {

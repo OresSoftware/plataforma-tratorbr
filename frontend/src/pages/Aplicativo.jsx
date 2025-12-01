@@ -6,6 +6,7 @@ import appIphone from '/imagens-aplicativo/baixar-android.png';
 import appAndroid from '/imagens-aplicativo/baixar-apple.png';
 import iphone02 from '/imagens-aplicativo/iphone15-02.png';
 import imgApp from '/imagens-aplicativo/imagem-app.png';
+import imgLogoE from '/imagens-aplicativo/logo-vetorizada-escrita.png';
 import img_um from '/imagens-aplicativo/img1.png';
 import img_dois from '/imagens-aplicativo/img2.png';
 import iph15 from '/imagens-aplicativo/iph15.png';
@@ -135,8 +136,9 @@ const PlanosPage = () => {
         <section className="section-trator">
           <div className="text-content">
             <div className="logo-container">
-              <img src={imgApp} alt="Logo Trator BR" />
-              <h1>TratorBR</h1>
+              <img src={imgApp} alt="Logo Trator BR" className='imgApp'  />
+               <img src={imgLogoE} alt="Logo Trator BR" className='imgLogo' />
+              {/* <h1>TratorBR</h1> */}
             </div>
             <h2>Conectando o campo à tecnologia</h2>
             <p>Com o app TratorBR, agricultores e concessionários ganham uma nova{" "}<br />forma de se conectar, negociar, e gerenciar suas máquinas com <br />eficiência e agilidade. Tudo na palma da mão.</p>
