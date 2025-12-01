@@ -34,7 +34,7 @@ body {
   align-items: center;
   text-decoration: none;
   gap: 0.75rem;
-  width: 350px;
+  width: 380px;
 }
 
 .logo-mark {
@@ -85,7 +85,7 @@ body {
   display: flex;
   align-items: center;
   gap: 1rem;
-  width: 350px;
+  width: 380px;
   height: auto;
   flex-direction: row-reverse;
   gap: 10px
@@ -637,7 +637,7 @@ body {
 
 .admin-suporte {
   background-color: #F3F5F5;
-  padding: 0.80rem 1rem;
+  padding: 0.80rem 0.8rem;
   border-radius: 20px 0 20px 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   display: flex;
