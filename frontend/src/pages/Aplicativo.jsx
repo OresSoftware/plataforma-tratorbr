@@ -16,6 +16,7 @@ import { WifiOff } from "lucide-react";
 import iph03 from '/imagens-aplicativo/iphone-03.png';
 import qrcode from '/imagens-aplicativo/qr-code.png';
 import qrcodeapple from '/imagens-aplicativo/qr-code-apple.jpg';
+import CalendlyFlutuante from "../components/CalendlyFlutuante";
 import './style/Aplicativo.css';
 
 
@@ -136,8 +137,8 @@ const PlanosPage = () => {
         <section className="section-trator">
           <div className="text-content">
             <div className="logo-container">
-              <img src={imgApp} alt="Logo Trator BR" className='imgApp'  />
-               <img src={imgLogoE} alt="Logo Trator BR" className='imgLogo' />
+              <img src={imgApp} alt="Logo Trator BR" className='imgApp' />
+              <img src={imgLogoE} alt="Logo Trator BR" className='imgLogo' />
               {/* <h1>TratorBR</h1> */}
             </div>
             <h2>Conectando o campo à tecnologia</h2>
@@ -439,7 +440,8 @@ const PlanosPage = () => {
           </div>
         )}
       </div>
-      <WhatsappFlutuante />
+      {/* <WhatsappFlutuante />  */}
+      <CalendlyFlutuante />
       <VoltarAoTopoBtn />
       <Footer />
     </div>

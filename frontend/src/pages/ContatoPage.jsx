@@ -7,6 +7,7 @@ import { FaPhoneAlt, FaMapMarkerAlt, FaEnvelope, } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
+// import CalendlyFlutuante from "../components/CalendlyFlutuante";
 import CalendlyLink from "../components/CalendlyLink";
 import './style/ContatoPage.css';
 
@@ -73,9 +74,9 @@ export default function ContatoPage() {
   }
 
   return (
+
     <main className="contato-wrapper">
       <Header />
-
       <section className="contato-hero">
         <h1>Em que podemos te ajudar?</h1>
         <div className='divsoria'></div>
@@ -190,7 +191,8 @@ export default function ContatoPage() {
         </div>
       </section>
 
-      <WhatsappFlutuante />
+      {/* <WhatsappFlutuante /> */}
+      {/* <CalendlyFlutuante /> */}
       <VoltarAoTopoBtn />
       <Footer />
     </main>
