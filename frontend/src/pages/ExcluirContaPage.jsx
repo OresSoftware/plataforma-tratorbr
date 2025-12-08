@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import Footer from '../components/footer';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
+import CalendlyFlutuante from "../components/CalendlyFlutuante";
 import { WifiOff } from "lucide-react";
 import './style/ExcluirContaPage.css';
 
@@ -226,7 +227,8 @@ const ExcluirContaPage = () => {
 
         </div>
       </main>
-      <WhatsappFlutuante />
+      {/* <WhatsappFlutuante /> */}
+      <CalendlyFlutuante />
       <VoltarAoTopoBtn />
       <Footer />
     </div>

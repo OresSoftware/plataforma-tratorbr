@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import Footer from '../components/footer';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
+import CalendlyFlutuante from "../components/CalendlyFlutuante";
 import './style/TermosEPolitica.css';
 
 const TermosEPolitica = () => {
@@ -150,7 +151,8 @@ const TermosEPolitica = () => {
 
         </div>
       </main>
-      <WhatsappFlutuante />
+      {/* <WhatsappFlutuante /> */}
+      {/* <CalendlyFlutuante /> */}
       <VoltarAoTopoBtn />
       <Footer />
     </div>

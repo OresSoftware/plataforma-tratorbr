@@ -1,0 +1,37 @@
+.flutuante-button {
+    position: fixed;
+    /* width: 100px;
+    height: 50px; */
+    bottom: 40px;
+    right: 15px;
+    background-color: #409535; 
+    border-radius: 20px 20px 0 20px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 1000;
+    transition: all 0.3s ease, opacity 0.4s ease, transform 0.4s ease; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+    padding: 0.80rem 1.4rem;
+
+}
+
+.flutuante-button.hidden-by-menu {
+    opacity: 0;
+    transform: translateX(100px);
+    pointer-events: none;
+}
+
+.flutuante-button:hover:not(.hidden-by-menu) {
+    transform: translateX(0) scale(1.1);
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4); 
+}
+
+@media (max-width: 768px) {
+    .flutuante-button{
+        bottom: 15px;
+    }
+}
