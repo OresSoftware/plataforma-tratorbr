@@ -1,4 +1,3 @@
-// src/server.js
 require("dotenv-flow").config();
 
 const express = require("express");
@@ -16,7 +15,7 @@ const app = express();
 // Se houver proxy reverso (NGINX/Cloudflare), isso garante IP correto
 app.set("trust proxy", 1);
 
-// ==== CORS DINÂMICO (lendo do .env) ====
+// CORS DINÂMICO (lendo do .env) 
 function parseOrigins(list) {
   return (list || "")
     .split(",")
@@ -28,7 +27,6 @@ const allowlist = new Set(parseOrigins(process.env.FRONTEND_ORIGINS || ""));
 app.use(
   cors({
     origin: (origin, cb) => {
-      // Permite requisições sem "Origin" (ex.: curl/healthcheck)
       if (!origin) return cb(null, true);
       if (allowlist.has(origin)) return cb(null, true);
       return cb(new Error("Not allowed by CORS: " + origin));
@@ -65,14 +63,14 @@ app.use(
   })
 );
 
-// ---------- Rotas de consentimento de cookies ----------
+// Rotas de consentimento de cookies 
 app.post("/api/consent", (req, res) => {
-  const { consent } = req.body; // "true" ou "false"
+  const { consent } = req.body;
   res.cookie("cookieConsent", consent, {
     httpOnly: false,
     secure: process.env.NODE_ENV === "production",
     sameSite: "Lax",
-    maxAge: 1000 * 60 * 60 * 24 * 365, // 1 ano
+    maxAge: 1000 * 60 * 60 * 24 * 365,
   });
   res.json({ message: "Consentimento salvo" });
 });
@@ -86,13 +84,13 @@ app.post("/api/consent/clear", (req, res) => {
   res.json({ message: "Consentimento removido" });
 });
 
-// ---------- Suas rotas /api ----------
+// Suas rotas /api 
 app.use("/api/admin/enterprises", adminEnterpriseRoutes);
-app.use("/api/public", publicRoutes);  
+app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/contatos", contatoRoutes);
 
-// ---------- Tratamento básico de erros (inclui erro de CORS) ----------
+// Tratamento básico de erros (inclui erro de CORS) 
 app.use((err, req, res, next) => {
   if (err && /Not allowed by CORS/i.test(err.message)) {
     return res.status(403).json({ error: "CORS bloqueado para esta origem." });
@@ -102,7 +100,7 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3001;
-const HOST = "0.0.0.0"; // importante para Docker/containers
+const HOST = "0.0.0.0";
 
 app.listen(PORT, HOST, () => {
   console.log(`Servidor backend rodando na porta ${PORT}`);

@@ -1,15 +1,10 @@
-// backend/src/controllers/adminUserController.js
 const pool = require("../config/db");
 const bcrypt = require('bcrypt');
 
-// Helpers
 const soNumeros = (str) => String(str || '').replace(/\D/g, '');
-// aceita apenas YYYY-MM-DD
 const isISODate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s || '').trim());
 
-/**
- * GET /api/admin/users
- */
+/* GET /api/admin/users */
 async function listarUsuarios(req, res) {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
@@ -21,12 +16,12 @@ async function listarUsuarios(req, res) {
 
     // filtros por relacionamento
     const enterpriseId = parseInt(req.query.enterprise_id ?? '', 10);
-    const cargoId      = parseInt(req.query.cargo_id ?? '', 10);
-    const cityId       = parseInt(req.query.city_id ?? '', 10);
+    const cargoId = parseInt(req.query.cargo_id ?? '', 10);
+    const cityId = parseInt(req.query.city_id ?? '', 10);
 
     // período (date_added)
     const dateFrom = String(req.query.date_from || '').trim();
-    const dateTo   = String(req.query.date_to   || '').trim();
+    const dateTo = String(req.query.date_to || '').trim();
 
     // Ordenação
     const rawSort = String(req.query.sort || 'name_asc').toLowerCase();
@@ -39,13 +34,13 @@ async function listarUsuarios(req, res) {
     const params = [];
 
     // status
-    if (status === 'ativos')   where.push('u.status = 1');
+    if (status === 'ativos') where.push('u.status = 1');
     if (status === 'inativos') where.push('u.status = 0');
 
     // empresa/cargo/cidade
     if (!Number.isNaN(enterpriseId)) { where.push('u.enterprise_id = ?'); params.push(enterpriseId); }
-    if (!Number.isNaN(cargoId))      { where.push('u.cargo_id = ?');      params.push(cargoId); }
-    if (!Number.isNaN(cityId))       { where.push('u.city_id = ?');       params.push(cityId); }
+    if (!Number.isNaN(cargoId)) { where.push('u.cargo_id = ?'); params.push(cargoId); }
+    if (!Number.isNaN(cityId)) { where.push('u.city_id = ?'); params.push(cityId); }
 
     // busca
     if (busca) {
@@ -124,9 +119,7 @@ async function listarUsuarios(req, res) {
   }
 }
 
-/**
- * GET /api/admin/users/:id
- */
+/* GET /api/admin/users/:id */
 async function buscarUsuarioPorId(req, res) {
   try {
     const { id } = req.params;
@@ -164,15 +157,12 @@ async function buscarUsuarioPorId(req, res) {
   }
 }
 
-/**
- * PUT /api/admin/users/:id
- */
+/* PUT /api/admin/users/:id */
 async function atualizarUsuario(req, res) {
   try {
     const { id } = req.params;
     const payload = { ...req.body };
 
-    // Remover campos que não devem ser atualizados diretamente
     delete payload.user_id;
     delete payload.password;
     delete payload.salt;
@@ -196,7 +186,6 @@ async function atualizarUsuario(req, res) {
     delete payload.plano_id;
     delete payload.sequencial;
 
-    // Atualizar date_modified
     payload.date_modified = new Date();
 
     // Validar email único (exceto o próprio registro)
@@ -219,9 +208,7 @@ async function atualizarUsuario(req, res) {
   }
 }
 
-/**
- * PATCH /api/admin/users/:id/status
- */
+/* PATCH /api/admin/users/:id/status */
 async function ativarDesativarUsuario(req, res) {
   try {
     const { id } = req.params;
@@ -256,9 +243,7 @@ async function ativarDesativarUsuario(req, res) {
   }
 }
 
-/**
- * POST /api/admin/users/:id/reset-password
- */
+/* POST /api/admin/users/:id/reset-password */
 async function resetarSenha(req, res) {
   try {
     const { id } = req.params;
@@ -300,9 +285,7 @@ async function resetarSenha(req, res) {
   }
 }
 
-/**
- * GET /api/admin/users/contador/ativos
- */
+/* GET /api/admin/users/contador/ativos */
 async function contadorAtivos(req, res) {
   try {
     const [[{ total }]] = await pool.query(
@@ -315,16 +298,7 @@ async function contadorAtivos(req, res) {
   }
 }
 
-/**
- * GET /api/admin/cities
- * Lista de cidades para os filtros do front.
- * Query params:
- *  - q        : termo (nome da cidade OU UF)
- *  - uf       : filtra por UF exata (ex.: SP)
- *  - page     : padrão 1
- *  - pageSize : padrão 50, máx 1000, mín 5
- * Retorno: { ok, data: [{ city_id, name, code }], page, pageSize, total }
- */
+// GET /api/admin/cities
 async function listarCidades(req, res) {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
@@ -380,6 +354,5 @@ module.exports = {
   ativarDesativarUsuario,
   resetarSenha,
   contadorAtivos,
-  // novo export:
   listarCidades,
 };

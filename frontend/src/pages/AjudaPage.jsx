@@ -16,33 +16,43 @@ const AjudaPage = () => {
   const faqData = [
     {
       pergunta: "Como funciona a plataforma TratorBR?",
-      introducao: "A TratorBR é uma plataforma digital que conecta compradores e vendedores de máquinas agrícolas.",
-      resposta: "A TratorBR é uma plataforma digital que conecta compradores e vendedores de máquinas agrícolas de forma segura e eficiente. Oferecemos avaliações precisas baseadas em tecnologia avançada, sistema de negociação transparente e suporte especializado durante todo o processo. Nossa plataforma conta com milhares de usuários verificados, banco de dados completo de máquinas e ferramentas que facilitam suas transações no agronegócio, garantindo segurança e confiabilidade em cada negociação."
+      introducao: "Oferecemos um sistema focado na avaliação e precificação de máquinas agrícolas usadas. Nosso sistema calcula...",
+      resposta: "Oferecemos um sistema focado na avaliação e precificação de máquinas agrícolas usadas. Nosso sistema calcula o valor estimado de um equipamento com base em parâmetros como marca, modelo, ano, nota técnica e valor do veículo novo. A plataforma conta com dezenas de usuários verificados, um banco de dados completo de máquinas e ferramentas que facilitam as suas transações no agronegócio, garantindo a melhor compra e venda da sua máquina agrícola."
     },
     {
-      pergunta: "Como posso anunciar minha máquina?",
-      introducao: "Para anunciar sua máquina, basta criar uma conta e preencher as informações do equipamento.",
-      resposta: "Para anunciar sua máquina na TratorBR, o processo é simples e rápido. Primeiro, crie uma conta gratuita em nossa plataforma. Em seguida, preencha as informações detalhadas do equipamento, incluindo marca, modelo, ano, horas de uso, estado de conservação e histórico de manutenção. Adicione fotos de alta qualidade mostrando diferentes ângulos da máquina. Nossa equipe especializada fará uma avaliação técnica e de mercado para precificar adequadamente seu equipamento. Após aprovação, seu anúncio ficará disponível para milhares de compradores qualificados em nossa rede."
+      pergunta: "O que o Aplicativo vai mudar na minha realidade?",
+      introducao: "Nosso aplicativo revoluciona o mercado ao eliminar a incerteza e garantir que todas as suas decisões de compra, venda e troca sejam fundamentadas...",
+      resposta: "Nosso aplicativo revoluciona o mercado ao eliminar a incerteza e garantir que todas as suas decisões de compra, venda e troca sejam fundamentadas no maior e mais completo banco de dados de máquinas agrícolas do Brasil. Sua empresa ganha rentabilidade e segurança máxima ao substituir avaliações subjetivas por um sistema padronizado, tornando o processo mais rápido e profissional. Além disso, o App garante total autonomia e eficiência operacional à sua equipe, funcionando de forma offline mesmo em áreas rurais, com sincronização automática dos dados quando a conectividade é restabelecida."
+    },
+    {
+      pergunta: "Como fazer um agendamento de demonstração?",
+      introducao: "O agendamento funciona diretamente pela nossa plataforma. Acesse a pagina de contato ou utilize o botão verde localizado...",
+      resposta: "O agendamento funciona diretamente pela nossa plataforma. Acesse a pagina de contato ou utilize o botão verde localizado na parte inferior direita e faça o seu agendamento com a TratorBR, escolhendo o melhor horário possível para você. Assim, você conhecerá como pode melhorar a sua tomada de decisão em compra, venda e troca com total segurança e precisão."
+    },
+    {
+      pergunta: "Como faço para cadastrar minha empresa no sistema da TratorBR?",
+      introducao: "O cadastro é geralmente feito por meio de contato direto com a nossa equipe comercial. É necessário solicitar uma demonstração...",
+      resposta: "O cadastro é geralmente feito por meio de contato direto com a nossa equipe comercial. É necessário solicitar uma demonstração e negociar um plano de assinatura para ter acesso às funcionalidades completas. Entre em contato conosco."
     },
     {
       pergunta: "O aplicativo está disponível para download?",
-      introducao: "Sim! Nosso aplicativo está disponível para iOS e Android gratuitamente.",
-      resposta: "Sim! Nosso aplicativo móvel está disponível para download gratuito tanto na App Store (iOS) quanto na Google Play Store (Android). Com o app TratorBR, você tem acesso completo a todas as funcionalidades da plataforma diretamente do seu celular ou tablet. Pode navegar pelos anúncios, favoritar máquinas, entrar em contato com vendedores, receber notificações de novos equipamentos que atendem seus critérios, acompanhar suas negociações em andamento e muito mais. O aplicativo é otimizado para oferecer a melhor experiência móvel no agronegócio."
+      introducao: "Sim! Nosso aplicativo móvel está disponível para download gratuito tanto na App Store (iOS) quanto na Google Play Store (Android). Com o App TratorBR...",
+      resposta: "Sim! Nosso aplicativo móvel está disponível para download gratuito tanto na App Store (iOS) quanto na Google Play Store (Android). Com o App TratorBR, você tem acesso completo a todas as funcionalidades da plataforma diretamente do seu celular ou tablet."
+    },
+    {
+      pergunta: "Meus dados e informações de avaliações estão seguros?",
+      introducao: "Sim, a segurança e a confidencialidade dos dados são nossa prioridade, seguindo as leis da LGPD. Utilizamos criptografia...",
+      resposta: "Sim, a segurança e a confidencialidade dos dados são nossa prioridade, seguindo as leis da LGPD. Utilizamos criptografia e protocolos de segurança avançados para proteger as informações de todas as avaliações e a identidade de nossos clientes."
     },
     {
       pergunta: "Como funciona o sistema de avaliação?",
-      introducao: "Utilizamos tecnologia avançada e um banco de dados completo para avaliar máquinas agrícolas.",
-      resposta: "Nosso sistema de avaliação utiliza tecnologia de ponta combinada com expertise humana para determinar o valor justo de máquinas agrícolas. Consideramos diversos fatores como marca, modelo, ano de fabricação, horas de uso, estado de conservação, histórico de manutenção, modificações realizadas e condições atuais do mercado. Nossa base de dados contém informações de milhares de transações realizadas, permitindo análises comparativas precisas. Além disso, nossa equipe de especialistas em máquinas agrícolas realiza verificações técnicas quando necessário, garantindo avaliações confiáveis e atualizadas com as tendências do mercado."
-    },
-    {
-      pergunta: "Há garantia nas transações?",
-      introducao: "Sim, oferecemos garantia e segurança em todas as transações realizadas na plataforma.",
-      resposta: "Sim, a TratorBR oferece múltiplas camadas de segurança e garantia em todas as transações. Temos um rigoroso sistema de verificação de vendedores, incluindo validação de documentos e histórico. Todas as máquinas passam por verificação de documentação completa antes da publicação. Oferecemos suporte jurídico especializado para garantir que todos os contratos e transferências sejam realizados corretamente. Além disso, temos parcerias com seguradoras para proteção adicional e um sistema de mediação para resolver eventuais disputas. Nossa equipe acompanha todo o processo de compra e venda, garantindo transparência e segurança do início ao fim da negociação."
+      introducao: "Nosso sistema de avaliação utiliza tecnologia de ponta combinada com expertise humana para determinar o valor justo de máquinas agrícolas...",
+      resposta: "Nosso sistema de avaliação utiliza tecnologia de ponta combinada com expertise humana para determinar o valor justo de máquinas agrícolas. Consideramos diversos fatores como marca, modelo, ano de fabricação, horas de uso, estado de conservação, histórico de manutenção, modificações realizadas e as condições atuais do mercado. Nossa base de dados contém informações de milhares de transações realizadas, permitindo análises comparativas precisas. Além disso, nossa equipe de especialistas em máquinas agrícolas realiza verificações técnicas quando necessário, garantindo avaliações confiáveis e atualizadas com as tendências do mercado."
     },
     {
       pergunta: "Como entrar em contato com o suporte?",
-      introducao: "Nosso suporte está disponível via WhatsApp, email e telefone com especialistas prontos para ajudar.",
-      resposta: "Nosso atendimento ao cliente está disponível através de múltiplos canais para sua conveniência. Você pode nos contatar via WhatsApp para respostas rápidas, enviar email para contato@tratorbr.com.br para questões mais detalhadas, ou ligar diretamente para nossa central de atendimento. Nossa equipe é composta por especialistas em máquinas agrícolas e profissionais experientes no agronegócio, prontos para ajudar com qualquer dúvida sobre compra, venda, avaliação ou uso da plataforma. Oferecemos suporte técnico, comercial e jurídico, garantindo que você tenha toda a assistência necessária durante sua jornada na TratorBR."
+      introducao: "Nosso atendimento ao cliente está disponível através de múltiplos canais para sua conveniência. Você pode nos contatar via WhatsApp para respostas rápidas...",
+      resposta: "Nosso atendimento ao cliente está disponível através de múltiplos canais para sua conveniência. Você pode nos contatar via WhatsApp para respostas rápidas, enviar e-mail para contato@tratorbr.com.br para questões mais detalhadas, ou através da nossa pagina de contato no próprio site. Nossa equipe é composta por especialistas em máquinas agrícolas e profissionais experientes no agronegócio, prontos para ajudar com qualquer dúvida sobre compra, venda, avaliação ou uso da plataforma. Oferecemos todo o suporte necessário durante a sua jornada na TratorBR."
     }
   ];
 

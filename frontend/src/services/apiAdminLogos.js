@@ -1,4 +1,3 @@
-// frontend/src/services/apiAdminLogos.js
 import { api } from "../lib/api";
 
 export const apiAdminLogos = {

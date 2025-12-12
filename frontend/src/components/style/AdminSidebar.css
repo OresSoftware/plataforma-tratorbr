@@ -7,7 +7,6 @@
   font-weight: normal;
 }
 
-/* Botão hamburger - inicialmente oculto */
 .hamburger-btn {
   display: none;
   position: fixed;
@@ -32,7 +31,6 @@
   transform: scale(1.05);
 }
 
-/* Backdrop para mobile */
 .sidebar-backdrop {
   display: none;
   position: fixed;
@@ -45,7 +43,6 @@
   backdrop-filter: blur(2px);
 }
 
-/* Sidebar */
 .admin-sidebar {
   width: 280px;
   background-color: #15383E;
@@ -172,51 +169,45 @@
   transition: all 0.5s ease-out;
 }
 
-/* Tablet/iPad - 1024px e abaixo */
+/* 1024px */
 @media (max-width: 1024px) {
-  /* Mostrar botão hamburger */
   .hamburger-btn {
     display: flex;
   }
-  
-  /* Mostrar backdrop quando menu aberto */
+
   .sidebar-backdrop {
     display: block;
   }
-  
-  /* Sidebar off-canvas */
+
   .admin-sidebar {
     transform: translateX(-100%);
     width: min(280px, 85vw);
     box-shadow: none;
   }
-  
+
   .admin-sidebar.is-open {
     transform: translateX(0);
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
   }
-  
-  /* Mostrar botão de fechar */
+
   .close-sidebar {
     display: flex;
   }
-  
-  /* Esconder botão hamburger quando menu está aberto */
+
   .hamburger-btn.menu-open {
     display: none;
   }
 }
 
-/* Animações suaves */
 @media (prefers-reduced-motion: no-preference) {
   .nav-item {
     transition: all 0.3s ease;
   }
-  
+
   .hamburger-btn {
     transition: all 0.2s ease;
   }
-  
+
   .admin-sidebar {
     transition: transform 0.3s ease;
   }

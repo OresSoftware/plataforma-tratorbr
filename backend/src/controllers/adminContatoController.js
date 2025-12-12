@@ -1,5 +1,4 @@
-// backend/controllers/adminContatoController.js
-const pool = require("../config/db"); // ajuste o caminho se seu db.js estiver em outro lugar
+const pool = require("../config/db");
 
 // GET /api/admin/contatos?status=pendente|respondido|todos&page=1&pageSize=20
 async function listarContatos(req, res) {
@@ -104,9 +103,6 @@ async function excluirContato(req, res) {
       `UPDATE contatos SET deleted_at=NOW() WHERE id=? AND deleted_at IS NULL`,
       [id]
     );
-
-    // se preferir hard delete, troque pela linha abaixo:
-    // await pool.query(`DELETE FROM contatos WHERE id=?`, [id]);
 
     res.json({ ok: true });
   } catch (e) {

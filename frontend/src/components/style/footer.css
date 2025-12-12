@@ -26,10 +26,9 @@
   border-bottom: 1px solid #f6f6f6;
   padding-bottom: 40px;
   margin-bottom: 20px;
-   align-items: center;
+  align-items: center;
 }
 
-/* Left and Middle-Left Sections */
 .footer-section {
   display: flex;
   flex-direction: column;
@@ -50,7 +49,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  
+
 }
 
 .footer-links li {
@@ -61,12 +60,13 @@
   text-decoration: none;
   color: black;
   font-size: 16px;
-   font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .footer-links a:hover {
   text-decoration: underline;
 }
+
 .footer-links a {
   color: #434343;
   text-decoration: none;
@@ -74,7 +74,6 @@
   transition: background-color 0.2s;
 }
 
-/* Center Section */
 .footer-center {
   display: flex;
   flex-direction: column;
@@ -105,7 +104,6 @@
   opacity: 1;
 }
 
-/* Right Section */
 .footer-right {
   display: flex;
   flex-direction: column;
@@ -127,12 +125,13 @@
   gap: 10px;
 }
 
-.separacao{
+.separacao {
   width: 200px;
   height: 0.5px;
   background-color: #15383E;
   margin: 6px 0;
 }
+
 .app-button {
   display: flex;
   align-items: center;
@@ -159,7 +158,6 @@
   color: var(--link-color);
 }
 
-/* Bottom Section */
 .footer-bottom {
   display: flex;
   justify-content: center;
@@ -169,7 +167,8 @@
   font-size: 12px;
   color: #929292;
 }
-.footer-left{
+
+.footer-left {
   display: flex;
 }
 
@@ -181,7 +180,6 @@
   font-size: 13px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 1027px) {
   .footer-content {
     flex-direction: column;
@@ -189,7 +187,9 @@
     text-align: center;
   }
 
-  .footer-section, .footer-center, .footer-right {
+  .footer-section,
+  .footer-center,
+  .footer-right {
     width: 100%;
     margin-bottom: 30px;
     margin-left: 0px;
@@ -204,10 +204,11 @@
     text-align: center;
   }
 
-  .footer-section-dois{
+  .footer-section-dois {
     margin-left: 0px;
   }
-  .footer-left{
+
+  .footer-left {
     display: block;
   }
 }
@@ -217,9 +218,10 @@
     justify-content: space-around;
   }
 
-  .footer-section, .footer-center, .footer-right {
+  .footer-section,
+  .footer-center,
+  .footer-right {
     min-width: auto;
   }
 
-  
 }

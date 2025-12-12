@@ -1,4 +1,3 @@
-// backend/src/routes/publicRoutes.js
 const express = require("express");
 const router = express.Router();
 const { proxyEsqueciSenha } = require("../controllers/publicController");

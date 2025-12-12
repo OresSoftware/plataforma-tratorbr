@@ -1,4 +1,3 @@
-// backend/src/routes/adminLogoRoutes.js
 const express = require("express");
 const { listarLogos, uploadLogo } = require("../controllers/adminLogoController");
 const { upload } = require("../../middleware/uploadLogo");

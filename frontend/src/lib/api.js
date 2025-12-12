@@ -21,19 +21,18 @@ api.interceptors.response.use(
     const url = (err?.config?.url || "").toLowerCase();
     const isLoginCall = url.includes("/admin/login");
 
-    // 👉 Foco apenas em 401 (token inválido/expirado)
     if (status === 401 && !isLoginCall) {
       try {
         localStorage.removeItem("adminToken"); // limpa token
-      } catch {}
-      // (opcional) manter a rota para voltar depois do login
+      } catch { }
+
       const next = encodeURIComponent(window.location.pathname + window.location.search);
       if (window.location.pathname !== "/admin/login") {
         window.location.assign(`/admin/login?next=${next}`);
       }
     }
 
-    // 403 agora tende a ser "sem permissão" — não redireciona para login aqui.
+    // 403 "sem permissão" — não redireciona para login aqui.
     return Promise.reject(err);
   }
 );
