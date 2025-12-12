@@ -1,4 +1,3 @@
-// backend/src/routes/adminRoutes.js
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const adminController = require('../controllers/adminController');
@@ -12,7 +11,7 @@ const adminLogoRoutes = require('./adminLogoRoutes');
 
 const router = express.Router();
 
-// -------- Middlewares de segurança -------- //
+// Middlewares de segurança //
 const verificarAdmin = async (req, res, next) => {
   try {
     const token = (req.headers.authorization || '').split(' ')[1];
@@ -45,29 +44,20 @@ const exigirMaster = (req, res, next) => {
   next();
 };
 
-// ------------------ Rotas públicas de Admin ------------------ //
+// Rotas públicas de Admin //
 router.post('/login', adminAuthController.loginAdmin);
 router.get('/verificar-token', adminAuthController.verificarToken);
 router.get('/ping', verificarAdmin, (req, res) => res.json({ ok: true, adminId: req.admin.id }));
 
 // ------------------ Rotas protegidas ------------------ //
-// Dashboard
 router.get('/dashboard/metricas', verificarAdmin, adminController.obterMetricasDashboard);
 router.get('/dashboard/pendencias', verificarAdmin, adminController.obterPendencias);
-
-// ---- Rotas de Contatos (PROTEGIDAS) ---- //
 router.use('/contatos', verificarAdmin, adminContatoRoutes);
-
-// ---- Rotas de Empresas (PROTEGIDAS) ---- //
 router.use('/enterprises', verificarAdmin, adminEnterpriseRoutes); 
 router.get('/cities', verificarAdmin, cityController.listarCidades);
 router.get('/cargos', verificarAdmin, cityController.listarCargos);
 router.get('/ocupacoes', verificarAdmin, cityController.listarOcupacoes);
-
-// ---- Rotas de Usuários do App (PROTEGIDAS) ---- //
 router.use('/users', verificarAdmin, adminUserRoutes);
-
-// ---- Rotas de Logos (PROTEGIDAS) ---- //
 router.use('/', verificarAdmin, adminLogoRoutes); 
 
 

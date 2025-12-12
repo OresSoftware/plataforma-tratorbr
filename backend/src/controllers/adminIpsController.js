@@ -1,19 +1,15 @@
-// backend/src/controllers/adminIpsController.js
 const db = require('../config/db');
-const fetch = require('node-fetch');           // npm i node-fetch@2
-const speakeasy = require('speakeasy');        // npm i speakeasy
-const qrcode = require('qrcode');              // npm i qrcode
+const fetch = require('node-fetch');
+const speakeasy = require('speakeasy');
+const qrcode = require('qrcode');
 
-// -------------------- util de IP --------------------
+// util de IP 
 function isPrivateIp(ip) {
   if (!ip) return true;
   const s = String(ip).toLowerCase();
   if (s === '::1' || s === 'localhost') return true;
-  // IPv4 mapeado em IPv6
   if (s.startsWith('::ffff:')) return isPrivateIp(s.replace('::ffff:', ''));
-  // IPv6 privadas
   if (s.includes(':')) return s.startsWith('fc') || s.startsWith('fd');
-  // IPv4 privadas/comuns
   return (
     s.startsWith('10.') ||
     s.startsWith('192.168.') ||
@@ -25,7 +21,7 @@ function isPrivateIp(ip) {
   );
 }
 
-// -------------------- detecção de colunas (sem cache) --------------------
+// detecção de colunas (sem cache) 
 async function hasLocationColumns() {
   try {
     const [rows] = await db.query(`SHOW COLUMNS FROM admin_ips LIKE 'last_city'`);
@@ -35,7 +31,7 @@ async function hasLocationColumns() {
   }
 }
 
-// -------------------- geolocalização (multi-fonte) --------------------
+// geolocalização (multi-fonte) 
 async function fetchJson(url, opt = {}) {
   try {
     const r = await fetch(url, { ...opt, timeout: 7000 });
@@ -46,18 +42,11 @@ async function fetchJson(url, opt = {}) {
   }
 }
 
-/**
- * Tenta resolver cidade/estado/país/lat/lon com 3 provedores:
- * 1) ipapi.co (HTTPS, gratuito)
- * 2) ipwho.is (HTTPS, gratuito)
- * 3) ip-api.com (HTTP, gratuito – apenas servidor)
- */
 async function geoLookupFull(ip) {
   if (!ip || isPrivateIp(ip)) return { data: null, errors: ['private-or-empty'] };
 
   const errors = [];
 
-  // 1) ipapi.co
   {
     const j = await fetchJson(`https://ipapi.co/${ip}/json/`);
     if (!j.__err && j && !j.error) {
@@ -76,7 +65,6 @@ async function geoLookupFull(ip) {
     errors.push(`ipapi.co:${j?.__err || j?.reason || j?.error || 'unknown'}`);
   }
 
-  // 2) ipwho.is
   {
     const k = await fetchJson(`https://ipwho.is/${ip}`);
     if (!k.__err && k && k.success) {
@@ -95,7 +83,6 @@ async function geoLookupFull(ip) {
     errors.push(`ipwho.is:${k?.__err || k?.message || 'unknown'}`);
   }
 
-  // 3) ip-api.com (HTTP – ok no backend)
   {
     const h = await fetchJson(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city,lat,lon,message`);
     if (!h.__err && h && h.status === 'success') {
@@ -127,25 +114,23 @@ async function geoCidadeEstado(ip) {
   return parts.join(' - ');
 }
 
-// --- helper: pegar admin alvo pelo role ---
+// helper: pegar admin alvo pelo role 
 async function getAdminByRole(role) {
   const [rows] = await db.query(
     `SELECT id, username FROM admins WHERE role = ? AND ativo = 1 LIMIT 1`,
     [role]
   );
   if (!rows.length) throw new Error(`Admin com role "${role}" não encontrado`);
-  return rows[0]; // { id, username }
+  return rows[0];
 }
 
-// -----------------------------------------------------------------------------
 // GET /api/admin/ips-autorizados
-// -----------------------------------------------------------------------------
 exports.listarIpsAutorizados = async (req, res) => {
   try {
     const clientIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
-                     req.socket?.remoteAddress ||
-                     req.ip ||
-                     req.connection?.remoteAddress;
+      req.socket?.remoteAddress ||
+      req.ip ||
+      req.connection?.remoteAddress;
 
     console.log('=== DEBUG STATUS ONLINE ===');
     console.log('IP do cliente detectado:', clientIP);
@@ -223,9 +208,7 @@ exports.listarIpsAutorizados = async (req, res) => {
   }
 };
 
-// -----------------------------------------------------------------------------
 // POST /api/admin/ips-autorizados
-// -----------------------------------------------------------------------------
 exports.adicionarIpAutorizado = async (req, res) => {
   const { ip, descricao, targetRole } = req.body;
 
@@ -236,7 +219,7 @@ exports.adicionarIpAutorizado = async (req, res) => {
   }
   const role = String(targetRole || '').toLowerCase();
   console.log('Role processado:', role);
-  
+
   if (!['master', 'gestor'].includes(role)) {
     return res.status(400).json({ message: 'Perfil inválido (master ou gestor)' });
   }
@@ -256,7 +239,7 @@ exports.adicionarIpAutorizado = async (req, res) => {
        VALUES (?, ?, ?, ?, 1)`,
       [targetAdmin.id, ip.trim(), descricao || null, secret.base32]
     );
-    
+
     console.log('IP inserido na admin_ips com admin_id:', targetAdmin.id, 'role:', role);
 
     const [currentAdmin] = await db.query(
@@ -301,37 +284,35 @@ exports.adicionarIpAutorizado = async (req, res) => {
   }
 };
 
-// -----------------------------------------------------------------------------
 // DELETE /api/admin/ips-autorizados/:id
-// -----------------------------------------------------------------------------
 exports.removerIpAutorizado = async (req, res) => {
   try {
     const { id } = req.params;
-    const clientIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 
-                     req.socket?.remoteAddress || 
-                     req.ip || 
-                     req.connection?.remoteAddress;
+    const clientIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+      req.socket?.remoteAddress ||
+      req.ip ||
+      req.connection?.remoteAddress;
 
     const [ipData] = await db.query(
       `SELECT ai.ip, ai.admin_id, a.username 
          FROM admin_ips ai 
          JOIN admins a ON a.id = ai.admin_id 
-        WHERE ai.id = ?`, 
+        WHERE ai.id = ?`,
       [id]
     );
-    
+
     if (!ipData.length) {
       return res.status(404).json({ message: 'IP não encontrado' });
     }
 
     const { ip: ipToRemove, admin_id, username } = ipData[0];
-    const isOwnIP = clientIP && (ipToRemove === clientIP || 
-                                (ipToRemove === '::1' && clientIP === '127.0.0.1') ||
-                                (ipToRemove === '127.0.0.1' && clientIP === '::1'));
-    
+    const isOwnIP = clientIP && (ipToRemove === clientIP ||
+      (ipToRemove === '::1' && clientIP === '127.0.0.1') ||
+      (ipToRemove === '127.0.0.1' && clientIP === '::1'));
+
     if (isOwnIP) {
-      return res.status(403).json({ 
-        message: 'Não é possível remover seu próprio IP. Esta operação deve ser feita diretamente no banco de dados.' 
+      return res.status(403).json({
+        message: 'Não é possível remover seu próprio IP. Esta operação deve ser feita diretamente no banco de dados.'
       });
     }
 
@@ -366,7 +347,7 @@ exports.removerIpAutorizado = async (req, res) => {
 
     const shouldForceLogout = req.admin && req.admin.id === admin_id;
 
-    res.json({ 
+    res.json({
       message: 'IP removido de ambas as tabelas',
       forceLogout: shouldForceLogout,
       removedIP: ipToRemove,
@@ -378,9 +359,7 @@ exports.removerIpAutorizado = async (req, res) => {
   }
 };
 
-// -----------------------------------------------------------------------------
 // POST /api/admin/ips-autorizados/:id/refresh-location
-// -----------------------------------------------------------------------------
 exports.refreshIpLocation = async (req, res) => {
   try {
     const id = req.params.id;

@@ -1,4 +1,3 @@
-// src/controllers/adminController.js
 const db = require('../config/db');
 
 async function safeCount(sql, params = []) {
@@ -14,14 +13,14 @@ async function safeCount(sql, params = []) {
 // Dashboard - Obter métricas simplificadas
 exports.obterMetricasDashboard = async (_req, res) => {
   try {
-    // 1. Admins Cadastrados (IPs cadastrados)
+    // 1. Admins Cadastrados 
     const adminsIpsCadastrados = await safeCount(`
       SELECT COUNT(DISTINCT admin_id) AS total 
       FROM admin_ips 
       WHERE ativo = 1
     `);
     
-    // 2. Admins Online (IPs que fizeram login nas últimas 24 horas)
+    // 2. Admins Online 
     const adminsOnline = await safeCount(`
       SELECT COUNT(DISTINCT admin_id) AS total 
       FROM admin_ips 
@@ -51,7 +50,6 @@ exports.obterMetricasDashboard = async (_req, res) => {
 // Dashboard - Obter pendências (mantido para compatibilidade, mas simplificado)
 exports.obterPendencias = async (_req, res) => {
   try {
-    // Apenas contatos pendentes
     const contatosPendentes = await safeCount(`
       SELECT COUNT(*) AS total 
       FROM contatos 

@@ -1,7 +1,3 @@
-// backend/src/services/ipLocation.js
-// Resolve cidade/UF/país/lat/lon a partir do IP com cache no banco feito por quem chama.
-// Suporta (opcional) MaxMind local (GeoLite2-City.mmdb) e fallback em ipapi.co
-
 const axios = require('axios');
 let maxmindReader = null;
 
@@ -24,10 +20,9 @@ function isPrivate(ip) {
   const v4 = ip.includes('.');
   if (ip === '::1') return true;
   if (!v4) {
-    // ipv6 privadas (simplificado)
     return ip.startsWith('fc') || ip.startsWith('fd');
   }
-  // ipv4 privadas/comuns
+
   return (
     ip.startsWith('10.') ||
     ip.startsWith('192.168.') ||
@@ -50,11 +45,11 @@ async function lookupIp(ip) {
       const r = mm.get(ip);
       if (r) {
         return {
-          city:   r?.city?.names?.en || r?.city?.names?.pt || null,
+          city: r?.city?.names?.en || r?.city?.names?.pt || null,
           region: r?.subdivisions?.[0]?.names?.en || null,
-          country:r?.country?.names?.en || null,
-          lat:    r?.location?.latitude ?? null,
-          lon:    r?.location?.longitude ?? null,
+          country: r?.country?.names?.en || null,
+          lat: r?.location?.latitude ?? null,
+          lon: r?.location?.longitude ?? null,
           source: 'maxmind'
         };
       }
@@ -65,11 +60,11 @@ async function lookupIp(ip) {
     if (data?.error) return null;
 
     return {
-      city:   data?.city || null,
+      city: data?.city || null,
       region: data?.region || data?.region_code || null,
-      country:data?.country_name || data?.country || null,
-      lat:    (data?.latitude != null ? Number(data.latitude) : null),
-      lon:    (data?.longitude != null ? Number(data.longitude) : null),
+      country: data?.country_name || data?.country || null,
+      lat: (data?.latitude != null ? Number(data.latitude) : null),
+      lon: (data?.longitude != null ? Number(data.longitude) : null),
       source: 'ipapi'
     };
   } catch (err) {

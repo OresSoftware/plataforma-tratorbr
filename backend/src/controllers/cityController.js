@@ -1,11 +1,10 @@
-// backend/src/controllers/cityController.js
 const pool = require("../config/db");
 
 // GET /api/admin/cities?busca=termo
 async function listarCidades(req, res) {
   try {
     const busca = req.query.busca || '';
-    
+
     let whereClauses = ['1=1'];
     const params = [];
 

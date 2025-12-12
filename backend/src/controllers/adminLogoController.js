@@ -1,4 +1,3 @@
-// backend/src/controllers/adminLogoController.js
 const fs = require("fs");
 const path = require("path");
 const { getManufacturerDir, ensureDirSync } = require("../utils/paths");
@@ -17,7 +16,6 @@ async function listarLogos(req, res) {
       .filter((f) => isImageName(f))
       .sort((a, b) => a.localeCompare(b));
 
-    // devolve só os nomes de arquivo; o front monta /images/manufacturer/<nome>
     res.json({ ok: true, data: files });
   } catch (e) {
     console.error("listarLogos:", e);
@@ -31,9 +29,7 @@ async function uploadLogo(req, res) {
     if (!req.file) {
       return res.status(400).json({ ok: false, error: "Nenhum arquivo enviado." });
     }
-    // nome final salvo pelo multer
     const filename = req.file.filename;
-    // caminho público para exibir (opcional; o front já sabe montar)
     const publicUrl = path.posix.join("/images/manufacturer/", filename);
 
     res.status(201).json({

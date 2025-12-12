@@ -1,21 +1,13 @@
-// frontend/src/services/apiAdminUsers.js
 import { api } from "../lib/api";
 
-/**
- * sort:
- *  - "name_asc"  -> A–Z (Nome)        [padrão]
- *  - "name_desc" -> Z–A (Nome)
- *  - "date_asc"  -> Primeiros cadastros (mais antigos)
- *  - "date_desc" -> Últimos cadastros  (mais novos)
- */
 export const apiAdminUsers = {
   async listar({
     status = "todos",
     page = 1,
     pageSize = 20,
     busca = "",
-    date_from,   // YYYY-MM-DD
-    date_to,     // YYYY-MM-DD
+    date_from,
+    date_to,
     enterprise_id,
     cargo_id,
     city_id,

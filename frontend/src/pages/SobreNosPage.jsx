@@ -44,12 +44,12 @@ const SobreNosPage = () => {
             <div className="visual-content">
               <div className="stats-grid">
                 <div className="stat-card">
-                  <div className="stat-number">500+</div>
-                  <div className="stat-label">Produtores Atendidos</div>
+                  <div className="stat-number">25+</div>
+                  <div className="stat-label">Anos de Experiência</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-number">50k+</div>
-                  <div className="stat-label">Hectares Gerenciados</div>
+                  <div className="stat-number">500+</div>
+                  <div className="stat-label">Avaliações Feitas</div>
                 </div>
                 <div className="stat-card">
                   <div className="stat-number">24/7</div>
@@ -155,7 +155,7 @@ const SobreNosPage = () => {
                     </svg>
                   </div>
                   <div className="feature-text">
-                    <h4>Tecnologia em Nuvem</h4>
+                    <h4>Tecnologia em Nuvem e Offline</h4>
                     <p>Acesse seus dados de qualquer lugar</p>
                   </div>
                 </div>
@@ -181,7 +181,7 @@ const SobreNosPage = () => {
                     </svg>
                   </div>
                   <div className="feature-text">
-                    <h4>Relatórios Inteligentes</h4>
+                    <h4>Avaliações Inteligentes</h4>
                     <p>Insights valiosos para tomada de decisão</p>
                   </div>
                 </div>

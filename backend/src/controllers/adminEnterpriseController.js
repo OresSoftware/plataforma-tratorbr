@@ -1,7 +1,6 @@
-// backend/src/controllers/adminEnterpriseController.js
 const pool = require("../config/db");
 
-/* ==================== Helpers gerais ==================== */
+// Helpers gerais 
 const soNumeros = (str) => String(str || '').replace(/\D/g, '');
 
 // Validação de CNPJ (DV oficial)
@@ -32,7 +31,7 @@ const onlyDigits = (s = "") => String(s).replace(/\D/g, "");
 
 function validarIEMinima(ieRaw = "") {
   const ie = normalizeIE(ieRaw);
-  if (!ie) return true; // permitir vazio
+  if (!ie) return true;
   if (ie.toUpperCase() === "ISENTO") return true;
   const digits = onlyDigits(ie);
   if (digits.length < 1 || digits.length > 14) return false;
@@ -75,7 +74,7 @@ async function existeIEDuplicadaMesmaUF({ ie, uf, ignorarEnterpriseId = null }) 
   return !!dup;
 }
 
-/* ======= Helpers para Matriz / Filial ======= */
+// Helpers para Matriz / Filial
 async function isMatrizAtiva(matrizId) {
   if (!matrizId) return false;
   const [[row]] = await pool.query(
@@ -101,14 +100,8 @@ async function countFiliaisByMatriz(matrizId) {
   return row?.qt ?? 0;
 }
 
-/* ==================== LISTAR EMPRESAS (com filtros) ==================== */
+// LISTAR EMPRESAS (com filtros) 
 // GET /api/admin/enterprises
-// Query params suportados:
-// - status: 'ativos' | 'inativos' | 'todos'
-// - busca: string (razao, fantasia, cidade, uf, bairro, IE, CNPJ)
-// - order: 'az' | 'za' | 'oldest' | 'newest' (padrão = por score)
-// - tipo: 'matriz' | 'filial' | '' (ambos)
-// - city_id: number
 async function listarEmpresas(req, res) {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
@@ -178,7 +171,6 @@ async function listarEmpresas(req, res) {
 
     const whereSql = where.join(' AND ');
 
-    // Score (para ordenar quando não há critério explícito)
     const pesos = {
       fantasia: 10,
       razao: 9,
@@ -260,7 +252,7 @@ async function listarEmpresas(req, res) {
   }
 }
 
-/* ==================== BUSCAR POR ID ==================== */
+/* BUSCAR POR ID */
 // GET /api/admin/enterprises/:id
 async function buscarEmpresaPorId(req, res) {
   try {
@@ -287,7 +279,7 @@ async function buscarEmpresaPorId(req, res) {
   }
 }
 
-/* ==================== LISTAR MATRIZES ATIVAS (autocomplete) ==================== */
+/* LISTAR MATRIZES ATIVAS (autocomplete) */
 // GET /api/admin/enterprises/matrizes
 async function listarMatrizesAtivas(req, res) {
   try {
@@ -318,7 +310,7 @@ async function listarMatrizesAtivas(req, res) {
   }
 }
 
-/* ==================== CRIAR EMPRESA ==================== */
+/* CRIAR EMPRESA */
 // POST /api/admin/enterprises
 async function criarEmpresa(req, res) {
   try {
@@ -329,11 +321,10 @@ async function criarEmpresa(req, res) {
     delete dados.score;
     delete dados.cidade_nome;
     delete dados.cidade_uf;
-    delete dados.matriz_nome;      // importante: alias, não existe na tabela
+    delete dados.matriz_nome;
     delete dados.created_at;
     delete dados.updated_at;
 
-    // Regras básicas
     if (!dados.fantasia || !dados.razao || !dados.cnpj) {
       return res.status(400).json({
         ok: false,
@@ -421,19 +412,18 @@ async function criarEmpresa(req, res) {
   }
 }
 
-/* ==================== ATUALIZAR EMPRESA ==================== */
+/* ATUALIZAR EMPRESA */
 // PUT /api/admin/enterprises/:id
 async function atualizarEmpresa(req, res) {
   try {
     const { id } = req.params;
     const payload = { ...req.body };
 
-    // Remover campos que não devem ir ao UPDATE
     delete payload.enterprise_id;
     delete payload.score;
     delete payload.cidade_nome;
     delete payload.cidade_uf;
-    delete payload.matriz_nome;    // importante: alias, não existe na tabela
+    delete payload.matriz_nome;
     delete payload.created_at;
     delete payload.updated_at;
 
@@ -578,7 +568,7 @@ async function atualizarEmpresa(req, res) {
   }
 }
 
-/* ==================== ATIVAR/DESATIVAR ==================== */
+/* ATIVAR/DESATIVAR */
 // PATCH /api/admin/enterprises/:id/status
 async function ativarDesativarEmpresa(req, res) {
   try {
@@ -614,7 +604,7 @@ async function ativarDesativarEmpresa(req, res) {
   }
 }
 
-/* ==================== CONTADOR ATIVOS ==================== */
+/* CONTADOR ATIVOS */
 // GET /api/admin/enterprises/contador/ativos
 async function contadorAtivos(req, res) {
   try {
@@ -628,7 +618,7 @@ async function contadorAtivos(req, res) {
   }
 }
 
-/* ==================== USUÁRIOS DA EMPRESA ==================== */
+/* USUÁRIOS DA EMPRESA */
 // GET /api/admin/enterprises/:id/users
 async function listarUsuariosDaEmpresa(req, res) {
   try {
@@ -657,7 +647,7 @@ async function listarUsuariosDaEmpresa(req, res) {
   }
 }
 
-/* ==================== FILIAIS DA MATRIZ ==================== */
+/* FILIAIS DA MATRIZ */
 // GET /api/admin/enterprises/:id/filiais
 async function listarFiliaisDaMatriz(req, res) {
   try {
@@ -686,7 +676,7 @@ async function listarFiliaisDaMatriz(req, res) {
   }
 }
 
-/* ==================== COBRANÇA (GET/PUT/DELETE) ==================== */
+/* COBRANÇA (GET/PUT/DELETE) */
 // GET /api/admin/enterprises/:id/cobranca
 async function obterEnderecoCobranca(req, res) {
   try {
@@ -803,7 +793,6 @@ async function removerEnderecoCobranca(req, res) {
   }
 }
 
-/* ==================== EXPORTS ==================== */
 module.exports = {
   listarEmpresas,
   buscarEmpresaPorId,

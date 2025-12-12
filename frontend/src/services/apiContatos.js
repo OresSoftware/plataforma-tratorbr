@@ -1,4 +1,3 @@
-// frontend/src/services/apiContatos.js
 import { api } from "../lib/api";
 
 export const apiContatos = {

@@ -1,4 +1,3 @@
-// frontend/src/services/apiAdminContatos.js
 import { api } from "../lib/api";
 
 export const apiAdminContatos = {
@@ -10,7 +9,6 @@ export const apiAdminContatos = {
   },
 
   async marcarRespondido(id, canal) {
-    // canal: 'email' | 'whatsapp'
     const { data } = await api.patch(`/admin/contatos/${id}/respondido`, { canal });
     return data;
   },

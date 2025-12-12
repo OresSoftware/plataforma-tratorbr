@@ -75,28 +75,28 @@ const PlanosPage = () => {
 
   const faqData = [
     {
-      pergunta: "Como funciona o sistema de avaliação de máquinas?",
-      resposta: "Nosso sistema utiliza tecnologia avançada para avaliar de forma eficiente o valor da sua máquina. Útil para o concessionário que precisa receber um usado na venda de um novo, e útil para o produtor que precisa comprar um maquinário novo."
+      pergunta: "Qual o principal objetivo do aplicativo para o usuário?",
+      resposta: "Com o foco em eliminar a maior dor do mercado, o objetivo principal é transformar o seu departamento de máquinas agrícolas usadas em um centro de lucro (rentável), fundamentando as decisões em dados reais. Assim, concessionários, revendas e outros usuários tomam decisões de compra, venda e troca com total segurança e precisão."
     },
     {
       pergunta: "O app funciona sem internet?",
       resposta: "Sim! O app da TratorBR funciona também offline, permitindo que você registre dados, acompanhe atividades e gerencie sua operação mesmo sem internet. Quando o sinal voltar, tudo se sincroniza automaticamente."
     },
     {
+      pergunta: "Quem usa o aplicativo da TratorBR?",
+      resposta: "O sistema é voltado principalmente para concessionárias, revendas e profissionais que precisam de uma avaliação técnica e precisa de máquinas agrícolas usadas, mas também pode ser útil para produtores rurais."
+    },
+    {
+      pergunta: "Como faço para cadastrar minha empresa no sistema da TratorBR?",
+      resposta: "O cadastro é geralmente feito por meio de contato direto com a nossa equipe comercial. É necessário solicitar uma demonstração e negociar um plano de assinatura para ter acesso às funcionalidades completas. Entre em contato conosco."
+    },
+    {
+      pergunta: "Como funciona o sistema de avaliação de maquinas?",
+      resposta: "Nosso sistema utiliza tecnologia avançada para avaliar o valor da sua máquina de forma eficiente. É útil para o concessionário que precisa receber um usado na troca por um novo, e também para o produtor que busca comprar um maquinário com segurança."
+    },
+    {
       pergunta: "Quais máquinas estão no banco de dados?",
-      resposta: "Nosso Banco de Dados é o maior e mais completo do Brasil, contendo praticamente todas as marcas e modelos de máquinas agrícolas comercializadas no Brasil."
-    },
-    {
-      pergunta: "Como posso cancelar minha assinatura?",
-      resposta: "Você pode cancelar sua assinatura a qualquer momento entrando em contato conosco via WhatsApp ou email. Não há taxas de cancelamento e o processo é simples e rápido."
-    },
-    {
-      pergunta: "Quais máquinas estão no banco de dados?",
-      resposta: "Nosso Banco de Dados é o maior e mais completo do Brasil, contendo praticamente todas as marcas e modelos de máquinas agrícolas comercializadas no Brasil."
-    },
-    {
-      pergunta: "Como posso cancelar minha assinatura?",
-      resposta: "Você pode cancelar sua assinatura a qualquer momento entrando em contato conosco via WhatsApp ou email. Não há taxas de cancelamento e o processo é simples e rápido."
+      resposta: "Nosso Banco de Dados é o maior e mais completo do Brasil, contendo praticamente todas as marcas e modelos de máquinas agrícolas comercializadas no país."
     }
   ];
 
