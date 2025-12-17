@@ -48,7 +48,7 @@ const SobreNosPage = () => {
                   <div className="stat-label">Anos de Experiência</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-number">500+</div>
+                  <div className="stat-number">400K+</div>
                   <div className="stat-label">Avaliações Feitas</div>
                 </div>
                 <div className="stat-card">

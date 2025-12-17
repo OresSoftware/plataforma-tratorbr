@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/footer';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
@@ -8,6 +8,8 @@ import './style/AjudaPage.css';
 
 const AjudaPage = () => {
   const [faqAberto, setFaqAberto] = useState(null);
+  const [activeTab, setActiveTab] = useState(0);
+  const [activeImageSlide, setActiveImageSlide] = useState(0);
 
   const toggleFaq = (index) => {
     setFaqAberto(faqAberto === index ? null : index);
@@ -56,14 +58,249 @@ const AjudaPage = () => {
     }
   ];
 
+  const tabsData = [
+    {
+      id: 'home',
+      label: 'Home',
+      title: 'Conheça mais da Home',
+      description: 'Eaê! Bem-vindo à sua central de comando. A tela de Home do TratorBR não é apenas um início, é o seu painel de controle para tomar decisões mais rápidas e inteligentes no mercado de máquinas agrícolas. Pense nela como a cabine da sua máquina mais potente: tudo o que você precisa está ao alcance de um toque.',
+      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      appImages: [
+        '/imagens-tutorial/IMG-HOME.png',
+        '/imagens-tutorial/IMG-HOME-2.png',
+        '/imagens-tutorial/IMG-HOME-3.png',
+        '/imagens-tutorial/IMG-HOME-4.png',
+        '/imagens-tutorial/IMG-HOME-5.png',
+        '/imagens-tutorial/IMG-HOME-6.png'
+      ]
+    },
+    // {
+    //   id: 'AnoBR',
+    //   label: 'AnoBr',
+    //   title: 'Como anunciar sua máquina',
+    //   description: 'No mercado de máquinas, o ano de fabricação é muito mais do que um número. É um fator decisivo de valorização ou desvalorização. O AnoBR é a sua ferramenta para decifrar esse fator com precisão cirúrgica, e baseado em dados dos fabricantes. Chega de "achismo". Use dados concretos para justificar o valor de um equipamento mais novo ou para negociar o preço de um mais antigo.',
+    //   videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    //   appImages: [
+    //     '/imagens-tutorial/anuncio-1.png',
+    //     '/imagens-tutorial/anuncio-2.png',
+    //     '/imagens-tutorial/anuncio-3.png'
+    //   ]
+    // },
+    {
+      id: 'tabelabr',
+      label: 'TabelaBr',
+      title: 'Como avaliar minha maquina',
+      description: 'Você já imaginou ter uma Tabela FIPE, mas construída para a realidade e a dinâmica do mercado de máquinas agrícolas? Essa ferramenta existe e se chama TabelaBR. Nós somos a referência de preços de Equipamento do Agronegócio. Com base em um algoritmo feito para calcular o valor de uma Máquina baseado no Estado de Conservação do Equipamento, a TabelaBr é a inteligência de dados trabalhando para o seu negócio.',
+      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      appImages: [
+        '/imagens-tutorial/tabelabr-00.png',
+        '/imagens-tutorial/tabelabr-01.png',
+        '/imagens-tutorial/tabelabr-02.png',
+        '/imagens-tutorial/tabelabr-03.png',
+        '/imagens-tutorial/tabelabr-04.png',
+        '/imagens-tutorial/tabelabr-05.png',
+        '/imagens-tutorial/tabelabr-06.png',
+        '/imagens-tutorial/tabelabr-07.png',
+        '/imagens-tutorial/tabelabr-08.png',
+        '/imagens-tutorial/tabelabr-09.png',
+        '/imagens-tutorial/tabelabr-10.png',
+        '/imagens-tutorial/tabelabr-11.png',
+        '/imagens-tutorial/tabelabr-12.png',
+        '/imagens-tutorial/tabelabr-13.png',
+        '/imagens-tutorial/tabelabr-14.png',
+      ]
+    },
+    {
+      id: 'checklist',
+      label: 'ChecklistBr',
+      title: 'Descobrindo a nota do meu equipamento',
+      description: 'Se AnoBR e TabelaBR te dão a base, o CheckBR é o seu bisturi de precisão. É aqui que separamos uma máquina comum de uma máquina excepcional. Esta ferramenta aponta oestado de Conservação exato, do seu equipamento, resultando em um Laudo, para documentar o que realmente esse Equipamento significa.',
+      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      appImages: [
+        '/imagens-tutorial/checklist-1.png',
+        '/imagens-tutorial/checklist-2.png',
+        '/imagens-tutorial/checklist-3.png'
+      ]
+    }
+  ];
+
+  const cardsData = [
+    {
+      numero: '1',
+      titulo: 'Cadastrar no APP',
+      descricao: 'Preencha seus dados para desbloquear a inteligência do mercado agro. É rápido, fácil e o primeiro passo para você ter o poder da avaliação assertiva exclusivo em suas mãos.'
+    },
+    {
+      numero: '2',
+      titulo: 'Validar o email',
+      descricao: 'Valide seu acesso seguro! Na sua caixa de entrada! Enviamos um link de confirmação para garantir a total segurança da sua conta e dos seus dados. Lembre-se de checar o spam. Um clique e você estará pronto para o próximo nível.'
+    },
+    {
+      numero: '3',
+      titulo: 'Entrar no APP',
+      descricao: 'Domine o Mercado. Entre! Acesso liberado. Entre agora no TratorBR e comece a transformar o jeito como você negocia. Não se esqueça, ao entrar pela 1ª vez realize o Passo a Passo segundo o tutorial, e aproveite do melhor que a TratorBr pode te oferecer.'
+    }
+  ];
+
+  // Auto-rotação de imagens a cada 4 segundos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveImageSlide((prev) =>
+        prev === tabsData[activeTab].appImages.length - 1 ? 0 : prev + 1
+      );
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [activeTab, tabsData]);
+
+  const handlePrevSlide = () => {
+    setActiveImageSlide((prev) =>
+      prev === 0 ? tabsData[activeTab].appImages.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextSlide = () => {
+    setActiveImageSlide((prev) =>
+      prev === tabsData[activeTab].appImages.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const goToSlide = (index) => {
+    setActiveImageSlide(index);
+  };
+
   return (
     <div className="ajuda-page">
       <Header />
 
+      <div className="tabs-header" style={{ marginTop: '7rem' }}>
+        <h2>Como Podemos Ajudar?</h2>
+        <div className='divisoria'></div>
+        <p>Aqui está o passo a passo de como usar o nosso aplicativo, para você extrair o melhor do nosso sistema. Aproveite tudo que nossa plataforma oferece!</p>
+      </div>
+
+      {/* VIDEO DE CADASTRO */}
+      <section className="texto-video-section">
+        <div className="texto-video-container">
+          <div className="texto-video-content">
+            <div className="texto-video-text">
+              <h2>Como se cadastrar no aplicativo?</h2>
+              <p>
+                Com o app TratorBR, agricultores e concessionários ganham uma nova forma de conectar suas máquinas com eficiência e agilidade. Tudo na palma da mão.
+              </p>
+            </div>
+
+            <div className="texto-video-video">
+              <div className="video-placeholder">
+                <iframe width="100%" height="100%"
+                  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                  title="Video mostrando todo o processo do cadastro"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ borderRadius: '12px' }}
+                ></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 1-2-3 CADASTRO */}
+      <section className="cards-numerados-section">
+        <div className="cards-numerados-container">
+          <div className="cards-grid">
+            {cardsData.map((card, index) => (
+              <div key={index} className="card-numerado">
+                <div className="card-numero">
+                  {card.numero}
+                </div>
+                <h3 className="card-titulo">{card.titulo}</h3>
+                <p className="card-descricao">{card.descricao}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* EXPLICAÇÕES EM ABAS */}
+      <section className="tabs-video-section">
+        <div className="tabs-video-container">
+          <div className="tabs-header">
+            <h2>Primeiros Passos</h2>
+            <div className='divisoria'></div>
+          </div>
+
+          <div className="tabs-nav">
+            {tabsData.map((tab, index) => (
+              <button
+                key={tab.id}
+                className={`tab-button ${activeTab === index ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab(index);
+                  setActiveImageSlide(0);
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="tabs-content-wrapper">
+            <div className="tabs-content-new">
+              <div className="tabs-left-column">
+                <h3 className="tabs-text-title">{tabsData[activeTab].title}</h3>
+                <p className="tabs-text-description">{tabsData[activeTab].description}</p>
+
+                <div className="video-placeholder-new">
+                  <iframe
+                    width="100%" height="100%" src={tabsData[activeTab].videoUrl} title={`Video - ${tabsData[activeTab].label}`}
+                    frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen style={{ borderRadius: '12px' }}
+                  ></iframe>
+                </div>
+              </div>
+
+              <div className="tabs-right-column">
+                <div className="carousel-container">
+                  <div className="carousel-text">Arraste para o lado →</div>
+
+                  <div className="carousel-images">
+                    {tabsData[activeTab].appImages.map((image, index) => (
+                      <div key={index} className={`carousel-image-wrapper ${index === activeImageSlide ? 'active' : ''}`}
+                      >
+                        <img src={image} alt={`App Screen ${index + 1}`} className="carousel-image" />
+                      </div>
+                    ))}
+
+                    <button className="carousel-arrow carousel-arrow-left" onClick={handlePrevSlide} aria-label="Imagem anterior">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M15 19l-7-7 7-7"></path>
+                      </svg>
+                    </button>
+                    <button className="carousel-arrow carousel-arrow-right" onClick={handleNextSlide} aria-label="Próxima imagem">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 19l7-7-7-7"></path>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="carousel-dots">
+                    {tabsData[activeTab].appImages.map((_, index) => (
+                      <button key={index} className={`carousel-dot ${index === activeImageSlide ? 'active' : ''}`} onClick={() => goToSlide(index)} aria-label={`Ir para slide ${index + 1}`}>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <main className="ajuda-content">
         <div className="ajuda-container">
-          <div className="ajuda-header">
-            <h1>AJUDA</h1>
+          <div className="tabs-header" style={{ marginTop: '7rem' }}>
+            <h2>Perguntas Frequentes</h2>
             <div className='divisoria'></div>
           </div>
 
@@ -82,12 +319,10 @@ const AjudaPage = () => {
                   </span>
                 </button>
 
-                {/* Introdução - só aparece quando fechado */}
                 <div className={`faq-intro ${faqAberto === index ? 'hidden' : 'visible'}`}>
                   <p>{item.introducao}</p>
                 </div>
 
-                {/* Resposta detalhada - só aparece quando aberto */}
                 <div className={`faq-answer ${faqAberto === index ? 'open' : ''}`}>
                   <div className="faq-answer-content">
                     <p>{item.resposta}</p>
@@ -123,4 +358,3 @@ const AjudaPage = () => {
 };
 
 export default AjudaPage;
-
