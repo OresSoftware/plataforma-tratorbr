@@ -173,11 +173,11 @@ const AjudaPage = () => {
     <div className="ajuda-page">
       <Header />
 
-      <div className="tabs-header" style={{ marginTop: '7rem' }}>
+      {/* <div className="tabs-header" style={{ marginTop: '7rem' }}>
         <h2>Como Podemos Ajudar?</h2>
         <div className='divisoria'></div>
         <p>Aqui está o passo a passo de como usar o nosso aplicativo, para você extrair o melhor do nosso sistema. Aproveite tudo que nossa plataforma oferece!</p>
-      </div>
+      </div> */}
 
       {/* VIDEO DE CADASTRO */}
       <section className="texto-video-section">
@@ -186,7 +186,7 @@ const AjudaPage = () => {
             <div className="texto-video-text">
               <h2>Como se cadastrar no aplicativo?</h2>
               <p>
-                Com o app TratorBR, agricultores e concessionários ganham uma nova forma de conectar suas máquinas com eficiência e agilidade. Tudo na palma da mão.
+                Aqui está o passo a passo de como usar o nosso aplicativo, para você extrair o melhor do nosso sistema. Aproveite tudo que nossa plataforma oferece!
               </p>
             </div>
 
@@ -299,7 +299,7 @@ const AjudaPage = () => {
 
       <main className="ajuda-content">
         <div className="ajuda-container">
-          <div className="tabs-header" style={{ marginTop: '7rem' }}>
+          <div className="tabs-header" >
             <h2>Perguntas Frequentes</h2>
             <div className='divisoria'></div>
           </div>

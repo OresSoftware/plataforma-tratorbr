@@ -23,7 +23,7 @@
 
 .ajuda-container {
   margin: 0 auto;
-  padding: 0px 60px;
+  padding: 30px 60px;
 }
 
 .ajuda-header {
@@ -199,11 +199,11 @@
   font-family: 'Montserrat', sans-serif;
 }
 
-/* SECTION 1: Texto à Esquerda + Vídeo à Direita */
 .texto-video-section {
-  padding: 2rem 80px 2rem 80px;
-  background-color: white;
+  padding: 5rem 80px 4rem 80px;
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #f8fafb 0%, #e7edf3 100%);
+  margin-top: 80px;
 }
 
 .texto-video-container {
@@ -258,7 +258,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* SECTION 2: Tabs com Título + Vídeo (ATUALIZADO) */
 .tabs-video-section {
   padding: 4rem 1rem;
   background-color: white;
@@ -568,7 +567,7 @@
 
 /* SECTION 3: Cards com Números (1, 2, 3) */
 .cards-numerados-section {
-  padding: 4rem 0rem;
+  padding: 4rem 0rem 1rem 0rem;
   background-color: white;
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -669,23 +668,28 @@
 /* RESPOCIVIDADE */
 @media (max-width: 1027px) {
 
-  .texto-video-section{
-     padding: 0px 40px;
+  .texto-video-section {
+    padding: 50px 40px;
+    margin-top: 70px;
 
   }
 
-  .texto-video-text h2{
+  .texto-video-text h2 {
     font-size: 1.6em;
   }
 
   .tabs-video-section {
-    padding: 1rem;
+    padding: 0rem;
   }
 
   .ajuda-container,
   .tabs-video-container,
   .cards-numerados-container {
-    padding: 0px 40px;
+    padding: 40px 40px;
+  }
+
+  .cards-numerados-container {
+    padding: 0px 40px 40px;
   }
 
   .texto-video-content {
@@ -734,7 +738,7 @@
 
 @media (max-width: 768px) {
   .ajuda-content {
-    padding: 2rem 1rem;
+    padding: 2rem 20px;
   }
 
   .ajuda-container,
@@ -751,6 +755,7 @@
   .faq-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+    margin-top: 30px;
   }
 
   .faq-question {
@@ -792,7 +797,7 @@
   }
 
   .tabs-header h2 {
-    font-size: 1.4em;
+    font-size: 1.5rem;
   }
 
   .tabs-header p {
@@ -833,7 +838,7 @@
   }
 
   .cards-numerados-section {
-    padding: 2.5rem 1rem;
+    padding: 2.5rem 20px;
   }
 
   .cards-grid {
@@ -889,6 +894,7 @@
   .ajuda-header h1 {
     font-size: 1.8rem;
   }
+
   .carousel-arrow-left {
     left: -5px;
   }
@@ -909,18 +915,20 @@
   .carousel-container {
     gap: 1rem;
   }
-  
+
   .faq-answer-content {
     padding: 1rem;
   }
 
   .texto-video-text h2 {
-    font-size: 0em;
+    font-size: 20px;
     margin-bottom: 0rem;
+    text-align: center;
   }
 
-  .texto-video-section{
-    padding: 0 1rem;
+  .texto-video-section {
+    padding: 2rem 20px;
+    margin-top: 70px;
   }
 
   .tabs-header {
@@ -928,15 +936,16 @@
   }
 
   .texto-video-text p {
-    font-size: 0rem;
+    font-size: 1em;
+    text-align: center;
   }
 
   .texto-video-content {
-    gap: 1.5rem;
+    gap: 2.5rem;
   }
 
   .tabs-header h2 {
-    font-size: 1.2em;
+    font-size: 1.5rem;
   }
 
   .tabs-header p {
@@ -974,7 +983,7 @@
     gap: 0rem;
   }
 
-  .video-placeholder-new{
+  .video-placeholder-new {
     width: 0%;
 
   }
