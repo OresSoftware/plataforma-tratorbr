@@ -640,6 +640,54 @@
   font-weight: 400;
 }
 
+.recursos-ajuda {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 30px;
+}
+
+.recurso-icon-figma {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.recurso-titulo-figma {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #15383E;
+  margin: 0 0 15px 0;
+  line-height: 1.3;
+}
+
+.recurso-texto-figma {
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.recurso-card-figma {
+  background: white;
+  padding: 40px 25px;
+  border-radius: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* Estilização de cards específicos (ids pares) */
+div#recurso-card-7 {
+  background-color: #15383E !important;
+}
+
+.recurso-card-figma:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
 /* Animações */
 @keyframes fadeInDown {
   from {
@@ -667,6 +715,10 @@
 
 /* RESPOCIVIDADE */
 @media (max-width: 1027px) {
+
+  .recursos-ajuda{
+    display: none;
+  }
 
   .texto-video-section {
     padding: 50px 40px;
@@ -914,6 +966,7 @@
 
   .carousel-container {
     gap: 1rem;
+    margin-top: 14px;
   }
 
   .faq-answer-content {

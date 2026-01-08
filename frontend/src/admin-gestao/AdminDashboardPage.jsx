@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import "./style/AdminDashboardPage.css";
-
+import useNoindex from '../hooks/useNoindex';
 import { apiAdminEnterprises } from "../services/apiAdminEnterprises";
 import { apiAdminUsers } from "../services/apiAdminUsers";
 import { apiAdminContatos } from "../services/apiAdminContatos";
@@ -33,6 +33,9 @@ const DIAS_JANELA = 30; // janela do gráfico de linha (últimos X dias)
 const PAGE_SIZE = 100;  // paginação para carregar tudo sem mudar o backend
 
 function AdminDashboardPage() {
+  useNoindex();
+
+  // métricas principais
   const [metricas, setMetricas] = useState({
     empresasAtivas: 0,
     usuariosAtivos: 0,

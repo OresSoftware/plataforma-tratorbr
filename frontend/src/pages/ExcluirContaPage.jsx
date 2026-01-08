@@ -5,11 +5,14 @@ import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import CalendlyFlutuante from "../components/CalendlyFlutuante";
 import { WifiOff } from "lucide-react";
+import useNoindex from '../hooks/useNoindex';
 import './style/ExcluirContaPage.css';
 
 const ExcluirContaPage = () => {
   const [email, setEmail] = useState('');
   const [recaptchaVerified, setRecaptchaVerified] = useState(false);
+
+  useNoindex();
 
   const handleSubmit = (e) => {
     e.preventDefault();

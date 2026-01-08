@@ -6,6 +6,72 @@ import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import CalendlyFlutuante from "../components/CalendlyFlutuante";
 import './style/AjudaPage.css';
 
+const SearchIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const PerfilIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 21V19C20 16.7909 18.2091 15 16 15H8C5.79086 15 4 16.7909 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const SuporteIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 18V16C3 11.0294 7.02944 7 12 7C16.9706 7 21 11.0294 21 16V18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M21 19C21 20.1046 20.1046 21 19 21H18C16.8954 21 16 20.1046 16 19V16C16 14.8954 16.8954 14 18 14H21V19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M3 19C3 20.1046 3.89543 21 5 21H6C7.10457 21 8 20.1046 8 19V16C8 14.8954 7.10457 14 6 14H3V19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const HomeIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const MoneyIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2V22M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6312 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6312 13.6815 18 14.5717 18 15.5C18 16.4283 17.6312 17.3185 16.9749 17.9749C16.3185 18.6312 15.4283 19 14.5 19H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const DatabaseIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="12" cy="5" rx="9" ry="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M21 12C21 13.66 17 15 12 15C7 15 3 13.66 3 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M3 5V19C3 20.66 7 22 12 22C17 22 21 20.66 21 19V5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const DisruptivoIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const AvaliacaoIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 4H18C19.1046 4 20 4.89543 20 6V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V6C4 4.89543 4.89543 4 6 4H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <rect x="8" y="2" width="8" height="4" rx="1" ry="1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M9 14L11 16L15 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const AlgoritmoIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="18" cy="5" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="6" cy="12" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="18" cy="19" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M8.59 13.51L15.42 17.49" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M15.41 6.51L8.59 10.49" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 const AjudaPage = () => {
   const [faqAberto, setFaqAberto] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
@@ -65,6 +131,32 @@ const AjudaPage = () => {
       title: 'Conheça mais da Home',
       description: 'Eaê! Bem-vindo à sua central de comando. A tela de Home do TratorBR não é apenas um início, é o seu painel de controle para tomar decisões mais rápidas e inteligentes no mercado de máquinas agrícolas. Pense nela como a cabine da sua máquina mais potente: tudo o que você precisa está ao alcance de um toque.',
       videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      recursosCards: [
+        {
+          idHtml: 'recurso-card-1',
+          icone: <PerfilIcon />,
+          titulo: 'Perfil',
+          texto: 'Acesso rápido às suas informações e configurações pessoais.',
+          iconColor: null,
+          textColor: null
+        },
+        {
+          idHtml: 'recurso-card-7',
+          icone: <SuporteIcon />,
+          titulo: 'Suporte',
+          texto: 'Facilitado ao seu acesso, para tirar todas as suas dúvidas.',
+          iconColor: '#fff',
+          textColor: '#fff'
+        },
+        {
+          idHtml: 'recurso-card-3',
+          icone: <HomeIcon />,
+          titulo: 'Inicialização',
+          texto: 'Rápido acesso às avaliações e principais funcionalidades.',
+          iconColor: '#15383E',
+          textColor: undefined
+        }
+      ],
       appImages: [
         '/imagens-tutorial/IMG-HOME.png',
         '/imagens-tutorial/IMG-HOME-2.png',
@@ -92,6 +184,32 @@ const AjudaPage = () => {
       title: 'Como avaliar minha maquina',
       description: 'Você já imaginou ter uma Tabela FIPE, mas construída para a realidade e a dinâmica do mercado de máquinas agrícolas? Essa ferramenta existe e se chama TabelaBR. Nós somos a referência de preços de Equipamento do Agronegócio. Com base em um algoritmo feito para calcular o valor de uma Máquina baseado no Estado de Conservação do Equipamento, a TabelaBr é a inteligência de dados trabalhando para o seu negócio.',
       videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      recursosCards: [
+        {
+          idHtml: 'recurso-card-1',
+          icone: <MoneyIcon />,
+          titulo: 'Presificação',
+          texto: 'Descubra o verdadeiro valor de mercado do seu equipamento.',
+          iconColor: null,
+          textColor: null
+        },
+        {
+          idHtml: 'recurso-card-7',
+          icone: <SearchIcon />,
+          titulo: 'Busca de suas avaliações',
+          texto: 'Acesse todas as suas avaliações anteriores em um só lugar.',
+          iconColor: '#fff',
+          textColor: '#fff'
+        },
+        {
+          idHtml: 'recurso-card-3',
+          icone: <DisruptivoIcon />,
+          titulo: 'Desrupitivo',
+          texto: 'Transformação no mercado de máquinas agrícolas usadas.',
+          iconColor: '#15383E',
+          textColor: undefined
+        }
+      ],
       appImages: [
         '/imagens-tutorial/tabelabr-00.png',
         '/imagens-tutorial/tabelabr-01.png',
@@ -116,6 +234,32 @@ const AjudaPage = () => {
       title: 'Descobrindo a nota do meu equipamento',
       description: 'Se AnoBR e TabelaBR te dão a base, o CheckBR é o seu bisturi de precisão. É aqui que separamos uma máquina comum de uma máquina excepcional. Esta ferramenta aponta oestado de Conservação exato, do seu equipamento, resultando em um Laudo, para documentar o que realmente esse Equipamento significa.',
       videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      recursosCards: [
+        {
+          idHtml: 'recurso-card-1',
+          icone: <AvaliacaoIcon />,
+          titulo: 'Avaliação Completa',
+          texto: 'Avaliação detalhada do estado de conservação do equipamento.',
+          iconColor: null,
+          textColor: null
+        },
+        {
+          idHtml: 'recurso-card-7',
+          icone: <AlgoritmoIcon />,
+          titulo: 'Algoritimos Avançados',
+          texto: 'Uma série de cálculos para o resultado mais preciso possível.',
+          iconColor: '#fff',
+          textColor: '#fff'
+        },
+        {
+          idHtml: 'recurso-card-3',
+          icone: <DatabaseIcon />,
+          titulo: 'Dados Reais',
+          texto: 'Maior banco de dados de máquina agrícolas, com informações atualizadas constantemente.',
+          iconColor: '#15383E',
+          textColor: undefined
+        }
+      ],
       appImages: [
         '/imagens-tutorial/checklist-1.png',
         '/imagens-tutorial/checklist-2.png',
@@ -252,11 +396,36 @@ const AjudaPage = () => {
                 <h3 className="tabs-text-title">{tabsData[activeTab].title}</h3>
                 <p className="tabs-text-description">{tabsData[activeTab].description}</p>
 
-                <div className="video-placeholder-new">
+                {/* <div className="video-placeholder-new">
                   <iframe
                     width="100%" height="100%" src={tabsData[activeTab].videoUrl} title={`Video - ${tabsData[activeTab].label}`}
                     frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen style={{ borderRadius: '12px' }}
                   ></iframe>
+                </div> */}
+                <div className='recursos-ajuda'>
+                  {tabsData[activeTab].recursosCards && tabsData[activeTab].recursosCards.map((card, index) => (
+                    <div
+                      key={index}
+                      className="recurso-card-figma"
+                      id={card.idHtml}
+                    >
+                      <div
+                        className="recurso-icon-figma"
+                        style={{ color: card.iconColor || 'inherit' }}
+                      >
+                        {card.icone}
+                      </div>
+                      <h3 className="recurso-titulo-figma" style={{ color: card.textColor || 'inherit' }}>
+                        {card.titulo}
+                      </h3>
+                      <p
+                        className="recurso-texto-figma"
+                        style={{ color: card.textColor || 'inherit' }}
+                      >
+                        {card.texto}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
 

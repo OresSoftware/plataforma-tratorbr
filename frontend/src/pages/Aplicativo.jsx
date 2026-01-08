@@ -267,7 +267,7 @@ const PlanosPage = () => {
               ))}
             </div>
           </div>
-        </section> */}
+        </section> 
         {/* Context Images Section */}
         <section className="context-section">
           <div className="context-container">

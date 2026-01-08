@@ -4,9 +4,12 @@ import Footer from '../components/footer';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import CalendlyFlutuante from "../components/CalendlyFlutuante";
+import useNoindex from '../hooks/useNoindex';
 import './style/TermosEPolitica.css';
 
 const TermosEPolitica = () => {
+  useNoindex();
+  
   return (
     <div className="termos-uso-container">
       <Header />

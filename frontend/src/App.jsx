@@ -5,6 +5,7 @@ import Aplicativo from "./pages/Aplicativo";
 import ContatoPage from "./pages/ContatoPage";
 import AjudaPage from "./pages/AjudaPage";
 import TermosEPolitica from './pages/TermosEPoliticaPage';
+import PlanoseCreditos from './pages/TermosCreditoePlanos';
 import AdminLoginPage from './admin-gestao/AdminLoginPage';
 import AdminDashboardPage from './admin-gestao/AdminDashboardPage';
 import AdminIpsPage from './admin-gestao/AdminIpsPage';
@@ -14,6 +15,7 @@ import SobreNosPage from './pages/SobreNosPage';
 import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
 import Analytics from "./components/Analytics";
+import StructuredDataAdvanced from "./components/StructuredDataAdvanced";
 import { MobileMenuProvider } from "./contexts/MobileMenuContext";
 import AdminContatoPage from './admin-gestao/AdminContatoPage';
 import AdminEnterprisesPage from './admin-gestao/AdminEnterprisesPage';
@@ -40,6 +42,9 @@ function App() {
   return (
     <MobileMenuProvider>
       <Router>
+        {/* Sitelinks */}
+        <StructuredDataAdvanced />
+
         <TitleManager />
         <ScrollToHashElement />
         <Routes>
@@ -47,6 +52,7 @@ function App() {
           <Route path="/" element={<Aplicativo />} />
           <Route path="/contato" element={<ContatoPage />} />
           <Route path="/politicasdeprivacidade.html" element={<TermosEPolitica />} />
+          <Route path="/planos-creditos" element={<PlanoseCreditos />} />
           <Route path="/ajuda" element={<AjudaPage />} />
           <Route path="/excluir-conta" element={<ExcluirContaPage />} />
           <Route path="/sobre-nos" element={<SobreNosPage />} />
@@ -57,9 +63,9 @@ function App() {
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           <Route path="/admin/ips" element={<AdminIpsPage />} />
           <Route path="/admin/contato" element={<AdminContatoPage />} />
-          <Route path="/admin/empresas" element={<AdminEnterprisesPage />} /> 
+          <Route path="/admin/empresas" element={<AdminEnterprisesPage />} />
           <Route path="/admin/usuarios" element={<AdminUsersPage />} />
-          
+
 
           {/* Redirecionamentos */}
           <Route path="*" element={<Navigate to="/" replace />} />

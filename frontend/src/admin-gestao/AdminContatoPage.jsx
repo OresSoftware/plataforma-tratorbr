@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { apiAdminContatos } from "../services/apiAdminContatos";
 import AdminLayout from '../components/AdminLayout';
+import useNoindex from '../hooks/useNoindex';
 import "./style/AdminContatoPage.css";
 
 function soDigitos(v) {
@@ -22,6 +23,8 @@ function formatarDataHora(iso) {
 export default function AdminContatoPage() {
   const token = localStorage.getItem("adminToken");
   if (!token) return <Navigate to="/admin/login" replace />;
+
+  useNoindex();
 
   // listagem e estado geral
   const [itens, setItens] = useState([]);

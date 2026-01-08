@@ -19,9 +19,8 @@
 }
 
 .footer-content {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   width: 100%;
   border-bottom: 1px solid #f6f6f6;
   padding-bottom: 40px;
@@ -56,6 +55,14 @@
   margin-bottom: 10px;
 }
 
+.footer-titulo {
+  font-size: 16px;
+  color: black;
+  font-weight: bold;
+  padding: 0rem 1rem;
+
+}
+
 .footer-links a {
   text-decoration: none;
   color: black;
@@ -80,8 +87,6 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0 20px;
-  margin-left: -140px;
 }
 
 .tratorbr-logo {
@@ -185,6 +190,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    grid-template-columns: repeat(1, 1fr);
   }
 
   .footer-section,
