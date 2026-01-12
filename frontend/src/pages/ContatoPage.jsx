@@ -77,7 +77,7 @@ export default function ContatoPage() {
 
     <main className="contato-wrapper">
       <Header />
-      <section className="contato-hero">
+      <section id="agendamento" className="contato-hero">
         <h1>Em que podemos te ajudar?</h1>
         <div className='divsoria'></div>
         <p>Encaminhe dúvidas, solicite um orçamento e saiba quais as melhores soluções em máquinas e tecnologias agrícolas disponíveis para você. Temos um time especializado para te atender.</p>
@@ -101,7 +101,7 @@ export default function ContatoPage() {
       </section>
 
       {/* CONTATO  */}
-      <section className="contato-hero" style={{ marginTop: "0px" }}>
+      <section id="contato" className="contato-hero" style={{ marginTop: "0px" }}>
         <div className="contato-card-1">
           <h2 className='conth2'>Fale com a TratorBR!</h2>
           <div className='divsoria-dois'></div>

@@ -155,7 +155,7 @@ const PlanosPage = () => {
         </section>
         {/* Download Section */}
         <section>
-          <div className="fundoloja">
+          <div id="baixar-app" className="fundoloja">
             <h1>Baixe agora</h1>
             <p>Clique e baixe nas principais lojas.</p>
             <div className="imgsloja">
@@ -344,6 +344,7 @@ const PlanosPage = () => {
           </div>
         </section>
         {/* <img src={iph03} alt="teste" className='ipho03'/> */}
+        
         <section className="download-section-dois">
           <img src={iph03} alt="teste" className='ipho03' />
           <div className='download-container-dois'>

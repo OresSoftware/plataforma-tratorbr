@@ -10,7 +10,7 @@ const TitleManager = () => {
       '/aplicativo': 'TratorBR - Aplicativo',
       '/contato': 'TratorBR - Contato',
       '/termos-e-politicas': 'TratorBR - Termos e Políticas',
-      '/juda': 'TratorBR - Dúvidas',
+      '/planos-creditos': 'TratorBR - Planos e Créditos',
       '/admin/login': 'TratorBR - Login Admin',
       '/admin/dashboard': 'TratorBR - Dashboard Admin',
       '/admin/ips': 'TratorBR - Gerenciar IPS Admin',

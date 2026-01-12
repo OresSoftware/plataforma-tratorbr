@@ -368,7 +368,7 @@ const AjudaPage = () => {
       </section>
 
       {/* EXPLICAÇÕES EM ABAS */}
-      <section className="tabs-video-section">
+      <section id="proximos-passos" className="tabs-video-section">
         <div className="tabs-video-container">
           <div className="tabs-header">
             <h2>Primeiros Passos</h2>
