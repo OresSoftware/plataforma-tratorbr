@@ -40,11 +40,11 @@ const MoneyIcon = () => (
   </svg>
 );
 
-const DatabaseIcon = () => (
+const LaudoIcon = () => (
   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="12" cy="5" rx="9" ry="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M21 12C21 13.66 17 15 12 15C7 15 3 13.66 3 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M3 5V19C3 20.66 7 22 12 22C17 22 21 20.66 21 19V5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9 15L11 17L15 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -253,9 +253,9 @@ const AjudaPage = () => {
         },
         {
           idHtml: 'recurso-card-3',
-          icone: <DatabaseIcon />,
-          titulo: 'Dados Reais',
-          texto: 'Maior banco de dados de máquina agrícolas, com informações atualizadas constantemente.',
+          icone: <LaudoIcon />,
+          titulo: 'Gerador de Laudo',
+          texto: 'Após a avaliação, gere um laudo completo e documentado do estado do equipamento.',
           iconColor: '#15383E',
           textColor: undefined
         }
@@ -263,7 +263,22 @@ const AjudaPage = () => {
       appImages: [
         '/imagens-tutorial/checklist-1.png',
         '/imagens-tutorial/checklist-2.png',
-        '/imagens-tutorial/checklist-3.png'
+        '/imagens-tutorial/checklist-3.png',
+        '/imagens-tutorial/checklist-4.png',
+        '/imagens-tutorial/checklist-5.png',
+        '/imagens-tutorial/checklist-6.png',
+        '/imagens-tutorial/checklist-7.png',
+        '/imagens-tutorial/checklist-8.png',
+        '/imagens-tutorial/checklist-9.png',
+        '/imagens-tutorial/checklist-10.png',
+        '/imagens-tutorial/checklist-11.png',
+        '/imagens-tutorial/checklist-12.png',
+        '/imagens-tutorial/checklist-13.png',
+        '/imagens-tutorial/checklist-14.png',
+        '/imagens-tutorial/checklist-15.png',
+        '/imagens-tutorial/checklist-16.png',
+        '/imagens-tutorial/checklist-17.png',
+        '/imagens-tutorial/checklist-18.png'
       ]
     }
   ];
