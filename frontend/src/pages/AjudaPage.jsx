@@ -4,6 +4,7 @@ import Footer from '../components/footer';
 import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import CalendlyFlutuante from "../components/CalendlyFlutuante";
+import { Link } from 'react-router-dom';
 import './style/AjudaPage.css';
 
 const SearchIcon = () => (
@@ -42,9 +43,9 @@ const MoneyIcon = () => (
 
 const LaudoIcon = () => (
   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M9 15L11 17L15 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M9 15L11 17L15 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -69,6 +70,40 @@ const AlgoritmoIcon = () => (
     <circle cx="18" cy="19" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     <path d="M8.59 13.51L15.42 17.49" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     <path d="M15.41 6.51L8.59 10.49" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const CadastroIcon = () => (
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 21V19C16 16.7909 14.2091 15 12 15H5C2.79086 15 1 16.7909 1 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M8.5 11C10.7091 11 12.5 9.20914 12.5 7C12.5 4.79086 10.7091 3 8.5 3C6.29086 3 4.5 4.79086 4.5 7C4.5 9.20914 6.29086 11 8.5 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M20 8V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M23 11H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const FuncionalidadesIcon = () => (
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="7" height="7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <rect x="14" y="3" width="7" height="7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <rect x="14" y="14" width="7" height="7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <rect x="3" y="14" width="7" height="7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const FaqIcon = () => (
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 11.5C21.0039 12.8199 20.6951 14.1219 20.1 15.3C19.3944 16.7118 18.3098 17.8992 16.9674 18.7293C15.6251 19.5594 14.0782 19.9994 12.5 20C11.1801 20.0035 9.87273 19.6955 8.7 19.1L3 21L4.9 15.3C4.30453 14.1273 3.99656 12.8199 4 11.5C4.00061 9.92179 4.44061 8.37488 5.27072 7.03258C6.10083 5.69028 7.28825 4.6056 8.7 3.90003C9.87812 3.30496 11.1801 2.9969 12.5 3H13C15.0843 3.11502 17.053 3.99479 18.5291 5.47089C20.0052 6.94699 20.885 8.91568 21 11V11.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M12 17H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M12 13.5C12 13.5 13.5 13.5 13.5 11.5C13.5 9.5 10.5 11.5 10.5 9.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const SuporteeIcon = () => (
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 18V16C3 11.0294 7.02944 7 12 7C16.9706 7 21 11.0294 21 16V18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M21 19C21 20.1046 20.1046 21 19 21H18C16.8954 21 16 20.1046 16 19V16C16 14.8954 16.8954 14 18 14H21V19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M3 19C3 20.1046 3.89543 21 5 21H6C7.10457 21 8 20.1046 8 19V16C8 14.8954 7.10457 14 6 14H3V19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -343,30 +378,65 @@ const AjudaPage = () => {
         <div className="texto-video-container">
           <div className="texto-video-content">
             <div className="texto-video-text">
-              <h2>Como se cadastrar no aplicativo?</h2>
+              <h2>Vamos lá! <br></br>Comece por aqui.</h2>
               <p>
                 Aqui está o passo a passo de como usar o nosso aplicativo, para você extrair o melhor do nosso sistema. Aproveite tudo que nossa plataforma oferece!
               </p>
             </div>
 
-            <div className="texto-video-video">
+            {/* <div className="texto-video-video">
               <div className="video-placeholder">
-                <iframe width="100%" height="100%"
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                  title="Video mostrando todo o processo do cadastro"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  style={{ borderRadius: '12px' }}
+                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Video mostrando todo o processo do cadastro" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen style={{ borderRadius: '12px' }}
                 ></iframe>
               </div>
+            </div> */}
+            
+
+            <div className="recursos-grid-novo">
+
+              <Link to="#cadastro-passos">
+                <div className="recurso-card-novo">
+                  <div className="recurso-icon-novo">
+                    <CadastroIcon />
+                  </div>
+                  <p className="recurso-titulo-novo">Como se <strong>cadastrar</strong> no aplicativo?</p>
+                </div>
+              </Link>
+
+              <Link to="#proximos-passos">
+                <div className="recurso-card-novo">
+                  <div className="recurso-icon-novo">
+                    <FuncionalidadesIcon />
+                  </div>
+                  <p className="recurso-titulo-novo">Como utilizar <strong>cada área</strong> do aplicativo?</p>
+                </div>
+              </Link>
+
+              <Link to="#ajuda-content">
+                <div className="recurso-card-novo">
+                  <div className="recurso-icon-novo">
+                    <FaqIcon />
+                  </div>
+                  <p className="recurso-titulo-novo"><strong>Perguntas frequentes</strong> sobre a TratorBr?</p>
+                </div>
+              </Link>
+
+              <Link to="/contato#contato-c">
+                <div className="recurso-card-novo">
+                  <div className="recurso-icon-novo">
+                    <SuporteeIcon />
+                  </div>
+                  <p className="recurso-titulo-novo">Como falar com o <strong>suporte</strong> da TratorBr?</p>
+                </div>
+              </Link>
+
             </div>
           </div>
         </div>
       </section>
 
       {/* 1-2-3 CADASTRO */}
-      <section className="cards-numerados-section">
+      <section id="cadastro-passos" className="cards-numerados-section">
         <div className="cards-numerados-container">
           <div className="cards-grid">
             {cardsData.map((card, index) => (
@@ -481,7 +551,7 @@ const AjudaPage = () => {
         </div>
       </section>
 
-      <main className="ajuda-content">
+      <main id="ajuda-content" className="ajuda-content">
         <div className="ajuda-container">
           <div className="tabs-header" >
             <h2>Perguntas Frequentes</h2>
