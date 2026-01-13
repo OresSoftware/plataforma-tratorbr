@@ -101,7 +101,7 @@ export default function ContatoPage() {
       </section>
 
       {/* CONTATO  */}
-      <section id="contato" className="contato-hero" style={{ marginTop: "0px" }}>
+      <section id="contato-c" className="contato-hero" style={{ marginTop: "0px" }}>
         <div className="contato-card-1">
           <h2 className='conth2'>Fale com a TratorBR!</h2>
           <div className='divsoria-dois'></div>

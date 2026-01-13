@@ -201,12 +201,12 @@ const SobreNosPage = () => {
               sua gestão com a TratorBR.
             </p>
             <div className="cta-buttons">
-              <Link to="/#recursos" className='btn-primary'>
+              <Link to="/#app-contato" className='btn-primary'>
                 Conhecer APP
               </Link>
-              <a href="/contato" className="btn-secondary">
+              <Link to="/contato#contato-c" className="btn-secondary">
                 Falar Conosco
-              </a>
+              </Link>
             </div>
           </div>
         </div>

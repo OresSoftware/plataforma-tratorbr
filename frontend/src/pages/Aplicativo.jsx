@@ -276,9 +276,7 @@ const PlanosPage = () => {
                 <img src={img_um} alt="Trator no campo" className="context-image" />
                 <div className="context-overlay">
                   <h2 className='titulo'><strong>Concessionários</strong></h2>
-                  <p>Conectamos o melhor preço e qualidade, gerencia suas análises
-                    de um só lugar e ainda te dá a certeza de todas as informações do seu estoque no
-                    campo.</p>
+                  <p>Acesse o maior banco de dados de máquinas agrícolas. Cruzamos dados de veículos novos e usados para entregar uma precificação confiável que facilita suas transações e blinda seu lucro.</p>
                   <a href="/contato"><button className="context-btn">Saiba mais</button></a>
                 </div>
               </div>
@@ -286,9 +284,7 @@ const PlanosPage = () => {
                 <img src={img_dois} alt="Agricultor trabalhando" className="context-image" />
                 <div className="context-overlay">
                   <h2 className='titulo'><strong>Agricultor</strong></h2>
-                  <p>Venda suas máquinas no preço de mercado, encontre
-                    concessionários perto de você e negocie com segurança direto no
-                    app.</p>
+                  <p>Antes de vender ou trocar, consulte o TratorBR. Oferecemos uma avaliação detalhada que considera desde o modelo até a conservação, garantindo que você faça o melhor negócio possível.</p>
                   <a href="/contato"><button className="context-btn">Saiba mais</button></a>
                 </div>
               </div>
@@ -327,7 +323,7 @@ const PlanosPage = () => {
                 </div>
               ))}
             </div>
-            <div className="contact-section-ajuda">
+            <div id='app-contato' className="contact-section-ajuda">
               <div className="contact-horizontal-ajuda">
                 <div className="contact-text-ajuda">
                   <h2>Você está com alguma dúvida que não foi sanada em cima?</h2>
@@ -344,7 +340,7 @@ const PlanosPage = () => {
           </div>
         </section>
         {/* <img src={iph03} alt="teste" className='ipho03'/> */}
-        
+
         <section className="download-section-dois">
           <img src={iph03} alt="teste" className='ipho03' />
           <div className='download-container-dois'>
