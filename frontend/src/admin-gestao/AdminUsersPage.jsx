@@ -6,6 +6,7 @@ import { api } from "../lib/api";
 import AdminLayout from '../components/AdminLayout';
 import "./style/AdminUsersPage.css";
 import { Search, ChevronLeft, ChevronRight, Edit, Power, Key, User } from 'lucide-react';
+import useNoindex from '../hooks/useNoindex';
 import { solicitarRedefinicaoSenha } from "../services/apiPublicAuth";
 
 // ===== Select pesquisável (com busca + lista rolável de 5 itens) =====
@@ -329,6 +330,9 @@ export default function AdminUsersPage() {
   const token = localStorage.getItem("adminToken");
   if (!token) return <Navigate to="/admin/login" replace />;
 
+  useNoindex();
+
+  
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);

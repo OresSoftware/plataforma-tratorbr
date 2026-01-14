@@ -5,6 +5,7 @@ import { apiAdminEnterprises } from "../services/apiAdminEnterprises";
 import { api } from "../lib/api";
 import AdminLayout from '../components/AdminLayout';
 import "./style/AdminEnterprisesPage.css";
+import useNoindex from '../hooks/useNoindex';
 import { Search, PlusCircle, ChevronLeft, ChevronRight, Edit, Power, ChevronDown } from 'lucide-react';
 import LogoSelector from './components/LogoSelector';
 
@@ -396,6 +397,8 @@ const FilterDropdown = ({ label, value, options, onChange, placeholder = "Seleci
 export default function AdminEnterprisesPage() {
   const token = localStorage.getItem("adminToken");
   if (!token) return <Navigate to="/admin/login" replace />;
+
+  useNoindex();
 
   const [empresas, setEmpresas] = useState([]);
   const [loading, setLoading] = useState(true);

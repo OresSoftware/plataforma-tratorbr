@@ -1,12 +1,12 @@
 .flutuante-button {
     position: fixed;
     bottom: 40px;
-    right: 15px;
-    background-color: #409535; 
+    right: 30px;
+    background-color: #409535;
     border-radius: 20px 20px 0 20px;
     box-shadow: 2px 2px 3px #999;
     z-index: 1000;
-    transition: all 0.3s ease, opacity 0.4s ease, transform 0.4s ease; 
+    transition: all 0.3s ease, opacity 0.4s ease, transform 0.4s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -25,11 +25,12 @@
 
 .flutuante-button:hover:not(.hidden-by-menu) {
     transform: translateX(0) scale(1.1);
-    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4); 
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
 }
 
 @media (max-width: 768px) {
-    .flutuante-button{
+    .flutuante-button {
         bottom: 15px;
+        right: 15px;
     }
 }

@@ -2,9 +2,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './style/AdminLoginPage.css';
-import { apiAuth } from "../lib/api"; // ✅ só o cliente "limpo" para login
+import useNoindex from '../hooks/useNoindex';
+import { apiAuth } from "../lib/api"; 
 
 const AdminLoginPage = () => {
+  useNoindex();
+
   const [formData, setFormData] = useState({ username: '', password: '', otp: '' });
   const [showPwd, setShowPwd] = useState(false); // 👈 estado para mostrar/ocultar senha
   const [loading, setLoading] = useState(false);
@@ -17,7 +20,6 @@ const AdminLoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
 
     try {
@@ -40,6 +42,8 @@ const AdminLoginPage = () => {
       setLoading(false);
     }
   };
+
+  
 
   return (
     <div className="admin-login-page">

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { Plus, Trash2, RefreshCw, X, MapPin } from "lucide-react";
 import AdminLayout from "../components/AdminLayout";
+import useNoindex from '../hooks/useNoindex';
 import "./style/AdminIpsPage.css";
 import { api } from "../lib/api"
 
@@ -29,6 +30,8 @@ export default function AdminIpsPage() {
   const admin = JSON.parse(localStorage.getItem("adminData") || "{}");
   if (!token) return <Navigate to="/admin/login" replace />;
   if (admin?.role !== "master") return <Navigate to="/admin/dashboard" replace />;
+
+  useNoindex();
 
   const [lista, setLista] = useState([]);
   const [loading, setLoading] = useState(true);
