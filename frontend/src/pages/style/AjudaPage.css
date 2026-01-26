@@ -428,10 +428,51 @@
 .carousel-image {
   width: 100%;
   height: 100%;
+  max-width: 340px;
   object-fit: cover;
   border-radius: 40px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  /* box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); */
 }
+
+/* teste */
+.carousel-images {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 9 / 19;
+  height: auto;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  margin: 0 auto;
+}
+
+.carousel-image-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-image-wrapper.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 40px;
+  /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); */
+}
+
 
 .carousel-dots {
   display: flex;
@@ -699,6 +740,7 @@ div#recurso-card-7 {
   text-decoration: none;
   color: inherit;
 }
+
 .recurso-card-novo {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(12px);
@@ -754,7 +796,7 @@ div#recurso-card-7 {
   }
 }
 
-/* RESPOCIVIDADE */
+/* RESPONSIVIDADE */
 @media (max-width: 1027px) {
 
   .recursos-ajuda {
@@ -828,13 +870,15 @@ div#recurso-card-7 {
     font-size: 0.9rem;
   }
 
-  .recursos-grid-novo{
+  .recursos-grid-novo {
     display: block;
   }
 
-  .recurso-card-novo{
+  .recurso-card-novo {
     margin-bottom: 14px;
   }
+
+
 }
 
 @media (max-width: 768px) {
@@ -934,8 +978,11 @@ div#recurso-card-7 {
   }
 
   .carousel-images {
-    max-width: 250px;
-    height: 500px;
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    aspect-ratio: 9 / 19;
+    margin: 0 auto;
   }
 
   .cards-numerados-section {
@@ -1091,8 +1138,19 @@ div#recurso-card-7 {
   }
 
   .carousel-images {
-    max-width: 100%;
-    height: 500px;
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    aspect-ratio: 9 / 19;
+    margin: 0 auto;
+  }
+
+  .carousel-arrow-left {
+    left: -15px;
+  }
+
+  .carousel-arrow-right {
+    right: -15px;
   }
 
   .carousel-dot {

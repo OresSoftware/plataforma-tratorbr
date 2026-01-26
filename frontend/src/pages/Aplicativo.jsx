@@ -126,6 +126,14 @@ const PlanosPage = () => {
     </svg>
   );
 
+  const LaudoIcon = () => (
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9 15L11 17L15 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+
 
   return (
     <div className="planos-page">
@@ -179,13 +187,24 @@ const PlanosPage = () => {
             <h2 className="recursos-title">RECURSOS</h2>
             <div className='divsoria'></div>
             <div className="recursos-grid-figma">
-              <div className="recurso-card-figma" id='recurso-card-1'>
+              {/* SOBRE O ANO */}
+              {/* <div className="recurso-card-figma" id='recurso-card-1'>
                 <div className="recurso-icon-figma">
                   <SearchIcon />
                 </div>
                 <h3 className="recurso-titulo-figma">Descubra o Ano</h3>
                 <p className="recurso-texto-figma">
                   A solução para quem tem dúvidas sobre o ano de fabricação da sua máquina de trabalho.
+                </p>
+              </div> */}
+
+              <div className="recurso-card-figma" id='recurso-card-1'>
+                <div className="recurso-icon-figma">
+                  <LaudoIcon />
+                </div>
+                <h3 className="recurso-titulo-figma">Gerador de Laudo</h3>
+                <p className="recurso-texto-figma">
+                  Após sua avaliação, gere um laudo completo e documentado do equipamento validado pela TratorBr.
                 </p>
               </div>
               <div className="recurso-card-figma" id='recurso-card-2'>
