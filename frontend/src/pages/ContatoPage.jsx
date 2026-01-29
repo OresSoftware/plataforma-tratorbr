@@ -5,10 +5,9 @@ import { useMemo, useState } from "react";
 import { apiContatos } from "../services/apiContatos";
 import { FaPhoneAlt, FaMapMarkerAlt, FaEnvelope, } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
-import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
-// import CalendlyFlutuante from "../components/CalendlyFlutuante";
-import CalendlyLink from "../components/CalendlyLink";
+// import WhatsappFlutuante from '../components/WhatsappFlutuante';
+// import CalendlyLink from "../components/CalendlyLink";
 import './style/ContatoPage.css';
 
 
@@ -77,27 +76,10 @@ export default function ContatoPage() {
 
     <main className="contato-wrapper">
       <Header />
-      <section id="agendamento" className="contato-hero">
+      <section id="agendamento" className="contato-hero" style={{ paddingBottom: "0px" }}>
         <h1>Em que podemos te ajudar?</h1>
         <div className='divsoria'></div>
-        <p>Encaminhe dúvidas, solicite um orçamento e saiba quais as melhores soluções em máquinas e tecnologias agrícolas disponíveis para você. Temos um time especializado para te atender.</p>
-      </section>
-
-      {/* CALENDLY */}
-      <section className="cta-section-agendamento">
-        <div className="container-sobre">
-          <div className="cta-content">
-            <h2 className="cta-title-agendamento">Pronto para revolucionar sua gestão rural?</h2>
-            <p className="cta-description">
-              Junte-se a centenas de produtores que já transformaram
-              sua gestão com a TratorBR.
-            </p>
-
-            <button className='agendamento-button'>
-              <CalendlyLink />
-            </button>
-          </div>
-        </div>
+        <p>Encaminhe suas dúvidas para a gente e saiba quais as melhores soluções em máquinas e tecnologias agrícolas disponíveis para você. Temos um time especializado para te atender.</p>
       </section>
 
       {/* CONTATO  */}
@@ -173,7 +155,7 @@ export default function ContatoPage() {
 
             <a
               className="whatsapp-btn-ajuda" href={'https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar?'} target="_blank" rel="noreferrer"> <FaWhatsapp className="nav-icon" size={22} />
-              Chamar no WhatsApp
+              Fale com a gente
             </a>
 
           </div>
@@ -192,7 +174,7 @@ export default function ContatoPage() {
       </section>
 
       {/* <WhatsappFlutuante /> */}
-      {/* <CalendlyFlutuante /> */}
+      {/* <CalendlyFlutuante />  */}
       <VoltarAoTopoBtn />
       <Footer />
     </main>

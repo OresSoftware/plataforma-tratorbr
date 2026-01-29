@@ -70,7 +70,8 @@ const Header = () => {
             </button>
             <div className="dropdown-menu">
               <Link to="/ajuda" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Ajuda</Link>
-              <Link to="/sobre-nos" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Sobre Nós</Link>
+              <Link to="/sobre-app" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Sobre App</Link>
+              <Link to="/quem-somos" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Quem Somos</Link>
             </div>
           </div>
 
@@ -126,7 +127,8 @@ const Header = () => {
                 </span>
               </button>
               <Link to="/ajuda" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Ajuda</Link>
-              <Link to="/sobre-nos" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Sobre Nós</Link>
+              <Link to="/sobre-app" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Sobre App</Link>
+              <Link to="/quem-somos" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Quem Somos</Link>
             </div>
             <Link to="/contato" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Contato</Link>
 
@@ -144,7 +146,7 @@ const Header = () => {
             <div className="login-btn-mobile">
               <CalendlyLinkHeader />
             </div>
-            
+
             <a href="https://wa.me/seunumerodetelefone" className="whatsapp-btn-header" target="_blank" rel="noopener noreferrer" style={{}}> Fale com a gente
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <image href="/iconwhats.svg" x="2" y="2" height="22" width="22" />
