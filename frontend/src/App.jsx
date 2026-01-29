@@ -11,6 +11,7 @@ import AdminDashboardPage from './admin-gestao/AdminDashboardPage';
 import AdminIpsPage from './admin-gestao/AdminIpsPage';
 import ExcluirContaPage from './pages/ExcluirContaPage';
 import SobreNosPage from './pages/SobreNosPage';
+import SobreApp from './pages/SobreApp';
 
 import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
@@ -55,7 +56,8 @@ function App() {
           <Route path="/planos-creditos" element={<PlanoseCreditos />} />
           <Route path="/ajuda" element={<AjudaPage />} />
           <Route path="/excluir-conta" element={<ExcluirContaPage />} />
-          <Route path="/sobre-nos" element={<SobreNosPage />} />
+          <Route path="/quem-somos" element={<SobreNosPage />} />
+          <Route path="/sobre-app" element={<SobreApp />} />
 
           {/* Área Administrativa */}
           <Route path="/admin" element={<AdminDashboardPage />} />
