@@ -9,6 +9,7 @@
     margin-right: 40px;
     transform: translateY(20px);
     animation: fadeInUp 0.6s ease-out forwards;
+    margin-top: 100px;
 }
 
 .hero {
@@ -260,7 +261,6 @@
     background: linear-gradient(to bottom, #fff, #E7EDF3, #ffffff);
     width: 100%;
     height: 150px;
-    margin-top: 100px;
     display: flex;
     align-items: center;
 }
@@ -276,7 +276,8 @@
         margin-bottom: 70px;
         margin-top: 150px;
     }
-    .filter-search-icon{
+
+    .filter-search-icon {
         width: 24px;
         height: 24px;
     }

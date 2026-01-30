@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import Footer from "../components/footer";
 // import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
-import CalendlyFlutuante from '../components/CalendlyFlutuante';  
+import CalendlyFlutuante from '../components/CalendlyFlutuante';
 import './style/HomePage.css';
 
 // QR CODE
@@ -230,83 +230,10 @@ export default function Home() {
     { src: logo10, alt: "Logo Valtra" },
   ];
 
-  // FILTRAGEM
-  const [maquinaValue, setMaquinaValue] = useState('');
-  const [marcaValue, setMarcaValue] = useState('');
-  const [modelosValue, setModelosValue] = useState('');
-
-  const isModelosDisabled = !maquinaValue && !marcaValue;
-
-  const maquinaOptions = [
-    { value: "Trator", label: "Trator" },
-    { value: "Colheitadeira", label: "Colheitadeira" },
-    { value: "Pulverizador", label: "Pulverizador" },
-  ];
-
-  const marcaOptions = [
-    { value: "Marca A", label: "Marca A" },
-    { value: "Marca B", label: "Marca B" },
-    { value: "Marca C", label: "Marca C" },
-  ];
-
   return (
     <>
       <Header />
-      <section >
-        <div className="filtragem">
-          <div className="filter-bar-container">
 
-            {/* ===== CAMPO 1: MÁQUINA (SELECT) ===== */}
-            <div className={`filter-field ${maquinaValue ? 'has-value' : ''}`}>
-              <label htmlFor="maquina">MÁQUINA</label>
-              <CustomSelect
-                options={maquinaOptions}
-                value={maquinaValue}
-                onChange={(value) => setMaquinaValue(value)}
-                onClear={(e) => { e.stopPropagation(); setMaquinaValue(''); }}
-                placeholder="Encontre a máquina"
-              />
-            </div>
-
-            <div className="filter-separator"></div>
-
-            {/* ===== CAMPO 2: MARCA (SELECT) ===== */}
-            <div className={`filter-field ${marcaValue ? 'has-value' : ''}`}>
-              <label htmlFor="marca">MARCA</label>
-              <CustomSelect
-                options={marcaOptions}
-                value={marcaValue}
-                onChange={(value) => setMarcaValue(value)}
-                onClear={(e) => { e.stopPropagation(); setMarcaValue(''); }}
-                placeholder="Encontre a marca"
-              />
-            </div>
-
-            <div className="filter-separator"></div>
-
-            {/* ===== CAMPO 3: MODELOS (INPUT TEXT) ===== */}
-            <div className={`filter-field ${isModelosDisabled ? 'is-disabled' : ''} ${modelosValue ? 'has-value' : ''}`}>
-              <label htmlFor="modelos">MODELOS</label>
-              <div className="filter-input-wrapper">
-                <input
-                  type="text"
-                  id="modelos"
-                  name="modelos"
-                  placeholder="Encontre o modelo"
-                  disabled={isModelosDisabled}
-                  value={modelosValue}
-                  onChange={(e) => setModelosValue(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <button type="submit" className="filter-search-btn">
-              <SearchIcon />
-            </button>
-          </div>
-        </div>
-
-      </section>
 
       <section className={`home-hero-wrapper ${isCategoriaAberta ? 'categorias-abertas' : ''}`}>
         {/* CARROSSEL DESKTOP */}
@@ -340,6 +267,13 @@ export default function Home() {
             {isCategoriaAberta ? '' : ''}
           </span>
         </div>
+      </section>
+
+      <section >
+
+        <div className="filtragem">
+        </div>
+
       </section>
 
       <section className="logo-carousel-section">
