@@ -1,22 +1,24 @@
-# Sistema TratorBR Simplificado
+# Plataforma TratorBR 
 
-Este é uma versão simplificada do sistema TratorBR, mantendo apenas as funcionalidades essenciais:
+Plataforma do agronegocio voltada para marketplace de tratores e venda do app de avaliação de tratores.
 
-## Funcionalidades Mantidas
+## Funcionalidades Principais
 
 ### Páginas Públicas:
-- **Página Inicial** - Navegação simples entre as seções
 - **Aplicativo** - Informações sobre o aplicativo TratorBR
 - **Contato** - Formulário de contato
 - **Termos de Uso** - Termos de uso do sistema
 - **Política de Privacidade** - Política de privacidade
-- **Dúvidas** - Perguntas frequentes (parte do tratorBR)
+- **Ajuda** - Perguntas frequentes (parte do tratorBR e Aplicativo)
+- **Quem Somos** - História da TratorBR
+- **Sobre App** - Primeiros passos do app 
 
 ### Área Administrativa:
 - **Login Admin** - Autenticação de administradores
 - **Dashboard** - Métricas básicas do sistema
-- **Gerenciar IPs** - Liberação de IPs para administradores (apenas Master)
 - **Contatos** - Visualização e gerenciamento de contatos recebidos
+- **Usuarios** - Visualização e gerenciamento dos usuarios do app
+- **Empresa** - Cadastro, visualização e gerenciamento das empresas cadastradas
 
 ## Estrutura do Projeto
 
@@ -41,6 +43,13 @@ sistema-trator-simplificado/
 ├── schema.sql             # Estrutura do banco de dados
 └── .env.example          # Exemplo de configuração
 ```
+
+### Estruturas das Branches
+
+- **main** - Principal e em produção 
+- **andreFerreira** -  Atulizações e teste
+- **devMarketplace** - Desenvolvimento do Marketplace
+
 
 ## Instalação
 
@@ -82,35 +91,6 @@ npm install
 npm run dev
 ```
 
-## Configuração
-
-### Variáveis de Ambiente (.env)
-```env
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=sua_senha
-DB_NAME=trator_simplificado
-JWT_SECRET=sua_chave_secreta_muito_segura
-PORT=3001
-NODE_ENV=development
-```
-
-### Primeiro Acesso Admin
-1. Acesse `/admin/login`
-2. Use as credenciais configuradas no banco de dados
-3. Configure os IPs autorizados (apenas usuários Master)
-
-## Funcionalidades Removidas
-
-As seguintes funcionalidades foram removidas desta versão simplificada:
-- Sistema de login de usuários
-- Cadastro de usuários
-- Gestão de revendedores
-- Sistema de aprovação de revendedores
-- Gestão de usuários com acesso à troca
-- Solicitações de troca
-- Gestão completa de usuários
-
 ## Tecnologias Utilizadas
 
 ### Frontend:
@@ -144,22 +124,6 @@ npm run dev         # Desenvolvimento
 npm run build       # Build para produção
 npm run preview     # Preview do build
 ```
-
-## Estrutura de Páginas
-
-### Públicas:
-- `/` - Página inicial
-- `/aplicativo` - Informações do app
-- `/contato` - Formulário de contato
-- `/termos-uso` - Termos de uso
-- `/politica-privacidade` - Política de privacidade
-- `/admin/duvidas` - Dúvidas frequentes
-
-### Administrativas:
-- `/admin/login` - Login administrativo
-- `/admin/dashboard` - Dashboard principal
-- `/admin/ips` - Gerenciar IPs (Master apenas)
-- `/admin/contatos` - Gerenciar contatos
 
 ## Suporte
 
