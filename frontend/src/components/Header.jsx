@@ -6,7 +6,7 @@ import './style/Header.css';
 
 const Header = () => {
   const { isMobileMenuOpen, toggleMobileMenu } = useMobileMenu();
-  const [open, setOpen] = useState(false); // Estado para o dropdown móvel
+  const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -14,17 +14,15 @@ const Header = () => {
     return location.pathname === path ? 'active' : '';
   };
 
-  // Função para lidar com o clique no botão "Quero Revender"
+  // Função para lidar com o clique no botão - Quero Revender
   const handleQueroRevender = (e) => {
-    e.preventDefault(); // Impede o comportamento padrão do link
+    e.preventDefault();
 
     const token = localStorage.getItem('token');
 
     if (token) {
-      // Usuário logado - vai direto para cadastro
       navigate('/tornar-revendedor');
     } else {
-      // Usuário não logado - vai para login com redirect
       navigate('/login?redirect=/tornar-revendedor');
     }
   };
@@ -34,7 +32,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-container">
-        {/* Botão do menu móvel */}
+        {/* Botão do mobile*/}
         <button className="menu-toggle" onClick={toggleMobileMenu} aria-label="Abrir menu de navegação">
           {isMobileMenuOpen ? (
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></svg>
@@ -54,20 +52,19 @@ const Header = () => {
           </span>
         </Link>
 
-        {/* Menu de Navegação (oculto em telas pequenas) */}
+        {/* Menu de Navegação */}
         <nav className="nav-menu">
           <Link to="/" className={`nav-link ${isActive('/')}`} onClick={() => window.scrollTo(0, 0)}>Início</Link>
-          <Link to="/contato" className={`nav-link ${isActive('/contato')}`} onClick={() => window.scrollTo(0, 0)}>Contato</Link>
-          {/* <Link to="/aplicativo" className={`nav-link ${isActive('/aplicativo')}`}>Aplicativo</Link> */}
-          {/* O menu dropdown Tratorbr */}
+          <Link to="/anuncios" className={`nav-link ${isActive('/anuncios')}`} onClick={() => window.scrollTo(0, 0)}>Anúncios</Link>
+
           <div className="nav-dropdown">
             <button className={`nav-link dropdown-btn`}>Tratorbr
               <span className="profile-arrow">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 9l6 6 6-6"></path>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="M6 9l6 6 6-6"></path>
                 </svg>
               </span>
             </button>
+
             <div className="dropdown-menu">
               <Link to="/ajuda" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Ajuda</Link>
               <Link to="/sobre-app" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Sobre App</Link>
@@ -75,15 +72,16 @@ const Header = () => {
             </div>
           </div>
 
+          <Link to="/contato" className={`nav-link ${isActive('/contato')}`} onClick={() => window.scrollTo(0, 0)}>Contato</Link>
+          <Link to="/aplicativo" className={`nav-link ${isActive('/aplicativo')}`} onClick={() => window.scrollTo(0, 0)}>App</Link>
         </nav>
 
-        {/* Área de Usuário Simplificada */}
+        {/* Btn - usuario */}
         <div className="user-area">
-          {/* <a href="https://www.instagram.com/tratorbr.oficial/" target="_blank" rel="noopener noreferrer"><img src="/footer/instagram.png" alt="Instagram" /></a>
-          <a href="https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar?" target="_blank" rel="noopener noreferrer"><img src="/footer/whatsapp.png" alt="WhatsApp" /></a> */}
+
           {/* <Link to="/admin/login" target="_blank" className="admin-btn">
             Acessar Painel
-          </Link> */}
+          </Link>  */}
 
           <div className="admin-btn">
             <CalendlyLinkHeader />
@@ -100,22 +98,23 @@ const Header = () => {
         {/*(Mobile) */}
         <div className={`mobile-menu-container ${isMobileMenuOpen ? 'open' : ''}`}>
           <div className="mobile-menu-header">
-            {/* Logo dentro do menu lateral */}
+
+            {/* Logo */}
             <Link to="/" className="logo-mobile-menu" aria-label="Trator BR — Início" onClick={toggleMobileMenu}>
               <img src="/logo-site.png" alt="Trator BR — Negócios Agrícolas" className="logo-img" />
             </Link>
+
             {/* Botão de fechar o menu */}
             <button className="close-menu" onClick={toggleMobileMenu}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <line x1="18" y1="6" x2="6" y2="18"></line> <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             </button>
+
           </div>
 
           <nav className="mobile-nav-menu">
             <Link to="/" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Início</Link>
-
+            <Link to="/anuncios" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Anúncios</Link>
             <div className={`mobile-dropdown-item ${open ? "active" : ""}`}>
               <button className="mobile-dropdown-btn" onClick={() => setOpen(!open)}>
                 Tratorbr
@@ -131,6 +130,8 @@ const Header = () => {
               <Link to="/quem-somos" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Quem Somos</Link>
             </div>
             <Link to="/contato" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Contato</Link>
+            <Link to="/aplicativo" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>App</Link>
+
 
           </nav>
           <div className="mobile-menu-actions">
@@ -155,7 +156,7 @@ const Header = () => {
 
           </div>
         </div>
-        {/* Adiciona um overlay para fechar o menu ao clicar fora dele */}
+
         {isMobileMenuOpen && <div className="mobile-menu-overlay" onClick={toggleMobileMenu}></div>}
       </div>
     </header>

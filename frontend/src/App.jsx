@@ -12,6 +12,8 @@ import AdminIpsPage from './admin-gestao/AdminIpsPage';
 import ExcluirContaPage from './pages/ExcluirContaPage';
 import SobreNosPage from './pages/SobreNosPage';
 import SobreApp from './pages/SobreApp';
+import HomePage from "./pages/HomePage";
+import AnunciosPage from "./pages/AnunciosPage";
 
 import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
@@ -50,7 +52,9 @@ function App() {
         <ScrollToHashElement />
         <Routes>
           {/* Páginas Públicas */}
-          <Route path="/" element={<Aplicativo />} />
+          <Route path="/" element={<HomePage/>} />
+          <Route path="/anuncios" element={<AnunciosPage />} />
+          <Route path="/aplicativo" element={<Aplicativo />} />
           <Route path="/contato" element={<ContatoPage />} />
           <Route path="/politicasdeprivacidade.html" element={<TermosEPolitica />} />
           <Route path="/planos-creditos" element={<PlanoseCreditos />} />
@@ -58,6 +62,7 @@ function App() {
           <Route path="/excluir-conta" element={<ExcluirContaPage />} />
           <Route path="/quem-somos" element={<SobreNosPage />} />
           <Route path="/sobre-app" element={<SobreApp />} />
+          
 
           {/* Área Administrativa */}
           <Route path="/admin" element={<AdminDashboardPage />} />
