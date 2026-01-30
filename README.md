@@ -44,6 +44,13 @@ sistema-trator-simplificado/
 └── .env.example          # Exemplo de configuração
 ```
 
+### Estruturas das Branches
+
+- **main** - Principal e em produção 
+- **andreFerreira** -  Atulizações e teste
+- **devMarketplace** - Desenvolvimento do Marketplace
+
+
 ## Instalação
 
 ### Pré-requisitos
