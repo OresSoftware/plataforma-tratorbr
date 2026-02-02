@@ -412,7 +412,7 @@
     }
 
     .faq-intro.visible {
-        padding: 0 1.25rem 1.25rem 1.25rem;
+        padding: 1.25rem;
     }
 
     .faq-answer-content {
@@ -437,7 +437,7 @@
     }
 
     .tabs-video-section {
-        padding: 2.5rem 1rem;
+        padding: 2.5rem 20px;
     }
 
     .tabs-header {
@@ -560,7 +560,7 @@
     }
 
     .faq-intro.visible {
-        padding: 0 1rem 1rem 1rem;
+        padding: 1rem;
     }
 
     .carousel-container {
@@ -584,7 +584,7 @@
     }
 
     .tabs-header {
-        margin-bottom: 0;
+        margin: 0;
     }
 
     .texto-video-text p {
@@ -602,6 +602,8 @@
 
     .tabs-header p {
         font-size: 0.85rem;
+        padding: 20px;
+        margin: 0;
     }
 
     .tabs-nav {
