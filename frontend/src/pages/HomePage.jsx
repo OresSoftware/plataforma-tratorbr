@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/footer";
-// import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import CalendlyFlutuante from '../components/CalendlyFlutuante';
+// import WhatsappFlutuante from '../components/WhatsappFlutuante';
+import Mercado from '../components/Mercado';
 import './style/HomePage.css';
 
 // QR CODE
@@ -65,61 +66,24 @@ function Carousel({ images, interval = 5000, autoPlay = true }) {
 
   return (
     <div
-      className="hero"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      aria-label="Banner de destaque"
+      className="hero" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} aria-label="Banner de destaque"
     >
-      <div className="hero-viewport">
-        {validImages.map((img, i) => (
-          <img
-            key={img.src}
-            src={img.src}
-            alt={img.alt || `Banner ${i + 1}`}
-            className={`hero-slide ${i === index ? "is-active" : ""}`}
-            draggable={false}
-          />
-        ))}
+      <div className="hero-viewport"> {validImages.map((img, i) => (
+        <img key={img.src} src={img.src} alt={img.alt || `Banner ${i + 1}`} className={`hero-slide ${i === index ? "is-active" : ""}`} draggable={false} />
+      ))}
       </div>
 
-      <button
-        className="hero-nav hero-nav-left"
-        aria-label="Slide anterior"
-        onClick={prev}
-        type="button"
-      >
-        ‹
-      </button>
-      <button
-        className="hero-nav hero-nav-right"
-        aria-label="Próximo slide"
-        onClick={next}
-        type="button"
-      >
-        ›
-      </button>
+      <button className="hero-nav hero-nav-left" aria-label="Slide anterior" onClick={prev} type="button">‹</button>
 
-      <div className="hero-dots">
-        {validImages.map((_, i) => (
-          <button
-            key={i}
-            aria-label={`Ir para o slide ${i + 1}`}
-            className={`hero-dot ${i === index ? "active" : ""}`}
-            onClick={() => goTo(i)}
-            type="button"
-          />
-        ))}
+      <button className="hero-nav hero-nav-right" aria-label="Próximo slide" onClick={next} type="button">›</button>
+
+      <div className="hero-dots"> {validImages.map((_, i) => (
+        <button key={i} aria-label={`Ir para o slide ${i + 1}`} className={`hero-dot ${i === index ? "active" : ""}`} onClick={() => goTo(i)} type="button" />
+      ))}
       </div>
     </div>
   );
 }
-
-// ICON BUSCA
-const SearchIcon = () => (
-  <svg className="filter-search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-  </svg>
-);
 
 // Ícone da Seta 
 const ChevronDownIcon = () => (
@@ -161,12 +125,7 @@ function CustomSelect({ options, value, onChange, placeholder, onClear }) {
   return (
     <div className="filter-select-wrapper" ref={wrapperRef}>
       <div className="filter-input-wrapper">
-        <button
-          type="button"
-          className={`filter-select-trigger ${!hasValue ? 'placeholder' : ''}`}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {displayText}
+        <button type="button" className={`filter-select-trigger ${!hasValue ? 'placeholder' : ''}`} onClick={() => setIsOpen(!isOpen)}> {displayText}
         </button>
 
         {hasValue ? (
@@ -183,13 +142,7 @@ function CustomSelect({ options, value, onChange, placeholder, onClear }) {
       {isOpen && (
         <div className="filter-dropdown-list">
           {options.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              className="filter-dropdown-option"
-              onClick={() => handleSelect(option.value)}
-            >
-              {option.label}
+            <button key={option.value} type="button" className="filter-dropdown-option" onClick={() => handleSelect(option.value)}> {option.label}
             </button>
           ))}
         </div>
@@ -234,7 +187,6 @@ export default function Home() {
     <>
       <Header />
 
-
       <section className={`home-hero-wrapper ${isCategoriaAberta ? 'categorias-abertas' : ''}`}>
         {/* CARROSSEL DESKTOP */}
         <div className="carousel-desktop">
@@ -246,27 +198,16 @@ export default function Home() {
           <Carousel images={bannersMobile} interval={6000} autoPlay={true} />
         </div>
 
-        {/* CONTEÚDO DAS CATEGORIAS */}
-        <div className="category-content" id="category-content-id">
-          <p>Aqui vão os links das categorias...</p>
-          <p>Tratores</p>
-          <p>Colheitadeiras</p>
-          <p>Pulverizadores</p>
-        </div>
+    
 
-        {/* BARRA VERDE */}
-        <div
-          className="category-bar"
-          onClick={() => setCategoriaAberta(!isCategoriaAberta)}
-          role="button"
-          aria-expanded={isCategoriaAberta}
-          aria-controls="category-content-id"
-        >
-          <h2>ESCOLHA A SUA CATEGORIA</h2>
+        {/* <div>
+          <h2>Mercado</h2>
           <span className="category-arrow">
             {isCategoriaAberta ? '' : ''}
           </span>
-        </div>
+        </div>  */}
+
+        <Mercado />
       </section>
 
       <section >
@@ -277,26 +218,22 @@ export default function Home() {
       </section>
 
       <section className="logo-carousel-section">
-        <h2>MARCAS QUE TRABALHAMOS</h2>
+        <h2>Marcas</h2>
 
         <div className="logo-scroller" data-speed="slow">
           <div className="logo-scroller-inner">
-            {/* Renderiza a lista de logos a primeira vez */}
             {logos.map((logo, index) => (
               <img key={`set1-${index}`} src={logo.src} alt={logo.alt} />
             ))}
 
-            {/* Renderiza a lista 2ª vez */}
             {logos.map((logo, index) => (
               <img key={`set2-${index}`} src={logo.src} alt={logo.alt} />
             ))}
 
-            {/* Renderiza a lista 3ª vez */}
             {logos.map((logo, index) => (
               <img key={`set3-${index}`} src={logo.src} alt={logo.alt} />
             ))}
 
-            {/* Renderiza a lista 4ª vez */}
             {logos.map((logo, index) => (
               <img key={`set4-${index}`} src={logo.src} alt={logo.alt} />
             ))}

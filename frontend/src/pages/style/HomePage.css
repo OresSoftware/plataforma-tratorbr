@@ -41,32 +41,6 @@
     transform: scale(1);
 }
 
-.hero-nav {
-    display: none;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.35);
-    color: #fff;
-    border: 0;
-    border-radius: 999px;
-    padding: 8px 12px;
-    cursor: pointer;
-    backdrop-filter: saturate(150%) blur(2px);
-    z-index: 10;
-}
-
-.hero-nav:hover {
-    background: rgba(0, 0, 0, 0.45);
-}
-
-.hero-nav-left {
-    left: 10px;
-}
-
-.hero-nav-right {
-    right: 10px;
-}
 
 .hero-dots {
     position: absolute;
@@ -74,24 +48,24 @@
     bottom: 20px;
     transform: translateX(-50%);
     display: flex;
-    gap: 8px;
+    gap: 10px;
     z-index: 10;
 }
 
 .hero-dot {
-    width: 30px;
-    height: 6px;
+    width: 70px;
+    height: 2px;
     border-radius: 50px;
     background: #fff;
-    border: solid 2px #fff;
+    border: solid 0.5px #fff;
     cursor: pointer;
-    opacity: 0.7;
+    opacity: 0.6;
 }
 
 .hero-dot.active {
-    background: #409535;
-    transform: scale(1.1);
-    border: solid 3px #409535;
+    background: #fff;
+    transform: scale(1);
+    border: solid 0.5px #fff;
     opacity: 1;
 }
 
@@ -128,7 +102,7 @@
 @media (max-width: 1027px) {
     .home-hero-wrapper {
         margin: 24px auto;
-        margin-top: 24px;
+        margin-top: 100px;
         margin-bottom: 24px;
         margin-left: 16px;
         margin-right: 16px;
@@ -168,7 +142,7 @@
 }
 
 .carousel-desktop .hero {
-    height: 495px;
+    height: 440px;
 }
 
 @media (max-width: 1027px) {
@@ -191,6 +165,13 @@
 
 
 }
+
+@media(max-width: 480px) {
+    .hero-dot {
+        width: 30px;
+    }
+}
+
 
 .category-bar {
     transition: background-color 0.4s ease, color 0.4s ease;
@@ -285,7 +266,7 @@
 
 .logo-carousel-section {
     padding: 40px 0 50px 0;
-    text-align: center;
+    text-align: end;
     background-color: #ffffff;
     overflow: hidden;
     transform: translateY(20px);
@@ -303,17 +284,19 @@
     font-family: 'Ethnocentric', sans-serif;
     font-weight: normal;
     text-align: center;
+    margin-right: 40px;
 }
 
 .logo-carousel-section h2::after {
     content: '';
     position: absolute;
     bottom: 0;
-    left: 50%;
+    left: 100%;
     transform: translateX(-50%);
     width: 140px;
     height: 0.5px;
     background-color: #409535;
+
 }
 
 .logo-scroller {
@@ -802,8 +785,8 @@
 .depoimentos-header h2 {
     font-size: 24px;
     font-weight: 700;
-    letter-spacing: 0.12em;
     text-transform: uppercase;
+    font-weight: normal;
 }
 
 .depoimentos-underline {
@@ -887,4 +870,37 @@
         display: flex;
         justify-content: flex-end;
     }
+}
+
+.hero-nav {
+    display: inline-flex;
+    position: absolute;
+    transform: translateY(-50%);
+    top: 50%;
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0);
+    color: white;
+    border: none;
+    border-radius: 100%;
+    cursor: pointer;
+    font-size: 45px;
+    font-weight: normal;
+    line-height: 40px;
+    text-align: center;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.hero-nav:hover {
+    background-color: rgba(0, 0, 0, 0);
+    color: #ffffff;
+    opacity: 0.7;
+    /* transition: background-color 0.3s ease-in-out; */
+}
+
+.hero-nav-left {
+    left: 15px;
+}
+
+.hero-nav-right {
+    right: 15px;
 }

@@ -1,0 +1,116 @@
+.mercado-wrapper {
+    background-color: #15383E;
+    color: white;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 5;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.mercado-header-mobile {
+    display: none;
+}
+
+.mercado-content {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+    font-family: 'montserrat', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.mercado-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mercado-item .label {
+    color: #A0A0A0;
+}
+
+.mercado-item .valor {
+    font-weight: 700;
+}
+
+.mercado-item .variacao {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+
+.variacao.positivo {
+    background-color: #40953500;
+    border: solid 1px #409535;
+    color: #409535;
+}
+
+.variacao.negativo {
+    background-color: #ff663300;
+    border: solid 1px #FF6633;
+    color: #FF6633;
+}
+
+
+@media (max-width: 1027px) {
+    .mercado-wrapper {
+        position: relative;
+        background-color: #15383E;
+        border-radius: 0;
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+    }
+
+    .mercado-header-mobile {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .mercado-header-mobile h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .mercado-arrow {
+        position: absolute;
+        right: 20px;
+        width: 20px;
+        height: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .mercado-arrow.aberto {
+        transform: rotate(180deg);
+    }
+
+    .mercado-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-in-out, padding 0.4s ease;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 0 20px;
+        background-color: #15383E;
+    }
+
+    .mercado-content.aberto {
+        max-height: 500px;
+        padding: 20px;
+        align-items: center;
+    }
+
+    .mercado-item.atualizacao {
+        display: none;
+    }
+}
