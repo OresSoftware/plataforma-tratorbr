@@ -73,7 +73,7 @@ const TermosEPolitica = () => {
 
             Limitações: divergências podem ocorrer por alterações, remarcações, variações de fabricante ou registros incompletos. Use como apoio, sempre conferindo documentação oficial e junto ao fabricante/órgãos competentes.<br /><br />
 
-            7.4. SimuladoBr — Simulador de Financiamento (DLL)<br />
+            {/* 7.4. SimuladoBr — Simulador de Financiamento (DLL)<br />
 
             O que é: simulador de parcelas e condições com integração ao Banco DLL.
 
@@ -81,7 +81,7 @@ const TermosEPolitica = () => {
 
             Dados e consentimento: para simular e, se desejar, prosseguir com intenção de crédito, você autoriza o compartilhamento dos dados estritamente necessários com o Banco DLL e parceiros envolvidos no processo.
 
-            Disclaimer regulatório: a TratorBr não é instituição financeira nem correspondente bancário, salvo indicação expressa em fluxo específico; a decisão de crédito, prazos, taxas, seguros e outras condições são exclusivas do Banco DLL.
+            Disclaimer regulatório: a TratorBr não é instituição financeira nem correspondente bancário, salvo indicação expressa em fluxo específico; a decisão de crédito, prazos, taxas, seguros e outras condições são exclusivas do Banco DLL. */}
           </p>
 
           <h2>8. Planos, Assinaturas e Cobrança</h2>
