@@ -22,7 +22,7 @@ import banner1 from "/banners/bannerTeste-1.png";
 import banner2 from "/banners/bannerTeste-2.png";
 import banner3 from "/banners/bannerTeste-3.png";
 
-// Banners para MOBILE (TROQUE OS NOMES/CAMINHOS)
+// Banners para MOBILE 
 import bannerMobile1 from "/banners/banner-mobile1.png";
 import bannerMobile2 from "/banners/banner-mobile2.png";
 import bannerMobile3 from "/banners/banner-mobile3.png";
@@ -242,11 +242,11 @@ export default function Home() {
 
       </section>
 
-      <section>
+      <section className="modelos">
 
         <h2 className="subTitulo-left" >Modelos Destaques</h2>
 
-        <button><Link to="/anuncios" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Ver Anuncios</Link></button>
+        <Link to="/anuncios" className="open-anuncios" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Ver Nosso Anuncios</Link>
 
       </section>
 
