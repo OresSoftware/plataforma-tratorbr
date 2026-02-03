@@ -218,7 +218,7 @@
   background: var(--btn);
   color: #fff;
   border: none;
-  border-radius: 25px;
+  border-radius: 50px 0 50px 50px;
   padding: 16px 230px;
   font-weight: 600;
   font-size: 1rem;

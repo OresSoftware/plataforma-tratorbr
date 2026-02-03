@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from 'react-router-dom';
 import Header from "../components/Header";
 import Footer from "../components/footer";
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
@@ -198,15 +199,7 @@ export default function Home() {
           <Carousel images={bannersMobile} interval={6000} autoPlay={true} />
         </div>
 
-    
-
-        {/* <div>
-          <h2>Mercado</h2>
-          <span className="category-arrow">
-            {isCategoriaAberta ? '' : ''}
-          </span>
-        </div>  */}
-
+        {/* COTAÇÃO */}
         <Mercado />
       </section>
 
@@ -217,8 +210,15 @@ export default function Home() {
 
       </section>
 
+      <section>
+
+        <h2 className="subTitulo-left">Tipos</h2>
+
+      </section>
+
       <section className="logo-carousel-section">
-        <h2>Marcas</h2>
+
+        <h2 className="subTitulo-right" >Marcas</h2>
 
         <div className="logo-scroller" data-speed="slow">
           <div className="logo-scroller-inner">
@@ -239,15 +239,15 @@ export default function Home() {
             ))}
           </div>
         </div>
+
       </section>
 
-      <section className="anuncios">
-        <div className="anuncios-header">
-          <h2>Nossos Produtos</h2>
-          <a href="/pesquisar" className="ver-todos-link">
-            <h4>Ver Todos</h4>
-          </a>
-        </div>
+      <section>
+
+        <h2 className="subTitulo-left" >Modelos Destaques</h2>
+
+        <button><Link to="/anuncios" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Ver Anuncios</Link></button>
+
       </section>
 
       <section className="context-section">
