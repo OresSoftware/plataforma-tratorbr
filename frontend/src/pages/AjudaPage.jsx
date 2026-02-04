@@ -259,7 +259,7 @@ const AjudaPage = () => {
     <div className="ajuda-page">
       <Header />
 
-      <div className="tabs-header" style={{ marginTop: '7rem' }}>
+      <div className="tabs-header">
         <h2>Como Podemos Ajudar?</h2>
         <div className='divisoria'></div>
         <p>Aqui está o passo a passo de como usar o nosso aplicativo, para você extrair o melhor do nosso sistema. Aproveite tudo que nossa plataforma oferece!</p>

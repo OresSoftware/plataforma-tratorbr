@@ -1,12 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap' );
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
 :root {
   --cor-primaria: #15383E;
-  --cor-branca: #FFFFFF;
-  --cor-texto-claro: #f0f0f0;
-  --cor-borda: #d1d1d1;
+  --cor-segundaria: #409535;
+  --cor-terciaria: #FF6633;
+  --cor-light: #CDCCCC;
+  --cor-white: #FFFFFF;
+  --cor-black: #000000;
+  --cor-primaria-clara: #E7EDF3;
+  --cor-titulo: #15383E;
+  --cor-subtitulo: #15383E;
+  --cor-paragrafo: #A3A1A1;
+  --cor-borda: #D0D7D8;
   --fonte-titulo: 'Ethnocentric', sans-serif;
   --fonte-corpo: 'Montserrat', sans-serif;
+  --margem-top: 50px;
+  --font-titulo: 1.6rem;
+  --font-p: 0.9rem;
 }
 
 @font-face {

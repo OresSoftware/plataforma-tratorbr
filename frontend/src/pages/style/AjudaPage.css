@@ -518,11 +518,12 @@
   text-align: center;
   margin-bottom: 3rem;
   margin: 10px;
+  margin-top: 7rem;
 }
 
 .tabs-header h2 {
   font-family: 'Ethnocentric', sans-serif;
-  font-size: 1.8em;
+  font-size: 1.6em;
   font-weight: normal;
   color: #15383E;
   margin: 0 0 1rem 0;
@@ -1047,7 +1048,7 @@ div#recurso-card-7 {
 
 @media (max-width: 768px) {
   .ajuda-content {
-    padding: 2rem 20px;
+    padding: 0rem 20px;
   }
 
   .ajuda-container,
@@ -1193,6 +1194,10 @@ div#recurso-card-7 {
 
   .card-descricao {
     font-size: 0.85rem;
+  }
+
+  .tabs-header {
+    margin-top: 100px;
   }
 
   .tabs-header h2 {
