@@ -1,6 +1,5 @@
 const pool = require("../config/db");
 
-// GET /api/admin/contatos?status=pendente|respondido|todos&page=1&pageSize=20
 async function listarContatos(req, res) {
   try {
     const status = String(req.query.status || "pendente").toLowerCase();
@@ -8,7 +7,6 @@ async function listarContatos(req, res) {
     const pageSize = Math.min(100, Math.max(5, parseInt(req.query.pageSize || "20", 10)));
     const offset = (page - 1) * pageSize;
 
-    // WHERE e parâmetros
     let where = "deleted_at IS NULL";
     const params = [];
 
@@ -17,13 +15,9 @@ async function listarContatos(req, res) {
       params.push(status);
     }
 
-    // ORDER BY dinâmico:
-    // - respondido  -> responded_at DESC
-    // - pendente/todos -> created_at DESC
     const orderBy =
       status === "respondido" ? "ORDER BY responded_at DESC" : "ORDER BY created_at DESC";
 
-    // SELECT inclui sempre os campos de auditoria; quando pendente, eles virão null
     const [rows] = await pool.query(
       `
       SELECT
@@ -57,7 +51,6 @@ async function listarContatos(req, res) {
   }
 }
 
-// PATCH /api/admin/contatos/:id/respondido
 async function marcarRespondido(req, res) {
   try {
     const id = Number(req.params.id);
@@ -67,7 +60,6 @@ async function marcarRespondido(req, res) {
       return res.status(400).json({ ok: false, error: "Canal inválido. Use 'email' ou 'whatsapp'." });
     }
 
-    // Quem está marcando (vem do middleware de admin autenticado)
     const adminId = req.admin?.id || null;
 
     const [result] = await pool.query(
@@ -92,13 +84,11 @@ async function marcarRespondido(req, res) {
 }
 
 
-// DELETE /api/admin/contatos/:id  (hard delete ou soft delete)
 async function excluirContato(req, res) {
   try {
     const id = Number(req.params.id);
     if (!id) return res.status(400).json({ ok: false, error: "ID inválido." });
 
-    // soft delete (recomendado):
     await pool.query(
       `UPDATE contatos SET deleted_at=NOW() WHERE id=? AND deleted_at IS NULL`,
       [id]
@@ -111,7 +101,6 @@ async function excluirContato(req, res) {
   }
 }
 
-// GET /api/admin/contatos/contador
 async function contadorPendentes(req, res) {
   try {
     const [[{ total }]] = await pool.query(

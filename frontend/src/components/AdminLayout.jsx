@@ -9,7 +9,6 @@ const AdminLayout = ({ children }) => {
     <div className="admin-layout">
       <AdminSidebar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
       
-      {/* Main Content */}
       <main className="admin-main">
         {children}
       </main>

@@ -3,17 +3,14 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const speakeasy = require('speakeasy');
 
-// Login do administrador com verificação de IP
 exports.loginAdmin = async (req, res) => {
   try {
     const { username, password, otp } = req.body;
 
-    // Validação básica dos campos
     if (!username || !password || !otp) {
       return res.status(400).json({ message: 'Todos os campos são obrigatórios' });
     }
 
-    // Verificar se o usuário existe
     const [admins] = await db.query(
       `SELECT id, username, password_hash AS senha_hash, role, ativo, twofa_secret
    FROM admins
@@ -28,7 +25,6 @@ exports.loginAdmin = async (req, res) => {
 
     const admin = admins[0];
 
-    // Verificar senha
     const ok = await bcrypt.compare(password, admin.senha_hash);
     if (!ok) {
       console.log(`Senha incorreta para usuário: ${username}`);
@@ -48,7 +44,6 @@ exports.loginAdmin = async (req, res) => {
       return res.status(401).json({ message: 'Código 2FA inválido' });
     }
 
-    // Atualizar ultimo_login
     await db.query(
       `UPDATE admins SET ultimo_login = NOW() WHERE id = ?`,
       [admin.id]
@@ -77,7 +72,6 @@ exports.loginAdmin = async (req, res) => {
   }
 };
 
-// Verificar se o token é válido
 exports.verificarToken = async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');

@@ -11,7 +11,6 @@ const adminLogoRoutes = require('./adminLogoRoutes');
 
 const router = express.Router();
 
-// Middlewares de segurança //
 const verificarAdmin = async (req, res, next) => {
   try {
     const token = (req.headers.authorization || '').split(' ')[1];

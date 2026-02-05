@@ -6,15 +6,10 @@ import './style/AdminSidebar.css';
 const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  // dados do admin salvos no login
   const admin = JSON.parse(localStorage.getItem('adminData') || '{}');
   const isMaster = admin?.role === 'master';
-
-  // helper para destacar o item atual do menu
   const isActive = (path) => location.pathname.startsWith(path);
 
-  // Fechar menu ao clicar fora (backdrop)
   useEffect(() => {
     const handleBackdropClick = () => {
       if (menuOpen) {
@@ -24,7 +19,7 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
 
     if (menuOpen) {
       document.addEventListener('click', handleBackdropClick);
-      document.body.style.overflow = 'hidden'; // Prevenir scroll do body
+      document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -43,38 +38,19 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
 
   const handleMenuItemClick = (path) => {
     navigate(path);
-    setMenuOpen(false); // Fechar menu após navegação
+    setMenuOpen(false);
   };
 
   return (
     <>
-      {/* Botão hamburger (mobile) */}
-      <button
-        className={`hamburger-btn ${menuOpen ? 'menu-open' : ''}`}
-        aria-label="Abrir menu"
-        aria-expanded={menuOpen}
-        onClick={(e) => {
-          e.stopPropagation();
-          setMenuOpen(true);
-        }}
-      >
+      <button className={`hamburger-btn ${menuOpen ? 'menu-open' : ''}`} aria-label="Abrir menu" aria-expanded={menuOpen} onClick={(e) => { e.stopPropagation(); setMenuOpen(true); }}>
         <Menu size={24} />
       </button>
 
-      {/* Backdrop para mobile */}
       {menuOpen && <div className="sidebar-backdrop" onClick={() => setMenuOpen(false)} />}
 
-      {/* Sidebar (fixa no desktop; off-canvas no mobile) */}
-      <aside
-        className={`admin-sidebar ${menuOpen ? 'is-open' : ''}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Fechar (mobile) */}
-        <button
-          className="close-sidebar"
-          aria-label="Fechar menu"
-          onClick={() => setMenuOpen(false)}
-        >
+      <aside className={`admin-sidebar ${menuOpen ? 'is-open' : ''}`} onClick={(e) => e.stopPropagation()}>
+        <button className="close-sidebar" aria-label="Fechar menu" onClick={() => setMenuOpen(false)}>
           <X size={22} />
         </button>
 

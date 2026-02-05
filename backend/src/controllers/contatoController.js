@@ -11,7 +11,6 @@ async function criarContato(req, res) {
   try {
     const { nome, email, telefone, mensagem, empresa, origem = "site" } = req.body || {};
 
-    // honeypot anti-bot
     if (empresa && String(empresa).trim() !== "") {
       return res.json({ ok: true });
     }

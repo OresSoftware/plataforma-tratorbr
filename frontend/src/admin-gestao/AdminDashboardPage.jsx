@@ -1,4 +1,3 @@
-// frontend/src/admin-gestao/AdminDashboardPage.jsx
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
@@ -8,34 +7,31 @@ import { apiAdminEnterprises } from "../services/apiAdminEnterprises";
 import { apiAdminUsers } from "../services/apiAdminUsers";
 import { apiAdminContatos } from "../services/apiAdminContatos";
 
-// Gráficos
 import {
   ResponsiveContainer,
   PieChart, Pie, Cell, Tooltip as ReTooltip, Legend,
   LineChart, Line, CartesianGrid, XAxis, YAxis
 } from "recharts";
 
-// Paleta suave (cinza azulado + complementares)
 const PALETTE = [
-  "#1E3A8A", // azul escuro
-  "#2563EB", // azul principal
-  "#3B82F6", // azul claro
-  "#60A5FA", // azul mais suave
-  "#93C5FD", // quase celeste
-  "#0EA5E9", // ciano
-  "#0284C7", // azul petróleo
-  "#7DD3FC", // azul bebê
-  "#38BDF8", // azul médio
-  "#A5F3FC"  // azul pastel
+  "#1E3A8A",
+  "#2563EB",
+  "#3B82F6",
+  "#60A5FA",
+  "#93C5FD",
+  "#0EA5E9",
+  "#0284C7",
+  "#7DD3FC",
+  "#38BDF8",
+  "#A5F3FC"
 ];
 
-const DIAS_JANELA = 30; // janela do gráfico de linha (últimos X dias)
-const PAGE_SIZE = 100;  // paginação para carregar tudo sem mudar o backend
+const DIAS_JANELA = 30;
+const PAGE_SIZE = 100;
 
 function AdminDashboardPage() {
   useNoindex();
 
-  // métricas principais
   const [metricas, setMetricas] = useState({
     empresasAtivas: 0,
     usuariosAtivos: 0,
@@ -44,22 +40,19 @@ function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
 
-  // dados para os gráficos
   const [pizzaUsuariosPorEmpresa, setPizzaUsuariosPorEmpresa] = useState([]);
   const [serieUsuariosPorDia, setSerieUsuariosPorDia] = useState([]);
   const [serieEmpresasPorDia, setSerieEmpresasPorDia] = useState([]);
 
-  const [tipoLinha, setTipoLinha] = useState("usuarios"); // 'usuarios' | 'empresas'
+  const [tipoLinha, setTipoLinha] = useState("usuarios");
   const navigate = useNavigate();
 
   useEffect(() => {
     carregarTudo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ---------- Helpers de data ----------
   const hoje = useMemo(() => new Date(), []);
-  const dd_mm_yyyy_iso = (d) => d.toISOString().slice(0, 10); // YYYY-MM-DD
+  const dd_mm_yyyy_iso = (d) => d.toISOString().slice(0, 10);
   const addDays = (d, n) => {
     const c = new Date(d);
     c.setDate(c.getDate() + n);
@@ -70,18 +63,16 @@ function AdminDashboardPage() {
     const out = [];
     for (let i = dias - 1; i >= 0; i--) {
       const dia = addDays(hoje, -i);
-      out.push(dd_mm_yyyy_iso(dia)); // YYYY-MM-DD
+      out.push(dd_mm_yyyy_iso(dia));
     }
     return out;
   };
 
-  // >>> Formatter para exibir no gráfico em dd_mm_yyyy
   const formatarLabelBR = (iso) => {
     const [y, m, d] = String(iso).split("-");
     return `${d}/${m}/${y.slice(-2)}`;
   };
 
-  // ---------- Chamadas de contadores (cards) ----------
   const carregarContadores = async () => {
     const [empresas, usuarios, contatos] = await Promise.all([
       apiAdminEnterprises.contadorAtivos().catch(() => ({ total: 0 })),
@@ -95,7 +86,6 @@ function AdminDashboardPage() {
     });
   };
 
-  // ---------- Paginação para "listar tudo" (sem mudar backend) ----------
   const listarTodosUsuarios = async () => {
     let page = 1;
     let total = 0;
@@ -126,7 +116,6 @@ function AdminDashboardPage() {
     return acc;
   };
 
-  // ---------- Agregações para os gráficos ----------
   const montarPizzaUsuariosPorEmpresa = (usuarios) => {
     const mapa = new Map();
     for (const u of usuarios) {
@@ -149,18 +138,17 @@ function AdminDashboardPage() {
     for (const it of items) {
       const raw = it?.[campoData];
       if (!raw) continue;
-      const dia = String(raw).slice(0, 10); // normaliza YYYY-MM-DD
+      const dia = String(raw).slice(0, 10);
       porDia.set(dia, (porDia.get(dia) || 0) + 1);
     }
 
     const linha = gerarLinhaDoTempo(DIAS_JANELA).map((d) => ({
-      date: d,             // YYYY-MM-DD
+      date: d,
       valor: porDia.get(d) || 0,
     }));
     return linha;
   };
 
-  // ---------- Carregamento geral ----------
   const carregarTudo = async () => {
     try {
       setLoading(true);
@@ -196,7 +184,6 @@ function AdminDashboardPage() {
     }
   };
 
-  // dados do gráfico de linha conforme toggle
   const dadosLinha = tipoLinha === "usuarios" ? serieUsuariosPorDia : serieEmpresasPorDia;
   const tituloLinha = tipoLinha === "usuarios" ? "Cadastros de Usuários por dia" : "Cadastros de Empresas por dia";
 
@@ -212,7 +199,6 @@ function AdminDashboardPage() {
           </div>
         )}
 
-        {/* Métricas (cards) */}
         <div className="metricas-grid-simple">
           {loading ? (
             <div className="loading-message">
@@ -242,9 +228,7 @@ function AdminDashboardPage() {
           )}
         </div>
 
-        {/* Gráficos */}
         <div className="graficos-grid">
-          {/* Pizza */}
           <div className="grafico-card">
             <div className="grafico-header">
               <h3>Usuários por Empresa</h3>
@@ -261,14 +245,7 @@ function AdminDashboardPage() {
               ) : (
                 <ResponsiveContainer width="100%" height={320}>
                   <PieChart>
-                    <Pie
-                      data={pizzaUsuariosPorEmpresa}
-                      dataKey="value"
-                      nameKey="name"
-                      innerRadius={60}
-                      outerRadius={100}
-                      paddingAngle={2}
-                    >
+                    <Pie data={pizzaUsuariosPorEmpresa} dataKey="value" nameKey="name" innerRadius={60} outerRadius={100} paddingAngle={2}>
                       {pizzaUsuariosPorEmpresa.map((entry, i) => (
                         <Cell key={`cell-${i}`} fill={PALETTE[i % PALETTE.length]} />
                       ))}
@@ -315,19 +292,10 @@ function AdminDashboardPage() {
                 <ResponsiveContainer width="100%" height={320}>
                   <LineChart data={dadosLinha} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    {/* Eixo X em dd_mm_yyyy */}
                     <XAxis dataKey="date" tickFormatter={formatarLabelBR} />
                     <YAxis allowDecimals={false} />
-                    {/* Tooltip também em dd_mm_yyyy */}
                     <ReTooltip labelFormatter={formatarLabelBR} />
-                    <Line
-                      type="monotone"
-                      dataKey="valor"
-                      stroke="#409535"     // cor verde solicitada
-                      strokeWidth={2.5}    // aumenta a espessura da linha
-                      dot={{ r: 4 }}       // pontinhos sutis nas datas
-                      activeDot={{ r: 5 }} // destaque ao passar o mouse
-                    />
+                    <Line type="monotone" dataKey="valor" stroke="#409535" strokeWidth={2.5} dot={{ r: 4 }} activeDot={{ r: 5 }} />
                   </LineChart>
                 </ResponsiveContainer>
               )}

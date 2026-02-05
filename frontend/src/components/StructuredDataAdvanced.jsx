@@ -1,20 +1,16 @@
 import { useEffect } from 'react';
-/**
- * Componente StructuredDataAdvanced
- 
- * Versão avançada que injeta múltiplos tipos de dados estruturados:
- * 1. WebSite com SearchAction (para caixa de busca)
- * 2. Organization (informações sobre a empresa)
- * 3. BreadcrumbList (para navegação estruturada)
- 
- * Isso melhora significativamente a visibilidade nos resultados do Google
- */
 
+// 1. WebSite com SearchAction (para caixa de busca)
+// 2. Organization (informações sobre a empresa)
+// 3. BreadcrumbList (para navegação estruturada)
+ 
+// Isso melhora significativamente a visibilidade nos resultados do Google
+ 
 const StructuredDataAdvanced = () => {
   useEffect(() => {
     const baseUrl = window.location.origin;
 
-    // 1. Dados do WebSite com SearchAction
+    // 1
     const websiteData = {
       "@context": "https://schema.org",
       "@type": "WebSite",
@@ -32,7 +28,7 @@ const StructuredDataAdvanced = () => {
       }
     };
 
-    // 2. Dados da Organization
+    // 2
     const organizationData = {
       "@context": "https://schema.org",
       "@type": "Organization",
@@ -51,7 +47,7 @@ const StructuredDataAdvanced = () => {
       }
     };
 
-    // 3. Sitelinks estruturados (como parte da Organization)
+    // 3
     const sitelinksData = {
       "@context": "https://schema.org",
       "@type": "WebSite",
@@ -73,7 +69,6 @@ const StructuredDataAdvanced = () => {
       ]
     };
 
-    // Função para adicionar script ao head
     const addScriptToHead = (data, id) => {
       const script = document.createElement('script');
       script.type = 'application/ld+json';
@@ -83,14 +78,12 @@ const StructuredDataAdvanced = () => {
       return script;
     };
 
-    // Adicionar todos os scripts
     const scripts = [
       addScriptToHead(websiteData, 'structured-data-website'),
       addScriptToHead(organizationData, 'structured-data-organization'),
       addScriptToHead(sitelinksData, 'structured-data-sitelinks')
     ];
 
-    // Cleanup
     return () => {
       scripts.forEach(script => {
         if (script && script.parentNode) {

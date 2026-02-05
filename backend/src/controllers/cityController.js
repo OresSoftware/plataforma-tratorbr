@@ -1,6 +1,5 @@
 const pool = require("../config/db");
 
-// GET /api/admin/cities?busca=termo
 async function listarCidades(req, res) {
   try {
     const busca = req.query.busca || '';
@@ -32,7 +31,6 @@ async function listarCidades(req, res) {
   }
 }
 
-// GET /api/admin/cargos
 async function listarCargos(req, res) {
   try {
     const [rows] = await pool.query(
@@ -49,7 +47,6 @@ async function listarCargos(req, res) {
   }
 }
 
-// GET /api/admin/ocupacoes
 async function listarOcupacoes(req, res) {
   try {
     const [rows] = await pool.query(

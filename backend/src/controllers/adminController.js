@@ -10,17 +10,14 @@ async function safeCount(sql, params = []) {
   }
 }
 
-// Dashboard - Obter métricas simplificadas
 exports.obterMetricasDashboard = async (_req, res) => {
   try {
-    // 1. Admins Cadastrados 
     const adminsIpsCadastrados = await safeCount(`
       SELECT COUNT(DISTINCT admin_id) AS total 
       FROM admin_ips 
       WHERE ativo = 1
     `);
     
-    // 2. Admins Online 
     const adminsOnline = await safeCount(`
       SELECT COUNT(DISTINCT admin_id) AS total 
       FROM admin_ips 
@@ -28,7 +25,6 @@ exports.obterMetricasDashboard = async (_req, res) => {
       AND last_seen_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
     `);
     
-    // 3. Contatos Pendentes
     const contatosPendentes = await safeCount(`
       SELECT COUNT(*) AS total 
       FROM contatos 
@@ -47,7 +43,6 @@ exports.obterMetricasDashboard = async (_req, res) => {
   }
 };
 
-// Dashboard - Obter pendências (mantido para compatibilidade, mas simplificado)
 exports.obterPendencias = async (_req, res) => {
   try {
     const contatosPendentes = await safeCount(`

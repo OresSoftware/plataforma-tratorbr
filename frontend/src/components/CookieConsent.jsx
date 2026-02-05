@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import "./style/CookieConsent.css"; // agora usa o CSS externo
+import "./style/CookieConsent.css"; 
 
 const CookieConsent = () => {
     const [visible, setVisible] = useState(false);

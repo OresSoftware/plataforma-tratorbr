@@ -12,8 +12,6 @@ api.interceptors.request.use((cfg) => {
   return cfg;
 });
 
-// Se você NÃO tiver um axiosGuard global, mantenha este bloco.
-// Caso já tenha um guard central, remova este para não duplicar.
 api.interceptors.response.use(
   (r) => r,
   (err) => {
@@ -23,7 +21,7 @@ api.interceptors.response.use(
 
     if (status === 401 && !isLoginCall) {
       try {
-        localStorage.removeItem("adminToken"); // limpa token
+        localStorage.removeItem("adminToken"); 
       } catch { }
 
       const next = encodeURIComponent(window.location.pathname + window.location.search);
@@ -32,7 +30,6 @@ api.interceptors.response.use(
       }
     }
 
-    // 403 "sem permissão" — não redireciona para login aqui.
     return Promise.reject(err);
   }
 );

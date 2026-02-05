@@ -1,4 +1,3 @@
-// frontend/src/admin-gestao/AdminUsersPage.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import { Navigate } from "react-router-dom";
 import { apiAdminUsers } from "../services/apiAdminUsers";
@@ -9,7 +8,6 @@ import { Search, ChevronLeft, ChevronRight, Edit, Power, Key, User } from 'lucid
 import useNoindex from '../hooks/useNoindex';
 import { solicitarRedefinicaoSenha } from "../services/apiPublicAuth";
 
-// ===== Select pesquisável (com busca + lista rolável de 5 itens) =====
 const SearchableSelect = ({
   options = [],
   value,
@@ -143,7 +141,6 @@ const SearchableSelect = ({
   );
 };
 
-// ===== Dropdown simples (SEM busca) — mesmo visual do SearchableSelect =====
 const SimpleSelect = ({
   options = [],
   value,
@@ -258,7 +255,6 @@ const SimpleSelect = ({
   );
 };
 
-// Modal genérico
 const Modal = ({ children, onClose }) => (
   <div className="modal-overlay" onClick={onClose}>
     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -267,7 +263,6 @@ const Modal = ({ children, onClose }) => (
   </div>
 );
 
-// Helpers CPF
 const formatarCPF = (valor) => {
   const numeros = String(valor || "").replace(/\D/g, '');
   return numeros
@@ -301,7 +296,6 @@ const formatarData = (dataISO) => {
   return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 };
 
-// Modal aviso reset
 const ModalAvisoReset = ({ nomeOuEmail, minutos, onClose }) => {
   return (
     <div className="modal-senha">
@@ -332,45 +326,31 @@ export default function AdminUsersPage() {
 
   useNoindex();
 
-  
+
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
-  // filtros
-  const [status, setStatus] = useState('ativos'); // 'todos' | 'ativos' | 'inativos'
+  const [status, setStatus] = useState('ativos');
   const [busca, setBusca] = useState('');
   const [termoBuscado, setTermoBuscado] = useState('');
-
-  // Datas (YYYY-MM-DD)
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
-
-  // Ordenação
   const [sort, setSort] = useState('date_desc');
-
-  // Filtros adicionais
   const [enterpriseId, setEnterpriseId] = useState('');
   const [cargoId, setCargoId] = useState('');
   const [cityId, setCityId] = useState('');
-
-  // opções para selects
   const [empresas, setEmpresas] = useState([]);
   const [cargos, setCargos] = useState([]);
   const [cidades, setCidades] = useState([]);
-
-  // contadores
   const [contadorAtivos, setContadorAtivos] = useState(0);
   const [contadorInativos, setContadorInativos] = useState(0);
   const [contadorTodos, setContadorTodos] = useState(0);
-
   const [modalAberto, setModalAberto] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
   const [avisoReset, setAvisoReset] = useState(null);
 
-  // carregar opções dos selects
   useEffect(() => {
     const loadOptions = async () => {
       try {
@@ -381,7 +361,7 @@ export default function AdminUsersPage() {
         ]);
         setEmpresas(empRes.data.data || []);
         setCargos(carRes.data.data || []);
-        setCidades(cidRes.data.data || []); // esperado: [{ city_id, name, code }]
+        setCidades(cidRes.data.data || []);
       } catch (e) {
         console.error('Erro ao carregar filtros', e);
       }
@@ -412,7 +392,6 @@ export default function AdminUsersPage() {
     setLoading(false);
   }, [status, page, termoBuscado, dateFrom, dateTo, enterpriseId, cargoId, cityId, sort]);
 
-  // contadores
   const carregarContadores = useCallback(async () => {
     try {
       const at = await apiAdminUsers.contadorAtivos();
@@ -554,9 +533,7 @@ export default function AdminUsersPage() {
           </div>
         </header>
 
-        {/* ======= FILTROS ======= */}
         <section className="filters-card">
-          {/* Linha 1: Ordem | Cidade | Empresa | Cargo */}
           <div className="filters-row top-row">
             <div className="filter-col">
               <SimpleSelect
@@ -564,8 +541,8 @@ export default function AdminUsersPage() {
                 onChange={(val) => { setSort(val); setPage(1); }}
                 options={[
                   { value: 'date_desc', label: 'Últimos cadastros' },
-                  { value: 'date_asc',  label: 'Primeiros cadastros' },
-                  { value: 'name_asc',  label: 'A–Z (Nome)' },
+                  { value: 'date_asc', label: 'Primeiros cadastros' },
+                  { value: 'name_asc', label: 'A–Z (Nome)' },
                   { value: 'name_desc', label: 'Z–A (Nome)' },
                 ]}
                 placeholder="Ordenar por"
@@ -574,59 +551,29 @@ export default function AdminUsersPage() {
             </div>
 
             <div className="filter-col">
-              <SearchableSelect
-                options={empresas}
-                value={enterpriseId}
-                onChange={(val) => { setEnterpriseId(val); setPage(1); }}
-                getLabel={(e) => e?.fantasia ?? ''}
-                getValue={(e) => String(e?.enterprise_id)}
-                placeholder="Empresa"
-                maxVisible={5}
-              />
+              <SearchableSelect options={empresas} value={enterpriseId} onChange={(val) => { setEnterpriseId(val); setPage(1); }} getLabel={(e) => e?.fantasia ?? ''} getValue={(e) => String(e?.enterprise_id)} placeholder="Empresa" maxVisible={5} />
             </div>
 
             <div className="filter-col">
-              <SimpleSelect
-                value={cargoId}
-                onChange={(val) => { setCargoId(val); setPage(1); }}
-                options={cargos.map(c => ({ value: String(c.cargo_id), label: c.name }))}
-                placeholder="Cargo"
-                maxVisible={6}
-              />
+              <SimpleSelect value={cargoId} onChange={(val) => { setCargoId(val); setPage(1); }} options={cargos.map(c => ({ value: String(c.cargo_id), label: c.name }))} placeholder="Cargo" maxVisible={6} />
             </div>
           </div>
 
-          {/* Linha 2: Busca | De | Até | Limpar data */}
           <div className="filters-row bottom-row">
             <form className="search-col" onSubmit={handleBusca}>
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Nome, Sobrenome, E-mail, CPF, Cargo, Empresa..."
-                value={busca}
-                onChange={(e) => setBusca(e.target.value)}
-              />
+              <input type="text" className="search-input" placeholder="Nome, Sobrenome, E-mail, CPF, Cargo, Empresa..." value={busca} onChange={(e) => setBusca(e.target.value)} />
+
               <button type="submit" className="search-btn">
                 <Search size={18} />
               </button>
             </form>
 
             <div className="date-col">
-              <input
-                type="date"
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-                placeholder="dd/mm/aaaa"
-              />
+              <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} placeholder="dd/mm/aaaa" />
             </div>
 
             <div className="date-col">
-              <input
-                type="date"
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-                placeholder="dd/mm/aaaa"
-              />
+              <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} placeholder="dd/mm/aaaa" />
             </div>
 
             <div className="clear-col">
@@ -647,7 +594,6 @@ export default function AdminUsersPage() {
                   <th>Data de Cadastro</th>
                   <th>Empresa</th>
                   <th>Cargo</th>
-                  {/* Cidade REMOVIDA da listagem */}
                   <th>Status</th>
                   <th>Ações</th>
                 </tr>
@@ -665,7 +611,6 @@ export default function AdminUsersPage() {
                       <td>{formatarData(u.date_added)}</td>
                       <td>{u.empresa_nome || 'Sem empresa'}</td>
                       <td>{u.cargo_nome || 'Sem cargo'}</td>
-                      {/* Coluna de cidade removida */}
                       <td>
                         <span className={`status-badge ${u.status ? 'status-ativo' : 'status-inativo'}`}>
                           {u.status ? 'Ativo' : 'Inativo'}
@@ -695,7 +640,6 @@ export default function AdminUsersPage() {
             </table>
           </div>
 
-          {/* Cards mobile */}
           <div className="cards-container">
             {loading ? (
               <div className="center">Carregando...</div>
@@ -719,7 +663,6 @@ export default function AdminUsersPage() {
                   <div className="card-info">
                     <p><strong>Empresa:</strong> {u.empresa_nome || 'Sem empresa'}</p>
                     <p><strong>Cargo:</strong> {u.cargo_nome || 'Sem cargo'}</p>
-                    {/* Linha de cidade REMOVIDA dos cards */}
                     <p><strong>Cadastrado em:</strong> {formatarData(u.date_added)}</p>
                   </div>
                   <div className="card-acoes" onClick={(ev) => ev.stopPropagation()}>
@@ -742,7 +685,6 @@ export default function AdminUsersPage() {
           </div>
         </div>
 
-        {/* Paginação */}
         {totalPages > 1 && (
           <div className="pagination">
             <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
@@ -773,7 +715,6 @@ export default function AdminUsersPage() {
   );
 }
 
-// Form de edição
 const FormUsuario = ({ usuario, onSave, onClose }) => {
   const [dados, setDados] = useState(usuario || {});
   const [empresas, setEmpresas] = useState([]);
@@ -783,7 +724,6 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
 
   useEffect(() => {
     carregarDados();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const carregarDados = async () => {
@@ -849,13 +789,7 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
           </div>
           <div className="form-field">
             <label>CPF</label>
-            <input
-              name="cpf"
-              value={dados.cpf || ''}
-              onChange={handleChange}
-              placeholder="000.000.000-00"
-              className={erroCPF ? 'input-error' : ''}
-            />
+            <input name="cpf" value={dados.cpf || ''} onChange={handleChange} placeholder="000.000.000-00" className={erroCPF ? 'input-error' : ''} />
             {erroCPF && <span className="error-message">{erroCPF}</span>}
           </div>
           <div className="form-field">
@@ -896,7 +830,6 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
   );
 };
 
-// Detalhes
 const DetalhesUsuario = ({ usuario, onClose }) => {
   const formatarData = (data) => {
     if (!data) return 'N/A';

@@ -1,5 +1,4 @@
 import { api } from "../lib/api";
-// mesmo axios do projeto (que aponta pro seu backend)
 
 export async function solicitarRedefinicaoSenha({ email }) {
 

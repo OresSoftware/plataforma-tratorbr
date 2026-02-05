@@ -4,27 +4,20 @@ const bcrypt = require('bcrypt');
 const soNumeros = (str) => String(str || '').replace(/\D/g, '');
 const isISODate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s || '').trim());
 
-/* GET /api/admin/users */
 async function listarUsuarios(req, res) {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
     const pageSize = Math.min(100, Math.max(5, parseInt(req.query.pageSize || "20", 10)));
     const offset = (page - 1) * pageSize;
-
-    const status = String(req.query.status || 'todos').toLowerCase(); // 'todos' | 'ativos' | 'inativos'
+    const status = String(req.query.status || 'todos').toLowerCase(); 
     const busca = String(req.query.busca || '').trim();
-
-    // filtros por relacionamento
     const enterpriseId = parseInt(req.query.enterprise_id ?? '', 10);
     const cargoId = parseInt(req.query.cargo_id ?? '', 10);
     const cityId = parseInt(req.query.city_id ?? '', 10);
-
-    // período (date_added)
     const dateFrom = String(req.query.date_from || '').trim();
     const dateTo = String(req.query.date_to || '').trim();
-
-    // Ordenação
     const rawSort = String(req.query.sort || 'name_asc').toLowerCase();
+
     let orderSql = 'u.firstname ASC, u.lastname ASC';
     if (rawSort === 'name_desc') orderSql = 'u.firstname DESC, u.lastname DESC';
     else if (rawSort === 'date_asc') orderSql = 'u.date_added ASC, u.user_id ASC';
@@ -33,16 +26,13 @@ async function listarUsuarios(req, res) {
     const where = ["1=1"];
     const params = [];
 
-    // status
     if (status === 'ativos') where.push('u.status = 1');
     if (status === 'inativos') where.push('u.status = 0');
 
-    // empresa/cargo/cidade
     if (!Number.isNaN(enterpriseId)) { where.push('u.enterprise_id = ?'); params.push(enterpriseId); }
     if (!Number.isNaN(cargoId)) { where.push('u.cargo_id = ?'); params.push(cargoId); }
     if (!Number.isNaN(cityId)) { where.push('u.city_id = ?'); params.push(cityId); }
 
-    // busca
     if (busca) {
       const like = `%${busca}%`;
       const cpfDigits = soNumeros(busca);
@@ -66,7 +56,6 @@ async function listarUsuarios(req, res) {
       params.push(...subParams);
     }
 
-    // data (inclusivo)
     if (dateFrom && isISODate(dateFrom) && dateTo && isISODate(dateTo)) {
       where.push("u.date_added BETWEEN ? AND ?");
       params.push(`${dateFrom} 00:00:00`, `${dateTo} 23:59:59`);
@@ -80,7 +69,6 @@ async function listarUsuarios(req, res) {
 
     const whereSql = where.join(' AND ');
 
-    // dados
     const [rows] = await pool.query(
       `SELECT 
          u.*,
@@ -100,7 +88,6 @@ async function listarUsuarios(req, res) {
       [...params, pageSize, offset]
     );
 
-    // total
     const [[{ total }]] = await pool.query(
       `SELECT COUNT(*) AS total
          FROM ocbr_user u
@@ -119,7 +106,6 @@ async function listarUsuarios(req, res) {
   }
 }
 
-/* GET /api/admin/users/:id */
 async function buscarUsuarioPorId(req, res) {
   try {
     const { id } = req.params;
@@ -145,7 +131,6 @@ async function buscarUsuarioPorId(req, res) {
       return res.status(404).json({ ok: false, error: 'Usuário não encontrado.' });
     }
 
-    // Remover campos sensíveis
     delete user.password;
     delete user.salt;
     delete user.tmp_password;
@@ -157,7 +142,6 @@ async function buscarUsuarioPorId(req, res) {
   }
 }
 
-/* PUT /api/admin/users/:id */
 async function atualizarUsuario(req, res) {
   try {
     const { id } = req.params;
@@ -188,7 +172,6 @@ async function atualizarUsuario(req, res) {
 
     payload.date_modified = new Date();
 
-    // Validar email único (exceto o próprio registro)
     if (payload.email) {
       const [[existing]] = await pool.query(
         'SELECT user_id FROM ocbr_user WHERE email = ? AND user_id != ?',
@@ -208,7 +191,6 @@ async function atualizarUsuario(req, res) {
   }
 }
 
-/* PATCH /api/admin/users/:id/status */
 async function ativarDesativarUsuario(req, res) {
   try {
     const { id } = req.params;
@@ -285,7 +267,6 @@ async function resetarSenha(req, res) {
   }
 }
 
-/* GET /api/admin/users/contador/ativos */
 async function contadorAtivos(req, res) {
   try {
     const [[{ total }]] = await pool.query(
@@ -298,7 +279,6 @@ async function contadorAtivos(req, res) {
   }
 }
 
-// GET /api/admin/cities
 async function listarCidades(req, res) {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));

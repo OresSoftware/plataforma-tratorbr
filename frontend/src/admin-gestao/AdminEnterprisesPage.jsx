@@ -1,4 +1,3 @@
-// frontend/src/admin-gestao/AdminEnterprisesPage.jsx
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import { apiAdminEnterprises } from "../services/apiAdminEnterprises";
@@ -9,7 +8,6 @@ import useNoindex from '../hooks/useNoindex';
 import { Search, PlusCircle, ChevronLeft, ChevronRight, Edit, Power, ChevronDown } from 'lucide-react';
 import LogoSelector from './components/LogoSelector';
 
-/** ===================== CNPJ UTILS (sanitize, validate, format) ===================== */
 const sanitizeCNPJ = (value = "") => String(value).replace(/\D/g, "").slice(0, 14);
 
 const isCNPJ = (value = "") => {
@@ -41,17 +39,13 @@ const formatCNPJ = (value = "") => {
   if (v.length <= 12) return v.replace(/(\d{2})(\d{3})(\d{3})(\d{1,4})/, "$1.$2.$3/$4");
   return v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})/, "$1.$2.$3/$4-$5");
 };
-/** ==================================================================================== */
 
-/** ===================== IE (Inscrição Estadual) – helpers simples ==================== */
 const sanitizeIEInput = (value = "") => {
   const v = String(value || "");
   if (v.trim().toUpperCase() === "ISENTO") return "ISENTO";
   return v.replace(/\D/g, "").slice(0, 14);
 };
-/** ==================================================================================== */
 
-// Outras máscaras
 const formatPhone = (value) => {
   const numbers = String(value || "").replace(/\D/g, '');
   if (numbers.length <= 10) {
@@ -89,7 +83,6 @@ const onImgError = (e) => {
   img.src = FALLBACK_LOGO;
 };
 
-/* =================== Modal “estrito” (não fecha fora/ESC) =================== */
 const Modal = ({ children /*, onClose */ }) => {
   const contentRef = useRef(null);
 
@@ -131,9 +124,7 @@ const Modal = ({ children /*, onClose */ }) => {
     </div>
   );
 };
-/* ============================================================================ */
 
-/* =================== CityDropdown (com fallback para edição) =================== */
 const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -151,7 +142,6 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel =
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // 🔧 dispara busca apenas quando o menu está aberto (com debounce)
   useEffect(() => {
     if (!isOpen) return;
     const timer = setTimeout(() => onSearchChange(searchTerm), 300);
@@ -179,13 +169,7 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel =
         <div className="city-dropdown-menu">
           <div className="city-dropdown-search">
             <Search size={16} />
-            <input
-              type="text"
-              placeholder="Buscar cidade..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              autoFocus
-            />
+            <input type="text" placeholder="Buscar cidade..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} autoFocus />
           </div>
           <div className="city-dropdown-list">
             {cidades.length === 0 ? (
@@ -207,16 +191,13 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel =
     </div>
   );
 };
-/* ============================================================================ */
 
-/* ====== NOVO: Dropdown de Matrizes ativas (autocomplete simples) ====== */
 const MatrizDropdown = ({ value, onChange, currentLabel = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [options, setOptions] = useState([]);
   const dropdownRef = useRef(null);
 
-  // buscar matrizes
   const fetchOptions = useCallback(async (q) => {
     try {
       const { data } = await api.get('/admin/enterprises/matrizes', { params: { search: q || '' } });
@@ -230,7 +211,6 @@ const MatrizDropdown = ({ value, onChange, currentLabel = '' }) => {
 
   useEffect(() => { if (isOpen) fetchOptions(''); }, [isOpen, fetchOptions]);
 
-  // debounce de busca
   useEffect(() => {
     if (!isOpen) return;
     const t = setTimeout(() => fetchOptions(searchTerm), 250);
@@ -270,23 +250,15 @@ const MatrizDropdown = ({ value, onChange, currentLabel = '' }) => {
         <div className="city-dropdown-menu">
           <div className="city-dropdown-search">
             <Search size={16} />
-            <input
-              type="text"
-              placeholder="Buscar Matriz (nome/razão/CNPJ)"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              autoFocus
-            />
+            <input type="text" placeholder="Buscar Matriz (nome/razão/CNPJ)" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} autoFocus />
           </div>
+
           <div className="city-dropdown-list">
             {options.length === 0 ? (
               <div className="city-dropdown-empty">Nenhuma matriz encontrada</div>
             ) : (
               options.slice(0, 100).map(opt => (
-                <div
-                  key={opt.id}
-                  className={`city-dropdown-item ${String(opt.id) === String(value) ? 'selected' : ''}`}
-                  onClick={() => handleSelect(opt)}
+                <div key={opt.id} className={`city-dropdown-item ${String(opt.id) === String(value) ? 'selected' : ''}`} onClick={() => handleSelect(opt)}
                 >
                   <div className="text-sm font-semibold">
                     <strong>Matriz - </strong>{(opt.fantasia || opt.razao) ?? '—'} | <strong>CNPJ - </strong> {formatCNPJ(opt.cnpj || '')}
@@ -300,9 +272,7 @@ const MatrizDropdown = ({ value, onChange, currentLabel = '' }) => {
     </div>
   );
 };
-/* ============================================================================ */
 
-/* ====== NOVO: limpeza de payload antes do POST/PUT ====== */
 const limparEmpresaPayload = (dados) => {
   const removidos = [
     "enterprise_id",
@@ -324,31 +294,17 @@ const MFTag = ({ tipo }) => {
   const isMatriz = String(tipo).toLowerCase() === 'matriz';
   const bg = isMatriz ? '#15383E' : '#409535';
   const letra = isMatriz ? 'M' : 'F';
+
   return (
     <span
       title={isMatriz ? 'Matriz' : 'Filial'}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 22,
-        height: 22,
-        borderRadius: '50%',
-        fontSize: 12,
-        fontWeight: 700,
-        color: '#fff',
-        background: bg,
-        marginRight: 8,
-        flex: '0 0 auto'
-      }}
-    >
+      style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: '50%', fontSize: 12, fontWeight: 700, color: '#fff', background: bg, marginRight: 8, flex: '0 0 auto' }}>
       {letra}
     </span>
   );
 };
 
 
-/* =================== Componente FilterDropdown =================== */
 const FilterDropdown = ({ label, value, options, onChange, placeholder = "Selecione..." }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -404,20 +360,15 @@ export default function AdminEnterprisesPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
   const [status, setStatus] = useState('ativos');
   const [busca, setBusca] = useState('');
   const [termoBuscado, setTermoBuscado] = useState('');
-
   const [contadorAtivos, setContadorAtivos] = useState(0);
   const [contadorInativos, setContadorInativos] = useState(0);
   const [contadorTodos, setContadorTodos] = useState(0);
-
   const [modalAberto, setModalAberto] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [empresaSelecionada, setEmpresaSelecionada] = useState(null);
-
-  // NOVOS ESTADOS PARA FILTRAGEM
   const [ordenacao, setOrdenacao] = useState('');
   const [tipoFiltro, setTipoFiltro] = useState('');
   const [cidadeFiltro, setCidadeFiltro] = useState(0);
@@ -431,9 +382,9 @@ export default function AdminEnterprisesPage() {
         status,
         page,
         busca: termoBuscado,
-        order: ordenacao,      // NOVO
-        tipo: tipoFiltro,      // NOVO
-        city_id: cidadeFiltro  // NOVO
+        order: ordenacao,
+        tipo: tipoFiltro,
+        city_id: cidadeFiltro
       });
       setEmpresas(result.data || []);
       setTotalPages(Math.ceil(result.total / result.pageSize));
@@ -471,7 +422,6 @@ export default function AdminEnterprisesPage() {
     }
   }, []);
 
-  // Carregar cidades ao montar o componente
   useEffect(() => {
     carregarCidades('');
   }, [carregarCidades]);
@@ -607,10 +557,9 @@ export default function AdminEnterprisesPage() {
         </header>
 
         <section className="filters-card">
-          
-            <div className="filters-row top-row">
-              {/* Dropdown Ordenar */}
-              <div className="filter-col">
+
+          <div className="filters-row top-row">
+            <div className="filter-col">
               <FilterDropdown
                 value={ordenacao}
                 onChange={(val) => { setOrdenacao(val); setPage(1); }}
@@ -622,9 +571,9 @@ export default function AdminEnterprisesPage() {
                 ]}
                 placeholder="Ordenar"
               />
-              </div>
+            </div>
 
-              <div className="filter-col">
+            <div className="filter-col">
               {/* Dropdown Tipo */}
               <FilterDropdown value={tipoFiltro}
                 onChange={(val) => {
@@ -637,42 +586,41 @@ export default function AdminEnterprisesPage() {
                 ]}
                 placeholder="Tipo"
               />
-              </div>
-
-              {/* Dropdown Cidade */}
-              <div className="filter-col">
-
-                <CityDropdown
-                  value={cidadeFiltro}
-                  onChange={(e) => {
-                    setCidadeFiltro(e.target.value);
-                    setPage(1);
-                  }}
-                  cidades={listaCidades}
-                  onSearchChange={(term) => {
-                    setSearchCidade(term);
-                    carregarCidades(term);
-                  }}
-                  currentLabel=""
-                />
-              </div>
             </div>
 
-            {/* Barra de Pesquisa */}
+            {/* Dropdown Cidade */}
             <div className="filter-col">
-              <form onSubmit={handleBusca} className="search-form-new">
-                <input
-                  type="text"
-                  placeholder="Nome, Cidade, CNPJ..."
-                  value={busca}
-                  onChange={e => e.target.value.length <= 100 && setBusca(e.target.value)}
-                />
-                <button type="submit" className="search-button">
-                  <Search size={20} />
-                </button>
-              </form>
+
+              <CityDropdown
+                value={cidadeFiltro}
+                onChange={(e) => {
+                  setCidadeFiltro(e.target.value);
+                  setPage(1);
+                }}
+                cidades={listaCidades}
+                onSearchChange={(term) => {
+                  setSearchCidade(term);
+                  carregarCidades(term);
+                }}
+                currentLabel=""
+              />
             </div>
-          
+          </div>
+
+          <div className="filter-col">
+            <form onSubmit={handleBusca} className="search-form-new">
+              <input
+                type="text"
+                placeholder="Nome, Cidade, CNPJ..."
+                value={busca}
+                onChange={e => e.target.value.length <= 100 && setBusca(e.target.value)}
+              />
+              <button type="submit" className="search-button">
+                <Search size={20} />
+              </button>
+            </form>
+          </div>
+
         </section>
 
         <div className="enterprise-card">
@@ -718,18 +666,10 @@ export default function AdminEnterprisesPage() {
                       </td>
                       <td className="acoes-cell">
                         <div className="acoes">
-                          <button
-                            className="btn-icon btn-edit"
-                            onClick={(ev) => { ev.stopPropagation(); abrirModalForm(e); }}
-                            title="Editar"
-                          >
+                          <button className="btn-icon btn-edit" onClick={(ev) => { ev.stopPropagation(); abrirModalForm(e); }} title="Editar">
                             <Edit size={16} />
                           </button>
-                          <button
-                            className={`btn-icon ${e.ativo ? 'btn-deactivate' : 'btn-activate'}`}
-                            onClick={(ev) => { ev.stopPropagation(); handleStatusToggle(e); }}
-                            title={e.ativo ? 'Desativar' : 'Ativar'}
-                          >
+                          <button className={`btn-icon ${e.ativo ? 'btn-deactivate' : 'btn-activate'}`} onClick={(ev) => { ev.stopPropagation(); handleStatusToggle(e); }} title={e.ativo ? 'Desativar' : 'Ativar'}>
                             <Power size={16} />
                           </button>
                         </div>
@@ -741,7 +681,6 @@ export default function AdminEnterprisesPage() {
             </table>
           </div>
 
-          {/* Cards para mobile */}
           <div className="cards-container">
             {loading ? (
               <div className="center">Carregando...</div>
@@ -751,20 +690,12 @@ export default function AdminEnterprisesPage() {
               empresas.map((e) => (
                 <div key={e.enterprise_id} className="enterprise-card-mobile" onClick={() => abrirModalDetalhes(e)}>
                   <div className="card-header">
-                    <img
-                      src={getLogoSrc(e.logo)}
-                      alt={e.fantasia || 'Logo'}
-                      className="logo-thumb-mobile"
-                      onError={onImgError}
-                      loading="lazy"
-                    />
+                    <img src={getLogoSrc(e.logo)} alt={e.fantasia || 'Logo'} className="logo-thumb-mobile" onError={onImgError} loading="lazy" />
                     <div>
-
                       <h3>{e.fantasia || 'N/A'}</h3>
                       <span className={`status-badge ${e.ativo ? 'status-ativo' : 'status-inativo'}`}>
                         {e.ativo ? 'Ativo' : 'Inativo'}
                       </span>
-
                     </div>
                   </div>
                   <div className="card-info">
@@ -792,13 +723,14 @@ export default function AdminEnterprisesPage() {
           </div>
         </div>
 
-        {/* Paginação */}
         {totalPages > 1 && (
           <div className="pagination">
             <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
               <ChevronLeft size={16} /> Anterior
             </button>
+
             <span>Página {page} de {totalPages}</span>
+
             <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
               Próxima <ChevronRight size={16} />
             </button>
@@ -816,14 +748,13 @@ export default function AdminEnterprisesPage() {
   );
 }
 
-/* ====================== SUBCOMPONENTE: Endereço de Cobrança (com rádio) ======================= */
 const BillingAddressInline = ({
   enterpriseId,
   draft,
   setDraft,
   mainAddr,
 }) => {
-  const [mode, setMode] = useState('same'); // 'same' | 'different'
+  const [mode, setMode] = useState('same');
   const [cidades, setCidades] = useState([]);
   const [labelCidadeAtual, setLabelCidadeAtual] = useState('');
 
@@ -861,7 +792,6 @@ const BillingAddressInline = ({
           }
         }
       } catch {
-        // sem cobrança existente
       }
     };
     fetchAtual();
@@ -908,24 +838,12 @@ const BillingAddressInline = ({
 
       <div className="billing-mode">
         <label className="radio">
-          <input
-            type="radio"
-            name="billingMode"
-            value="same"
-            checked={mode === 'same'}
-            onChange={handleModeChange}
-          />
+          <input type="radio" name="billingMode" value="same" checked={mode === 'same'} onChange={handleModeChange} />
           <span>O mesmo cadastrado acima</span>
         </label>
 
         <label className="radio" style={{ marginLeft: 16 }}>
-          <input
-            type="radio"
-            name="billingMode"
-            value="different"
-            checked={mode === 'different'}
-            onChange={handleModeChange}
-          />
+          <input type="radio" name="billingMode" value="different" checked={mode === 'different'} onChange={handleModeChange} />
           <span>Endereço diferente</span>
         </label>
       </div>
@@ -971,9 +889,7 @@ const BillingAddressInline = ({
     </div>
   );
 };
-/* ============================================================================ */
 
-// Formulário de criação/edição
 const FormEmpresa = ({ empresa, onSave, onClose }) => {
   const [dados, setDados] = useState(() => ({
     ativo: 1,
@@ -985,14 +901,9 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
   const [cidades, setCidades] = useState([]);
   const [cnpjTouched, setCnpjTouched] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-
-  // rascunho do endereço de cobrança (salvo junto no submit)
   const [cobrancaDraft, setCobrancaDraft] = useState(null);
-
-  // estado auxiliar para exibir rótulo da matriz atual (em edição)
   const [matrizLabel, setMatrizLabel] = useState('');
 
-  // 🔧 memoiza a função de busca para o CityDropdown
   const carregarCidades = React.useCallback(async (busca) => {
     try {
       const { data } = await api.get('/admin/cities', { params: { busca } });
@@ -1002,12 +913,10 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
     }
   }, []);
 
-  // carrega lista inicial apenas uma vez
   useEffect(() => {
     carregarCidades('');
   }, [carregarCidades]);
 
-  // pré-carrega label da matriz atual em edição (se houver)
   useEffect(() => {
     (async () => {
       try {
@@ -1041,7 +950,6 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
     setDados(prev => ({ ...prev, [name]: formattedValue }));
   };
 
-  // NOVO: mudar tipo (Matriz/Filial)
   const handleTipoChange = (e) => {
     const tipo = e.target.value;
     if (tipo === 'Matriz') {
@@ -1093,29 +1001,17 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
       </div>
 
       <div className="modal-body">
-        {/* ========= NOVO BLOCO: Tipo (Matriz/Filial) + Matriz ========= */}
         <div className="form-grid">
           <div className="form-field full-width">
             <label>Tipo *</label>
             <div className="radio-group">
               <label className="radio">
-                <input
-                  type="radio"
-                  name="matriz_filial"
-                  value="Matriz"
-                  checked={dados.matriz_filial === 'Matriz'}
-                  onChange={handleTipoChange}
-                />
+                <input type="radio" name="matriz_filial" value="Matriz" checked={dados.matriz_filial === 'Matriz'} onChange={handleTipoChange} />
                 <span>Matriz</span>
               </label>
+
               <label className="radio" style={{ marginLeft: 16 }}>
-                <input
-                  type="radio"
-                  name="matriz_filial"
-                  value="Filial"
-                  checked={dados.matriz_filial === 'Filial'}
-                  onChange={handleTipoChange}
-                />
+                <input type="radio" name="matriz_filial" value="Filial" checked={dados.matriz_filial === 'Filial'} onChange={handleTipoChange} />
                 <span>Filial</span>
               </label>
             </div>
@@ -1135,29 +1031,21 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
             </div>
           )}
         </div>
-        {/* ============================================================= */}
 
         <div className="form-grid">
           <div className="form-field">
             <label>Razão Social *</label>
             <input name="razao" value={dados.razao || ''} onChange={handleChange} required />
           </div>
+
           <div className="form-field">
             <label>Nome Fantasia *</label>
             <input name="fantasia" value={dados.fantasia || ''} onChange={handleChange} required />
           </div>
+
           <div className="form-field">
             <label>CNPJ *</label>
-            <input
-              name="cnpj"
-              value={dados.cnpj || ''}
-              onChange={handleChange}
-              onBlur={() => setCnpjTouched(true)}
-              placeholder="00.000.000/0000-00"
-              maxLength={18}
-              required
-              aria-invalid={cnpjTouched && !cnpjValido}
-            />
+            <input name="cnpj" value={dados.cnpj || ''} onChange={handleChange} onBlur={() => setCnpjTouched(true)} placeholder="00.000.000/0000-00" maxLength={18} required aria-invalid={cnpjTouched && !cnpjValido} />
             {cnpjTouched && !cnpjValido && (
               <small style={{ color: "crimson" }}>CNPJ inválido</small>
             )}
@@ -1165,13 +1053,7 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
 
           <div className="form-field">
             <label>Inscrição Estadual</label>
-            <input
-              name="inscricao_estadual"
-              value={dados.inscricao_estadual || ''}
-              onChange={handleChange}
-              placeholder="Digite a IE ou 'ISENTO'"
-              maxLength={45}
-            />
+            <input name="inscricao_estadual" value={dados.inscricao_estadual || ''} onChange={handleChange} placeholder="Digite a IE ou 'ISENTO'" maxLength={45} />
             <small className="hint">Digite apenas números (até 14) ou “ISENTO”.</small>
           </div>
 
@@ -1179,12 +1061,10 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
             <label>Endereço</label>
             <input name="endereco" value={dados.endereco || ''} onChange={handleChange} />
           </div>
-
           <div className="form-field">
             <label>Bairro</label>
             <input name="bairro" value={dados.bairro || ''} onChange={handleChange} />
           </div>
-
           <div className="form-field">
             <label>Número</label>
             <input name="numero" value={dados.numero || ''} onChange={handleChange} />
@@ -1195,40 +1075,30 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
           </div>
           <div className="form-field">
             <label>CEP</label>
-            <input
-              name="cep"
-              value={dados.cep || ''}
-              onChange={handleChange}
-              placeholder="00000-000"
-            />
+            <input name="cep" value={dados.cep || ''} onChange={handleChange} placeholder="00000-000" />
           </div>
+
           <div className="form-field">
             <label>Cidade</label>
             <CityDropdown
-              value={dados.city_id ? Number(dados.city_id) : ''}   // mantém '' quando não selecionado
-              onChange={handleChange}
-              cidades={cidades}
-              onSearchChange={carregarCidades}
-              currentLabel={
+              value={dados.city_id ? Number(dados.city_id) : ''} onChange={handleChange} cidades={cidades} onSearchChange={carregarCidades} currentLabel={
                 (empresa && (empresa.cidade_nome || empresa.cidade_uf))
                   ? `${empresa.cidade_nome || ''}${empresa.cidade_nome && empresa.cidade_uf ? ' - ' : ''}${empresa.cidade_uf || ''}`
                   : ''
               }
             />
           </div>
+
           <div className="form-field">
             <label>Telefone</label>
-            <input
-              name="fone"
-              value={dados.fone || ''}
-              onChange={handleChange}
-              placeholder="(00) 00000-0000"
-            />
+            <input name="fone" value={dados.fone || ''} onChange={handleChange} placeholder="(00) 00000-0000" />
           </div>
+
           <div className="form-field">
             <label>Email</label>
             <input type="email" name="email" value={dados.email || ''} onChange={handleChange} />
           </div>
+
           <div className="form-field">
             <label>Site</label>
             <input type="url" name="site" value={dados.site || ''} onChange={handleChange} />
@@ -1236,31 +1106,15 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
 
           {/* Logo agora é nome de arquivo na pasta /images/manufacturer */}
           <div className="form-field full-width">
-            <LogoSelector
-              value={dados.logo || ''}
-              onChange={handleChange}
-              label="Logo *"
-              name="logo"
-            />
+            <LogoSelector value={dados.logo || ''} onChange={handleChange} label="Logo *" name="logo" />
           </div>
+
           <div className="form-field full-width">
-            <LogoSelector
-              value={dados.representada_logo || ''}
-              onChange={handleChange}
-              label="Logo Representada"
-              name="representada_logo"
-              nomeFantasia={dados.fantasia || ''}
-            />
+            <LogoSelector value={dados.representada_logo || ''} onChange={handleChange} label="Logo Representada" name="representada_logo" nomeFantasia={dados.fantasia || ''} />
           </div>
         </div>
 
-        {/* ===== Endereço de Cobrança com rádio ===== */}
-        <BillingAddressInline
-          enterpriseId={empresa?.enterprise_id || null}
-          draft={cobrancaDraft}
-          setDraft={setCobrancaDraft}
-          mainAddr={mainAddr}
-        />
+        <BillingAddressInline enterpriseId={empresa?.enterprise_id || null} draft={cobrancaDraft} setDraft={setCobrancaDraft} mainAddr={mainAddr} />
       </div>
 
       <div className="modal-actions">
@@ -1273,18 +1127,15 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
   );
 };
 
-// Detalhes
 const DetalhesEmpresa = ({ empresa, onClose }) => {
   const [aba, setAba] = useState('usuarios');
   const [usuarios, setUsuarios] = useState([]);
   const [loadingUsuarios, setLoadingUsuarios] = useState(true);
-
   const [filiais, setFiliais] = useState([]);
   const [loadingFiliais, setLoadingFiliais] = useState(false);
 
   useEffect(() => {
     carregarUsuarios();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -1328,27 +1179,15 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
         <div className="logos-container">
           <div className="logo-detail">
             <label>Logo:</label>
-            <img
-              src={getLogoSrc(empresa.logo)}
-              alt="Logo"
-              onError={onImgError}
-              loading="lazy"
-            />
+            <img src={getLogoSrc(empresa.logo)} alt="Logo" onError={onImgError} loading="lazy" />
           </div>
           {empresa.representada_logo && (
             <div className="logo-detail">
               <label>Logo Representada:</label>
-              <img
-                src={getLogoSrc(empresa.representada_logo)}
-                alt="Logo Representada"
-                onError={onImgError}
-                loading="lazy"
-              />
+              <img src={getLogoSrc(empresa.representada_logo)} alt="Logo Representada" onError={onImgError} loading="lazy" />
             </div>
           )}
         </div>
-
-
 
         <div className="details-grid">
           <div className="detail-item">
@@ -1363,22 +1202,18 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
             <label>CNPJ:</label>
             <span>{empresa.cnpj || 'N/A'}</span>
           </div>
-
           <div className="detail-item">
             <label>Inscrição Estadual:</label>
             <span>{empresa.inscricao_estadual || 'N/A'}</span>
           </div>
-
           <div className="detail-item full-width">
             <label>Endereço:</label>
             <span>{empresa.endereco ? `${empresa.endereco}, ${empresa.numero || 's/n'}` : 'N/A'}</span>
           </div>
-
           <div className="detail-item">
             <label>Bairro:</label>
             <span>{empresa.bairro || 'N/A'}</span>
           </div>
-
           <div className="detail-item">
             <label>Complemento:</label>
             <span>{empresa.complemento || 'N/A'}</span>
@@ -1422,17 +1257,11 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
         <div className="usuarios-vinculados">
           <div className="tabs-inline" style={{ display: 'flex', gap: 8, marginTop: 16, marginBottom: 8 }}>
             <button
-              type="button"
-              className={`btn ${aba === 'usuarios' ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setAba('usuarios')}
-            >
+              type="button" className={`btn ${aba === 'usuarios' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setAba('usuarios')}>
               Usuários
             </button>
             <button
-              type="button"
-              className={`btn ${aba === 'filiais' ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setAba('filiais')}
-            >
+              type="button" className={`btn ${aba === 'filiais' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setAba('filiais')}>
               Filiais
             </button>
           </div>
@@ -1464,7 +1293,6 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
             <>
               <h3>Filiais Vinculadas</h3>
 
-              {/* se a empresa NÃO for Matriz, apenas avisa */}
               {empresa.matriz_filial !== 'Matriz' ? (
                 <p className="empty-text">
                   Esta empresa é uma <strong>Filial</strong>{empresa.matriz_nome ? ` da Matriz ${empresa.matriz_nome}` : ''} e não possui filiais.

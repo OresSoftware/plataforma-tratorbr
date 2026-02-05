@@ -6,7 +6,6 @@ const Analytics = () => {
     const consent = Cookies.get("cookieConsent");
 
     if (consent === "true") {
-      // GOOGLE ANALYTICS
       const gaId = "UA-XXXXXXX-X"; 
 
       if (gaId && !window.gtag) {
@@ -25,7 +24,6 @@ const Analytics = () => {
         document.body.appendChild(script2);
       }
 
-      // META PIXEL 
       const pixelId = "SEU_PIXEL_ID_AQUI"; 
 
       if (pixelId && !window.fbq) {
