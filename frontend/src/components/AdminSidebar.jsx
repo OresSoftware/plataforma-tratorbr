@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, MapPin, LogOut, MessageCircleQuestion, Building2, Users } from "lucide-react";
+import { Menu, X, LayoutDashboard, MapPin, LogOut, MessageCircleQuestion, Building2, Users, Star } from "lucide-react";
 import './style/AdminSidebar.css';
 
 const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
@@ -100,6 +100,14 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
           >
             <MessageCircleQuestion className="nav-icon" size={22} />
             Contatos
+          </button>
+
+          <button
+            className={`nav-item ${isActive('/admin/avaliacoes') ? 'active' : ''}`}
+            onClick={() => handleMenuItemClick('/admin/avaliacoes')}
+          >
+            <Star className="nav-icon" size={22} />
+            Avaliações
           </button>
         </nav>
 

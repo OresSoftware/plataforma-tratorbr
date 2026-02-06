@@ -15,6 +15,7 @@ import SobreApp from './pages/SobreApp';
 import HomePage from "./pages/HomePage";
 import AnunciosPage from "./pages/AnunciosPage";
 import AvaliacaoPage from "./pages/AvaliacaoPage";
+import AdminAvaliacoesPage from './admin-gestao/AdminAvaliacoesPage';
 
 import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
@@ -74,6 +75,7 @@ function App() {
           <Route path="/admin/contato" element={<AdminContatoPage />} />
           <Route path="/admin/empresas" element={<AdminEnterprisesPage />} />
           <Route path="/admin/usuarios" element={<AdminUsersPage />} />
+          <Route path="/admin/avaliacoes" element={<AdminAvaliacoesPage />} />
 
 
           {/* Redirecionamentos */}
