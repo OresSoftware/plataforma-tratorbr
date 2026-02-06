@@ -18,6 +18,7 @@ const Footer = () => {
               {/* <li><Link to="/excluir-conta" onClick={() => window.scrollTo(0, 0)}>Excluir Conta</Link></li> */}
               {/* <li><Link to="#" onClick={() => window.scrollTo(0, 0)}>Área do Gestor</Link></li> */}
               <li><Link to="/ajuda" onClick={() => window.scrollTo(0, 0)}>Central de ajuda</Link></li>
+              <li><Link to="/avaliar" onClick={() => window.scrollTo(0, 0)}>Avaliar o TratorBR</Link></li>
             </ul>
           </div>
 

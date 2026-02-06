@@ -14,6 +14,7 @@ import SobreNosPage from './pages/SobreNosPage';
 import SobreApp from './pages/SobreApp';
 import HomePage from "./pages/HomePage";
 import AnunciosPage from "./pages/AnunciosPage";
+import AvaliacaoPage from "./pages/AvaliacaoPage";
 
 import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
@@ -62,6 +63,7 @@ function App() {
           <Route path="/excluir-conta" element={<ExcluirContaPage />} />
           <Route path="/quem-somos" element={<SobreNosPage />} />
           <Route path="/sobre-app" element={<SobreApp />} />
+          <Route path="/avaliar" element={<AvaliacaoPage />} />
           
 
           {/* Área Administrativa */}

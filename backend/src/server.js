@@ -107,3 +107,9 @@ app.listen(PORT, HOST, () => {
   console.log("CORS allowlist:", Array.from(allowlist));
   console.log("Manufacturer dir:", manufacturerDir);
 });
+
+const avaliacaoRoutes = require("./routes/avaliacaoRoutes");
+const adminAvaliacaoRoutes = require("./routes/adminAvaliacaoRoutes");
+
+app.use("/api/avaliacoes", avaliacaoRoutes);
+app.use("/api/admin/avaliacoes", adminAvaliacaoRoutes);
