@@ -29,7 +29,7 @@ const Footer = () => {
               <li><Link smooth to="/ajuda#proximos-passos">Passo a Passo</Link></li>
               <li><Link to="/planos-creditos" onClick={() => window.scrollTo(0, 0)}>Planos e Créditos</Link></li>
               <li><Link smooth to="/#app-contato">Baixar o aplicativo</Link></li>
-              <li><Link to="/contato" onClick={() => window.scrollTo(0, 0)}>Agendar Demonstração</Link></li>
+              <li><Link to="/aplicativo#agendamento" onClick={() => window.scrollTo(0, 0)}>Agendar Demonstração</Link></li>
             </ul>
           </div>
         </div>

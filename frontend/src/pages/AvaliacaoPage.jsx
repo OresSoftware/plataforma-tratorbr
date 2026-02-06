@@ -12,7 +12,7 @@ const AvaliacaoPage = () => {
   const [formData, setFormData] = useState({
     nome: "",
     mensagem: "",
-    estrelas: 5,
+    estrelas: 0,
   });
 
   const [errors, setErrors] = useState({});
@@ -71,24 +71,26 @@ const AvaliacaoPage = () => {
     const newErrors = {};
 
     if (!formData.nome.trim()) {
-      newErrors.nome = "Nome é obrigatório";
+      newErrors.nome = "Por favor, digite seu nome.";
     } else if (formData.nome.trim().length < 3) {
-      newErrors.nome = "Nome deve ter no mínimo 3 caracteres";
+      newErrors.nome = "O nome deve ter no mínimo 3 caracteres.";
     } else if (formData.nome.trim().length > 255) {
       newErrors.nome = "Nome não pode exceder 255 caracteres";
     }
 
     if (!formData.mensagem.trim()) {
-      newErrors.mensagem = "Mensagem é obrigatória";
+      newErrors.mensagem = "Por favor, escreva sua mensagem.";
     } else if (formData.mensagem.trim().length < 10) {
-      newErrors.mensagem = "Mensagem deve ter no mínimo 10 caracteres";
-    } else if (formData.mensagem.trim().length > 5000) {
-      newErrors.mensagem = "Mensagem não pode exceder 5000 caracteres";
+      newErrors.mensagem = "A mensagem deve ser um pouco mais detalhada (mínimo 10 letras).";
+    } else if (formData.mensagem.trim().length > 500) {
+      newErrors.mensagem = "Mensagem não pode exceder 500 caracteres.";
     }
 
     const estrelas = parseInt(formData.estrelas, 10);
-    if (isNaN(estrelas) || estrelas < 1 || estrelas > 5) {
-      newErrors.estrelas = "Classificação deve ser entre 1 e 5 estrelas";
+    if (!estrelas || estrelas === 0) {
+      newErrors.estrelas = "É obrigatório selecionar uma nota (estrelas).";
+    } else if (estrelas < 1 || estrelas > 5) {
+      newErrors.estrelas = "A nota deve ser entre 1 e 5.";
     }
 
     return newErrors;
@@ -117,7 +119,7 @@ const AvaliacaoPage = () => {
         setFormData({
           nome: "",
           mensagem: "",
-          estrelas: 5,
+          estrelas: 0,
         });
 
         await carregarEstatisticas();
@@ -172,20 +174,6 @@ const AvaliacaoPage = () => {
               nos ajuda a melhorar, mas também orienta outros clientes que estão
               considerando nossos serviços e produtos. Conte-nos como foi!
             </p>
-
-            {/* <div className="stats-card">
-              <div className="stat-item">
-                <span className="stat-label">Avaliações</span>
-                <span className="stat-value">{stats.total || 0}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Média</span>
-                <div className="stat-stars">
-                  {renderStatsStars(Math.round(stats.media || 0))}
-                </div>
-                <span className="stat-value">{stats.media || 0}</span>
-              </div>
-            </div> */}
           </div>
 
           <div className="avaliacao-right">
@@ -205,22 +193,30 @@ const AvaliacaoPage = () => {
                 </div>
 
                 <div className="form-group">
-                  <textarea name="mensagem" placeholder="Mensagem" value={formData.mensagem} onChange={handleChange} aria-invalid={!!errors.mensagem} className={`form-textarea ${errors.mensagem ? "error" : ""}`} rows="5" />
+                  <textarea name="mensagem" placeholder="Mensagem" value={formData.mensagem} onChange={handleChange} aria-invalid={!!errors.mensagem} className={`form-textarea ${errors.mensagem ? "error" : ""}`} rows="5" maxLength={500} />
+
+                  <div style={{ textAlign: "right", fontSize: "0.8rem", color: "#666", marginTop: "4px" }}>
+                    {formData.mensagem.length}/500
+                  </div>
+
                   {errors.mensagem && (
                     <small className="error-text">{errors.mensagem}</small>
                   )}
                 </div>
 
                 <div className="form-group rating-group">
-                  <label className="rating-label">De suas estrelas</label>
                   <div className="rating-container">{renderStars()}</div>
+
                   {errors.estrelas && (
-                    <small className="error-text">{errors.estrelas}</small>
+                    <small className="error-text" style={{ color: "red", display: "block", marginTop: "5px", textAlign: "center" }}>
+                      {errors.estrelas}
+                    </small>
                   )}
+
+                  <h3 className="rating-label">*deixe suas estrelas aqui</h3>
                 </div>
 
                 <button type="submit" className="submit-btn" disabled={enviando}>
-
                   {enviando ? "Enviando..." : "Enviar Avaliação"}
                 </button>
               </form>
