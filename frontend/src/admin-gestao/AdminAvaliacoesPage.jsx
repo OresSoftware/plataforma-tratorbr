@@ -28,6 +28,42 @@ function renderStars(count) {
   ));
 }
 
+// Componente de Média de Estrelas
+function MediaEstrelas({ avaliacoes }) {
+  if (!avaliacoes || avaliacoes.length === 0) {
+    return (
+      <div className="media-estrelas-card">
+        <div className="media-content">
+          <h3>Média de Avaliações</h3>
+          <p className="media-valor">-</p>
+          <p className="media-info">Nenhuma avaliação</p>
+        </div>
+      </div>
+    );
+  }
+
+  const totalEstrelas = avaliacoes.reduce((acc, av) => acc + (av.estrelas || 0), 0);
+  const media = (totalEstrelas / avaliacoes.length).toFixed(1);
+
+  return (
+    <div className="media-estrelas-card">
+      <div className="media-content">
+        <h3>Média de Avaliações</h3>
+        <div className="media-display">
+          <p className="media-valor">{media}</p>
+          <div className="media-stars">
+            {renderStars(Math.round(parseFloat(media)))}
+          </div>
+        </div>
+        <p className="media-info">
+          {avaliacoes.length} avaliação{avaliacoes.length !== 1 ? "ões" : ""} • Total: {totalEstrelas} estrelas
+        </p>
+      </div>
+    </div>
+  );
+}
+
+
 export default function AdminAvaliacoesPage() {
   const token = localStorage.getItem("adminToken");
   if (!token) return <Navigate to="/admin/login" replace />;
@@ -44,6 +80,7 @@ export default function AdminAvaliacoesPage() {
   const [status, setStatus] = useState("ativas");
   const [ativasTotal, setAtivasTotal] = useState(0);
   const [inativasTotal, setInativasTotal] = useState(0);
+  const [todasAvaliacoes, setTodasAvaliacoes] = useState([]);
   const [modalAberto, setModalAberto] = useState(false);
   const [avaliacaoSelecionada, setAvaliacaoSelecionada] = useState(null);
 
@@ -56,10 +93,15 @@ export default function AdminAvaliacoesPage() {
       setTotal(list.total || 0);
       setTotalPages(list.totalPages || 0);
 
-      const [listAtivas, listInativas] = await Promise.all([
+      const [listAtivas, listInativas, listTodas] = await Promise.all([
         apiAvaliacoesAdmin.listar({ status: "ativas", page: 1, pageSize: 1 }).catch(() => ({ total: 0 })),
         apiAvaliacoesAdmin.listar({ status: "inativas", page: 1, pageSize: 1 }).catch(() => ({ total: 0 })),
+        apiAvaliacoesAdmin.listar({ status: "todos", page: 1, pageSize: 1000 }).catch(() => ({ data: [] })),
       ]);
+      setAtivasTotal(Number(listAtivas?.total || 0));
+      setInativasTotal(Number(listInativas?.total || 0));
+      setTodasAvaliacoes(listTodas?.data || []);
+
       setAtivasTotal(Number(listAtivas?.total || 0));
       setInativasTotal(Number(listInativas?.total || 0));
     } catch (err) {
@@ -130,6 +172,8 @@ export default function AdminAvaliacoesPage() {
           </div>
 
         </header>
+
+        <MediaEstrelas avaliacoes={todasAvaliacoes} />
 
         {erro && (
           <div className="error-banner">
