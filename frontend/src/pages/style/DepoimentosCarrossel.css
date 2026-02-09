@@ -1,0 +1,419 @@
+.depoimentos-carrossel-section {
+    width: 100%;
+    background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+    padding: 60px 0px;
+    overflow: hidden;
+}
+
+.depoimentos-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.depoimentos-header h2 {
+    font-size: 1.6rem;
+    color: #1a3a3a;
+    margin: 0;
+    display: inline-block;
+    font-family: var(--fonte-titulo);
+    font-style: normal;
+}
+
+.depoimentos-header h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 0.5px;
+    background-color: #409535;
+    border-radius: 2px;
+}
+
+.depoimentos-carrossel-container {
+    width: 100%;
+    margin-bottom: 50px;
+}
+
+.carrossel-track {
+    width: 100%;
+    margin-bottom: 30px;
+    position: relative;
+    /* overflow: hidden; */
+}
+
+.carrossel-track::before,
+.carrossel-track::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 100px;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.carrossel-track::before {
+    left: 0;
+    background: linear-gradient(to right, #f5f5f5, transparent);
+}
+
+.carrossel-track::after {
+    right: 0;
+    background: linear-gradient(to left, #f5f5f5, transparent);
+}
+
+.carrossel-inner {
+    display: flex;
+    gap: 20px;
+    animation: scrollRight 40s linear infinite;
+    width: max-content;
+}
+
+.carrossel-top .carrossel-inner {
+    animation: scrollRight 60s linear infinite;
+}
+
+.carrossel-bottom .carrossel-inner {
+    animation: scrollLeft 60s linear infinite;
+}
+
+@keyframes scrollLeft {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes scrollRight {
+    0% {
+        transform: translateX(-50%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.carrossel-track:hover .carrossel-inner {
+    animation-play-state: paused;
+}
+
+.depoimento-card {
+    flex: 0 0 auto;
+    width: 320px;
+    height: 160px;
+    background: white;
+    border-radius: 30px 0 30px 30px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.depoimento-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+    border-color: #409535;
+}
+
+.depoimento-header {
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.depoimento-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a3a3a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.depoimento-localizacao {
+    margin: 4px 0 0 0;
+    font-size: 0.85rem;
+    color: #999;
+    font-weight: 500;
+}
+
+.depoimento-texto {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.4;
+    font-style: italic;
+    flex-grow: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow-wrap: break-word;
+}
+
+.depoimento-stars {
+    display: flex;
+    gap: 4px;
+    margin-top: auto;
+    flex-shrink: 0;
+}
+
+.star-filled {
+    color: #ffc107;
+}
+
+.star-empty {
+    color: #ddd;
+}
+
+.depoimentos-loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    font-size: 1rem;
+}
+
+.depoimentos-cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-radius: 30px;
+    padding: 26px 36px;
+    gap: 30px;
+    margin: 40px 40px 60px 40px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cta-text h3 {
+    margin: 0 0 2px 0;
+    font-size: 1.5rem;
+    color: #000000;
+    font-weight: 400;
+}
+
+.cta-text p {
+    margin: 0;
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 14px 32px;
+    background-color: #409535;
+    color: white;
+    text-decoration: none;
+    border-radius: 30px 0 30px 30px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    border: 2px solid #409535;
+}
+
+.cta-button:hover {
+    background-color: transparent;
+    color: #409535;
+}
+
+@media (max-width: 1027px) {
+    .depoimentos-carrossel-section {
+        padding: 50px 0px;
+    }
+
+    .depoimentos-header h2 {
+        font-size: 2rem;
+    }
+
+    .depoimento-card {
+        width: 300px;
+        height: 150px;
+        padding: 20px;
+    }
+
+    .carrossel-inner {
+        gap: 15px;
+    }
+
+    .depoimentos-cta {
+        padding: 30px;
+        gap: 20px;
+    }
+
+    .cta-text h3 {
+        font-size: 1.3rem;
+    }
+
+    .cta-button {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+    }
+}
+
+/* @media (max-width: 768px) {
+  .depoimentos-carrossel-section {
+    padding: 40px 12px;
+  }
+
+  .depoimentos-header h2 {
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+  }
+
+  .depoimentos-header h2::after {
+    width: 50px;
+  }
+
+  .depoimento-card {
+    width: 280px;
+    height: 200px;
+    padding: 18px;
+  }
+
+  .depoimento-header h3 {
+    font-size: 1rem;
+  }
+
+  .depoimento-texto {
+    font-size: 0.9rem;
+    -webkit-line-clamp: 2;
+  }
+
+  .carrossel-track::before,
+  .carrossel-track::after {
+    width: 60px;
+  }
+
+  .carrossel-inner {
+    gap: 12px;
+  }
+
+  .depoimentos-cta {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 25px;
+    gap: 20px;
+  }
+
+  .cta-text h3 {
+    font-size: 1.2rem;
+  }
+
+  .cta-text p {
+    font-size: 0.9rem;
+  }
+
+  .cta-button {
+    width: 100%;
+    text-align: center;
+    padding: 12px 20px;
+  }
+} */
+
+@media (max-width: 480px) {
+    .depoimentos-carrossel-section {
+        padding: 40px 0px;
+    }
+
+    .depoimentos-header h2 {
+        font-size: 1.5rem;
+        letter-spacing: 0.5px;
+    }
+
+    .depoimentos-header h2::after {
+        width: 60px;
+        height: 0.5px;
+    }
+
+    .depoimento-card {
+        width: 260px;
+        height: 130px;
+        padding: 16px;
+    }
+
+    .depoimento-header h3 {
+        font-size: 0.95rem;
+    }
+
+    .depoimento-localizacao {
+        font-size: 0.8rem;
+    }
+
+    .depoimento-texto {
+        font-size: 0.85rem;
+        line-height: 1.3;
+        -webkit-line-clamp: 2;
+    }
+
+    .depoimento-stars {
+        gap: 3px;
+    }
+
+    .depoimento-stars svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .carrossel-track::before,
+    .carrossel-track::after {
+        width: 40px;
+    }
+
+    .carrossel-inner {
+        gap: 10px;
+    }
+
+    .depoimentos-cta {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 20px;
+        gap: 40px;
+        text-align: center;
+        margin: 20px 20px 100px 20px;
+    }
+
+    .cta-text h3 {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+
+    .cta-text p {
+        font-size: 0.85rem;
+    }
+
+    .cta-button {
+        width: 100%;
+        text-align: center;
+        padding: 11px 16px;
+        font-size: 0.85rem;
+    }
+
+    .carrossel-track {
+        margin-bottom: 15px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .carrossel-inner {
+        animation: none;
+    }
+
+    .depoimento-card {
+        transition: none;
+    }
+
+    .cta-button {
+        transition: none;
+    }
+}

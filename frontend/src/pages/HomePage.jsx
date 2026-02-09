@@ -1,12 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from 'react-router-dom';
+import { Star } from 'lucide-react';
 import Header from "../components/Header";
 import Footer from "../components/footer";
 import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import CalendlyFlutuante from '../components/CalendlyFlutuante';
 // import WhatsappFlutuante from '../components/WhatsappFlutuante';
 import Mercado from '../components/Mercado';
+import { apiAvaliacoes } from '../services/apiAvaliacoes';
 import './style/HomePage.css';
+import './style/DepoimentosCarrossel.css';
 
 // QR CODE
 import iph03 from '/imagens-aplicativo/iphone-03.png';
@@ -152,6 +155,119 @@ function CustomSelect({ options, value, onChange, placeholder, onClear }) {
   );
 }
 
+// Componente de Carrossel de Depoimentos
+function DepoimentosCarrossel() {
+  const [avaliacoes, setAvaliacoes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function carregarAvaliacoes() {
+      try {
+        setLoading(true);
+        const response = await apiAvaliacoes.listarAtivas();
+
+        if (response && Array.isArray(response)) {
+          setAvaliacoes(response);
+        } else if (response && response.data && Array.isArray(response.data)) {
+          setAvaliacoes(response.data);
+        } else {
+          setAvaliacoes([]);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar avaliações:', err);
+        setAvaliacoes([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    carregarAvaliacoes();
+  }, []);
+
+  if (loading || avaliacoes.length === 0) {
+    return null;
+  }
+
+  const renderStars = (count) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        size={16}
+        className={i < count ? 'star-filled' : 'star-empty'}
+        fill={i < count ? 'currentColor' : 'none'}
+      />
+    ));
+  };
+
+  const baseAvaliacoes = avaliacoes.length > 0 ? avaliacoes : [];
+
+  const listaInfinita = [
+    ...baseAvaliacoes, ...baseAvaliacoes,
+    ...baseAvaliacoes, ...baseAvaliacoes,
+    ...baseAvaliacoes, ...baseAvaliacoes
+  ];
+
+  const avaliacoesTop = listaInfinita;
+  const avaliacoesBottom = listaInfinita;
+
+  return (
+    <section className="depoimentos-carrossel-section">
+      <div className="depoimentos-header">
+        <h2>DEPOIMENTOS</h2>
+      </div>
+
+      <div className="depoimentos-carrossel-container">
+        {/* Linha de Cima - Move para Esquerda */}
+        <div className="carrossel-track carrossel-top">
+          <div className="carrossel-inner">
+            {avaliacoesTop.map((avaliacao, index) => (
+              <div key={`top-${index}`} className="depoimento-card">
+                {/* ... seu conteúdo do card ... */}
+                <div className="depoimento-header">
+                  <h3>{avaliacao.nome}</h3>
+                </div>
+                <p className="depoimento-texto">"{avaliacao.mensagem}"</p>
+                <div className="depoimento-stars">
+                  {renderStars(avaliacao.estrelas)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Linha de Baixo - Move para Direita */}
+        <div className="carrossel-track carrossel-bottom">
+          <div className="carrossel-inner">
+            {avaliacoesBottom.map((avaliacao, index) => (
+              <div key={`bottom-${index}`} className="depoimento-card">
+                {/* ... seu conteúdo do card ... */}
+                <div className="depoimento-header">
+                  <h3>{avaliacao.nome}</h3>
+                </div>
+                <p className="depoimento-texto">"{avaliacao.mensagem}"</p>
+                <div className="depoimento-stars">
+                  {renderStars(avaliacao.estrelas)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div className="depoimentos-cta">
+        <div className="cta-text">
+          <h3>O que falam da <strong>TratorBR?</strong></h3>
+          <p>Compartilhe com a gente a sua experiência, deixe um comentário no formulário ao lado</p>
+        </div>
+        <a href="/avaliar" className="cta-button">
+          Avalie agora
+        </a>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
 
   const [isCategoriaAberta, setCategoriaAberta] = useState(false);
@@ -273,31 +389,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="depoimentos">
-        <div className="depoimentos-header">
-          <h2>DEPOIMENTOS</h2>
-        </div>
-
-        <div className="depoimentos-card-wrapper">
-          <div className="depoimentos-card">
-            <div className="depoimentos-text">
-              <h3>
-                O que falam da <span>TratorBR?</span>
-              </h3>
-              <p>
-                Compartilhe com a gente a sua experiência, deixe um comentário no
-                formulário ao lado.
-              </p>
-            </div>
-
-            <div className="depoimentos-button-wrapper">
-              <button type="button" className="depoimentos-btn">
-                Avalie agora
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* NOVA SEÇÃO DE DEPOIMENTOS COM CARROSSEL */}
+      <DepoimentosCarrossel />
 
       <section className="download-section-dois">
         <img src={iph03} alt="teste" className='ipho03' />

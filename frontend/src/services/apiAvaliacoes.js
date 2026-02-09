@@ -14,6 +14,11 @@ export const apiAvaliacoes = {
     return data;
   },
 
+  async listarAtivas() {
+    const { data } = await api.get("/avaliacoes");
+    return data;
+  },
+
   async obterEstatisticas() {
     const { data } = await api.get("/avaliacoes/stats");
     return data;
