@@ -89,6 +89,7 @@
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 30px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 }
 
 .table-container {
@@ -107,16 +108,19 @@
 }
 
 .avaliacoes-table thead {
-  background-color: #f9f9f9;
+  background-color: #f8f9fa;
   border-bottom: 2px solid #e0e0e0;
+
 }
 
 .avaliacoes-table th {
   padding: 15px;
   text-align: center;
-  font-weight: 700;
-  color: #1a3a3a;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4f5e5e;
   white-space: nowrap;
+  font-family: "montserrat";
 }
 
 .avaliacoes-table tbody tr {
@@ -282,7 +286,8 @@
   gap: 15px;
   padding: 15px; */
 
-  display: flex; /* Deixe visível ou flex por padrão se for usar cards */
+  display: flex;
+  /* Deixe visível ou flex por padrão se for usar cards */
   flex-direction: column;
   gap: 15px;
   padding: 15px;
@@ -504,12 +509,13 @@
 
   .avaliacoes-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: end;
     gap: 15px;
   }
 
   .avaliacoes-wrap {
-    padding: 15px;
+    padding: 0px;
+    margin-top: -50px;
   }
 
   .avaliacoes-header h1 {
@@ -517,12 +523,16 @@
   }
 
   .tabs {
-    gap: 8px;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
   }
 
   .tabs button {
     padding: 8px 12px;
     font-size: 0.85rem;
+    width: 32%;
+    justify-content: center;
   }
 
   .table-container {
@@ -561,16 +571,20 @@
     width: 100%;
     justify-content: center;
   }
+
+  .card-mensagem{
+    overflow-wrap: break-word;
+  }
 }
 
 @media (max-width: 480px) {
-  .avaliacoes-wrap {
+  /* .avaliacoes-wrap {
     padding: 10px;
-  }
+  } */
 
-  .avaliacoes-header h1 {
+  /* .avaliacoes-header h1 {
     font-size: 1.25rem;
-  }
+  } */
 
   .tabs {
     gap: 5px;

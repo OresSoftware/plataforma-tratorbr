@@ -261,10 +261,10 @@ export default function AdminAvaliacoesPage() {
         <div className="modal-overlay" onClick={fecharModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Detalhes da Avaliação</h2>
               <button className="close-btn" onClick={fecharModal}>
                 ✕
               </button>
+              <h2>Detalhes da Avaliação</h2>
             </div>
 
             <div className="modal-body">
@@ -312,7 +312,7 @@ export default function AdminAvaliacoesPage() {
               }}>
                 {avaliacaoSelecionada.ativo ? "Desativar" : "Ativar"}
               </button>
-              
+
               <button className="btn btn-danger" onClick={() => { handleDeletar(avaliacaoSelecionada.id); fecharModal(); }}>
                 Deletar
               </button>
