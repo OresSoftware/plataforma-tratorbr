@@ -272,13 +272,13 @@ export default function AdminContatoPage() {
                   <div className="card-email">{c.email}</div>
                   <div className="card-duvida">{truncarTexto(c.mensagem, 50)}</div>
                   <div className="card-meta">
-                    <strong>Canal:</strong> <CanalChip canal={c.response_channel} />
+                    Canal |  <CanalChip canal={c.response_channel} />
                   </div>
                   <div className="card-meta">
-                    <strong>Respondido por:</strong> {c.responded_by ?? "-"}
+                    Respondido por |  <strong>{c.responded_by ?? "-"}</strong>
                   </div>
                   <div className="card-meta">
-                    <strong>Data/Hora:</strong> {formatarDataHora(c.responded_at)}
+                    Data/Hora |  <strong>{formatarDataHora(c.responded_at)}</strong>
                   </div>
                   <div className="card-acoes" onClick={(e) => e.stopPropagation()}>
                     {/* <a

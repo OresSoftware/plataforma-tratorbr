@@ -13,7 +13,6 @@
   --primary: #15383E;
 }
 
-/* Conteúdo da Página de Contatos */
 .duvidas-wrap {
   max-width: 100%;
   overflow-x: hidden;
@@ -30,8 +29,7 @@
 
 .duvidas-header h1 {
   font-size: 2rem;
-  color: #1f2937;
-  margin: 0;
+  color: #15383E;
   font-weight: 700;
 }
 
@@ -78,7 +76,6 @@
   width: 100%;
 }
 
-/* Tabela Desktop */
 .table-container {
   width: 100%;
   overflow-x: auto;
@@ -172,7 +169,7 @@
   flex-wrap: wrap;
 }
 
-.btn {
+/* .btn {
   border: none;
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
@@ -188,7 +185,7 @@
 .btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
+} */
 
 .btn-whats {
   background: var(--whats);
@@ -219,7 +216,6 @@
   border-color: #b42318;
 }
 
-/* Cards Mobile - inicialmente ocultos */
 .cards-container {
   display: none;
   gap: 1rem;
@@ -263,7 +259,7 @@
 .card-email {
   color: var(--muted);
   font-size: 0.9rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 20px;
   word-break: break-word;
 }
 
@@ -283,7 +279,6 @@
   flex-wrap: wrap;
 }
 
-/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -315,6 +310,7 @@
     opacity: 0;
     transform: translateY(-30px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -408,128 +404,6 @@
   font-size: 0.9rem;
 }
 
-/* Responsividade */
-@media (max-width: 1024px) {
-  .acoes {
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  
-  .btn {
-    font-size: 11px;
-    padding: 0.4rem 0.6rem;
-  }
-}
-
-/* Mobile - 768px e abaixo */
-@media (max-width: 768px) {
-  .duvidas-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-  }
-  
-  .duvidas-header h1 {
-    font-size: 1.5rem;
-    text-align: center;
-  }
-  
-  .duvidas-actions {
-    justify-content: center;
-  }
-  
-  /* Esconder tabela no mobile */
-  .table-container {
-    display: none;
-  }
-  
-  /* Mostrar cards no mobile */
-  .cards-container {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-  }
-  
-  .modal-content {
-    margin: 0.5rem;
-    max-height: calc(100vh - 1rem);
-  }
-  
-  .modal-header {
-    padding: 1.25rem 1.5rem;
-  }
-  
-  .modal-body {
-    padding: 1.5rem;
-  }
-  
-  .modal-actions {
-    padding: 1.25rem 1.5rem;
-    flex-direction: column;
-  }
-  
-  .modal-actions .btn {
-    width: 100%;
-    text-align: center;
-    padding: 1rem;
-    font-size: 1rem;
-  }
-}
-
-/* Mobile pequeno - 480px e abaixo */
-@media (max-width: 480px) {
-  .duvidas-header h1 {
-    font-size: 1.25rem;
-  }
-  
-  .badge {
-    justify-content: center;
-    width: 100%;
-  }
-  
-  .contato-card {
-    padding: 1rem;
-  }
-  
-  .card-header h3 {
-    font-size: 1rem;
-  }
-  
-  .card-telefone {
-    font-size: 0.8rem;
-  }
-  
-  .card-email {
-    font-size: 0.8rem;
-  }
-  
-  .card-duvida {
-    font-size: 0.85rem;
-    padding: 0.5rem;
-  }
-  
-  .card-acoes {
-    flex-direction: column;
-  }
-  
-  .card-acoes .btn {
-    width: 100%;
-    text-align: center;
-    padding: 0.75rem;
-  }
-  
-  .modal-content {
-    margin: 0.25rem;
-    border-radius: 12px;
-  }
-}
-
-/* Animações */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 .contato-card {
   animation: fadeIn 0.4s ease;
 }
@@ -538,7 +412,6 @@
   animation: fadeIn 0.3s ease;
 }
 
-/* Loading spinner */
 .loading-spinner {
   display: inline-block;
   width: 24px;
@@ -550,20 +423,22 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-/* ===================== */
-/*   ABAS (tabs) + badge */
-/* ===================== */
 .tabs {
   display: inline-flex;
   gap: 6px;
   background: #f3f4f6;
   padding: 4px;
   border-radius: 999px;
-  box-shadow: 0 1px 2px rgba(15,23,42,0.06) inset;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06) inset;
 }
 
 .tabs button {
@@ -599,9 +474,6 @@
   color: #1f2d3a;
 }
 
-/* ===================== */
-/*    CHIPS de CANAL     */
-/* ===================== */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -615,44 +487,37 @@
 .chip.whatsapp {
   background: #e7f6ec;
   color: var(--whats);
-  border: 1px solid rgba(64,149,53,0.15);
+  border: 1px solid rgba(64, 149, 53, 0.15);
 }
 
 .chip.email {
   background: #e6ecf8;
   color: var(--mail);
-  border: 1px solid rgba(22,119,255,0.15);
+  border: 1px solid rgba(22, 119, 255, 0.15);
 }
 
-/* ===================== */
-/*   BOTÕES padronizados */
-/* ===================== */
-
-/* OK (verde) — usar a cor institucional */
 .btn-ok {
   background: #6b7280;
   color: #fff;
   border: 1px solid var(--ok);
 }
+
 .btn-ok:hover {
   background: #51565f;
   border-color: #51565f;
 }
 
-/* Excluir/perigo */
 .btn-danger {
   background: #fff;
   color: var(--del);
   border: 1px solid #b42318;
 }
+
 .btn-danger:hover {
   background: #fef2f2;
   border-color: #b42318;
 }
 
-/* ===================== */
-/*  Colunas novas (resp) */
-/* ===================== */
 .canal-cell,
 .respby-cell,
 .data-cell {
@@ -664,9 +529,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ===================== */
-/*   Banner de erro      */
-/* ===================== */
 .error-banner {
   display: flex;
   align-items: center;
@@ -679,6 +541,7 @@
   border-radius: 10px;
   margin-bottom: 1rem;
 }
+
 .error-banner button {
   background: #fff;
   border: 1px solid #fecaca;
@@ -688,13 +551,11 @@
   font-weight: 600;
   cursor: pointer;
 }
+
 .error-banner button:hover {
   background: #fff1f2;
 }
 
-/* ===================== */
-/*   Modal secundário    */
-/* ===================== */
 .modal-close-2 {
   background: #f3f4f6;
   color: #111827;
@@ -704,14 +565,149 @@
   font-weight: 600;
   cursor: pointer;
 }
+
 .modal-close-2:hover {
   background: #e5e7eb;
 }
 
-/* Responsividade das abas */
-@media (max-width: 768px) {
+
+@media (max-width: 1027px) {
+  .acoes {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .btn {
+    font-size: 11px;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .duvidas-header {
+    display: block;
+  }
+
+  .duvidas-header h1 {
+    text-align: end;
+  }
+
+  .duvidas-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .duvidas-actions {
+    justify-content: center;
+  }
+
+  .cards-container {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .modal-content {
+    margin: 0.5rem;
+    max-height: calc(100vh - 1rem);
+  }
+
+  .modal-header {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+  }
+
+  .modal-actions {
+    padding: 1.25rem 1.5rem;
+    flex-direction: column;
+  }
+
+  .modal-actions .btn {
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
   .tabs {
+    justify-content: space-between;
+    width: 100%;
+
+  }
+
+  .tabs button {
+    width: 50%;
+    text-align: center;
+    display: block;
+
+  }
+}
+
+@media (max-width: 480px) {
+  .card-meta{
+    margin-bottom: 10px;
+  }
+  .cards-container {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .badge {
     justify-content: center;
     width: 100%;
+  }
+
+  .contato-card {
+    padding: 1rem;
+  }
+
+  .card-header h3 {
+    font-size: 1rem;
+  }
+
+  .card-telefone {
+    font-size: 0.8rem;
+  }
+
+  .card-email {
+    font-size: 0.8rem;
+  }
+
+  .card-duvida {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+
+  .card-acoes {
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .card-acoes .btn {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem;
+    justify-content: center;
+  }
+
+  .modal-content {
+    margin: 0.25rem;
+    border-radius: 12px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
