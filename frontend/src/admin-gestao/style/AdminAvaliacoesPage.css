@@ -8,8 +8,7 @@
 .avaliacoes-header h1 {
   font-size: 2rem;
   font-weight: 700;
-  color: #1a3a3a;
-  margin: 0 0 20px 0;
+  color: #15383E;
 }
 
 .tabs {
@@ -515,7 +514,7 @@
 
   .avaliacoes-wrap {
     padding: 0px;
-    margin-top: -50px;
+    margin-top: 0px;
   }
 
   .avaliacoes-header h1 {
@@ -578,13 +577,13 @@
 }
 
 @media (max-width: 480px) {
-  /* .avaliacoes-wrap {
+  .avaliacoes-wrap {
     padding: 10px;
-  } */
+  } 
 
-  /* .avaliacoes-header h1 {
+  .avaliacoes-header h1 {
     font-size: 1.25rem;
-  } */
+  }
 
   .tabs {
     gap: 5px;
