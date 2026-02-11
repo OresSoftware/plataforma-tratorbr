@@ -105,7 +105,7 @@ const TermosEPolitica = () => {
           </p>
 
           <h2>12. Privacidade e LGPD</h2>
-          <p>Tratamos dados pessoais conforme a Política de Privacidade e a LGPD (Lei 13.709/2018), para finalidades como autenticação, prevenção a fraudes, operação do serviço e, quando aplicável, integrações (ex.: Banco DLL no SimuladoBr).
+          <p>Tratamos dados pessoais conforme a Política de Privacidade e a LGPD (Lei 13.709/2018), para finalidades como autenticação, prevenção a fraudes, operação do serviço e, quando aplicável, integrações.
             Direitos do titular: acesso, correção, exclusão, portabilidade, revogação do consentimento, entre outros, pelos canais indicados na plataforma.
             Detalhes sobre bases legais, compartilhamentos, retenção e cookies constam na Política de Privacidade.
           </p>

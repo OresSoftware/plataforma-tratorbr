@@ -599,18 +599,18 @@ export default function AdminEnterprisesPage() {
                 <span className="count">{contadorInativos}</span>
               </button>
             </div>
-            <button className="btn btn-primary" onClick={() => abrirModalForm()}>
+            <button className="btn-primary" onClick={() => abrirModalForm()}>
               <PlusCircle size={18} />
               Nova Empresa
             </button>
           </div>
-        </header>
 
+        </header>
         <section className="filters-card">
-          
-            <div className="filters-row top-row">
-              {/* Dropdown Ordenar */}
-              <div className="filter-col">
+
+          <div className="filters-row top-row">
+            {/* Dropdown Ordenar */}
+            <div className="filter-col">
               <FilterDropdown
                 value={ordenacao}
                 onChange={(val) => { setOrdenacao(val); setPage(1); }}
@@ -622,9 +622,9 @@ export default function AdminEnterprisesPage() {
                 ]}
                 placeholder="Ordenar"
               />
-              </div>
+            </div>
 
-              <div className="filter-col">
+            <div className="filter-col">
               {/* Dropdown Tipo */}
               <FilterDropdown value={tipoFiltro}
                 onChange={(val) => {
@@ -637,42 +637,42 @@ export default function AdminEnterprisesPage() {
                 ]}
                 placeholder="Tipo"
               />
-              </div>
-
-              {/* Dropdown Cidade */}
-              <div className="filter-col">
-
-                <CityDropdown
-                  value={cidadeFiltro}
-                  onChange={(e) => {
-                    setCidadeFiltro(e.target.value);
-                    setPage(1);
-                  }}
-                  cidades={listaCidades}
-                  onSearchChange={(term) => {
-                    setSearchCidade(term);
-                    carregarCidades(term);
-                  }}
-                  currentLabel=""
-                />
-              </div>
             </div>
 
-            {/* Barra de Pesquisa */}
+            {/* Dropdown Cidade */}
             <div className="filter-col">
-              <form onSubmit={handleBusca} className="search-form-new">
-                <input
-                  type="text"
-                  placeholder="Nome, Cidade, CNPJ..."
-                  value={busca}
-                  onChange={e => e.target.value.length <= 100 && setBusca(e.target.value)}
-                />
-                <button type="submit" className="search-button">
-                  <Search size={20} />
-                </button>
-              </form>
+
+              <CityDropdown
+                value={cidadeFiltro}
+                onChange={(e) => {
+                  setCidadeFiltro(e.target.value);
+                  setPage(1);
+                }}
+                cidades={listaCidades}
+                onSearchChange={(term) => {
+                  setSearchCidade(term);
+                  carregarCidades(term);
+                }}
+                currentLabel=""
+              />
             </div>
-          
+          </div>
+
+          {/* Barra de Pesquisa */}
+          <div className="filter-col">
+            <form onSubmit={handleBusca} className="search-form-new">
+              <input
+                type="text"
+                placeholder="Nome, Cidade, CNPJ..."
+                value={busca}
+                onChange={e => e.target.value.length <= 100 && setBusca(e.target.value)}
+              />
+              <button type="submit" className="search-button">
+                <Search size={20} />
+              </button>
+            </form>
+          </div>
+
         </section>
 
         <div className="enterprise-card">
