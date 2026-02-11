@@ -1,7 +1,5 @@
-/* src/pages/AdminDashboardPage.css */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-/* Loading inline */
 .loading-message {
   grid-column: 1 / -1;
   display: flex;
@@ -32,7 +30,6 @@
   }
 }
 
-/* Content */
 .admin-content {
   max-width: 100%;
   overflow-x: hidden;
@@ -45,7 +42,6 @@
   margin: 0 0 2rem 0;
 }
 
-/* Error Banner */
 .error-banner {
   background-color: #fef2f2;
   border: 1px solid #fecaca;
@@ -70,7 +66,6 @@
   font-size: 0.9rem;
 }
 
-/* Métricas Grid Simplificado - 3 colunas */
 .metricas-grid-simple {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -113,93 +108,11 @@
   font-style: italic;
 }
 
-/* Responsividade */
-@media (max-width: 1200px) {
-  .metricas-grid-simple {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-}
-
-@media (max-width: 1024px) {
-  .metricas-grid-simple {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-  }
-}
-
-/* Mobile - 768px e abaixo */
-@media (max-width: 768px) {
-  .admin-content h1 {
-    font-size: 1.5rem;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .metricas-grid-simple {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .metrica-card {
-    padding: 1.25rem;
-  }
-
-  .metrica-valor {
-    font-size: 1.8rem;
-  }
-}
-
-/* Mobile pequeno - 480px e abaixo */
-@media (max-width: 480px) {
-  .admin-content h1 {
-    font-size: 1.25rem;
-  }
-
-  .metricas-grid-simple {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .metrica-card {
-    padding: 1rem;
-    text-align: center;
-  }
-
-  .metrica-valor {
-    font-size: 1.6rem;
-  }
-
-  .error-banner {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .error-banner button {
-    width: 100%;
-    padding: 0.75rem;
-  }
-}
-
-/* Animações suaves */
-@media (prefers-reduced-motion: no-preference) {
-  .metrica-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-}
-
-/* Grid dos gráficos */
 .graficos-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
   margin-top: 1.5rem;
-}
-
-@media (max-width: 768px) {
-  .graficos-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .grafico-card {
@@ -240,7 +153,6 @@
   color: #6b7b8c;
 }
 
-/* Toggle (Usuários | Empresas) */
 .toggle-linha {
   display: inline-flex;
   gap: 6px;
@@ -264,18 +176,15 @@
   color: #2e3f4f;
 }
 
-/* Cards já existentes: ajuste sutil de alinhamento se precisar */
 .metrica-card h3 {
   margin-bottom: 0.25rem;
 }
 
-/* ==================== CONTAINER PRINCIPAL ==================== */
 .relatorio-container {
   margin-top: 40px;
   margin-bottom: 40px;
 }
 
-/* ==================== CARD DE GERAÇÃO ==================== */
 .relatorio-card {
   background: #fff;
   border-radius: 12px;
@@ -309,7 +218,6 @@
   flex-wrap: wrap;
 }
 
-/* ==================== OPÇÕES DE PERÍODO ==================== */
 .relatorio-opcoes {
   display: flex;
   gap: 20px;
@@ -341,271 +249,6 @@
 
 .radio-option span {
   font-weight: 500;
-}
-
-/* ==================== BOTÃO GERAR PDF ==================== */
-.btn-gerar-pdf {
-  padding: 12px 32px;
-  background: #409535;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  font-family: 'Montserrat', sans-serif;
-}
-
-.btn-gerar-pdf:hover:not(:disabled) {
-  background: #357a2b;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(64, 149, 53, 0.3);
-}
-
-.btn-gerar-pdf:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.btn-gerar-pdf .spinner {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ==================== MENSAGEM DE FEEDBACK ==================== */
-.relatorio-mensagem {
-  margin-top: 16px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.relatorio-mensagem.success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.relatorio-mensagem.error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-/* ==================== HISTÓRICO ==================== */
-.relatorio-historico {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-}
-
-.relatorio-historico h4 {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.relatorio-historico h4 svg {
-  color: #1E3A8A;
-}
-
-/* ==================== LOADING DO HISTÓRICO ==================== */
-.historico-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  gap: 12px;
-}
-
-.historico-loading .spinner {
-  color: #1E3A8A;
-  animation: spin 1s linear infinite;
-}
-
-.historico-loading p {
-  margin: 0;
-  color: #666;
-  font-size: 14px;
-}
-
-/* ==================== HISTÓRICO VAZIO ==================== */
-.historico-vazio {
-  text-align: center;
-  padding: 40px 20px;
-  color: #999;
-  font-size: 14px;
-  font-style: italic;
-}
-
-/* ==================== LISTA DE HISTÓRICO ==================== */
-.historico-lista {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.historico-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  transition: all 0.2s;
-}
-
-.historico-item:hover {
-  background: #e9ecef;
-  border-color: #dee2e6;
-}
-
-.historico-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-}
-
-.historico-info svg {
-  color: #1E3A8A;
-  flex-shrink: 0;
-}
-
-.historico-detalhes {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.historico-detalhes strong {
-  font-size: 14px;
-  color: #333;
-  font-weight: 600;
-}
-
-.historico-meta {
-  font-size: 12px;
-  color: #666;
-}
-
-/* ==================== AÇÕES DO HISTÓRICO ==================== */
-.historico-acoes {
-  display: flex;
-  gap: 8px;
-}
-
-.btn-icon {
-  padding: 8px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-}
-
-.btn-icon:hover {
-  transform: translateY(-1px);
-}
-
-.btn-download {
-  color: #409535;
-}
-
-.btn-download:hover {
-  background: rgba(64, 149, 53, 0.1);
-}
-
-.btn-excluir {
-  color: #dc3545;
-}
-
-.btn-excluir:hover {
-  background: rgba(220, 53, 69, 0.1);
-}
-
-/* ==================== RESPONSIVO ==================== */
-@media (max-width: 768px) {
-  .relatorio-content {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .relatorio-opcoes {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .btn-gerar-pdf {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .historico-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .historico-acoes {
-    width: 100%;
-    justify-content: flex-end;
-  }
-}
-
-@media (max-width: 480px) {
-
-  .relatorio-card,
-  .relatorio-historico {
-    padding: 16px;
-  }
-
-  .relatorio-header h3 {
-    font-size: 18px;
-  }
-
-  .relatorio-historico h4 {
-    font-size: 16px;
-  }
 }
 
 .grafico-header-complex {
@@ -718,30 +361,6 @@
   grid-column: span 3;
 }
 
-@media (max-width: 768px) {
-  .metricas-layout-custom {
-    grid-template-columns: 1fr;
-  }
-
-  .card-upper,
-  .card-lower {
-    grid-column: span 1;
-  }
-
-  .growth-row{
-    justify-content: center;
-  }
-
-  .grafico-subtitle{
-    font-size: 0;
-  }
-
-  .filtro-tempo-container{
-    align-self: center;
-
-  }
-}
-
 .metrica-card {
   background: white;
   padding: 20px;
@@ -811,4 +430,115 @@
   padding: 5px 10px;
   color: #15383E;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-container h1 {
+  color: #15383E;
+}
+
+@media (max-width: 1200px) {
+  .metricas-grid-simple {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 1027px) {
+  .metricas-grid-simple {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .dashboard-container h1 {
+    text-align: end;
+  }
+
+  .admin-content h1 {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .metricas-grid-simple {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .metrica-card {
+    padding: 1.25rem;
+  }
+
+  .metrica-valor {
+    font-size: 1.8rem;
+  }
+
+  .graficos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metricas-layout-custom {
+    grid-template-columns: repeat(2, 1fr);
+
+  }
+
+  .card-upper,
+  .card-lower {
+    grid-column: span 1;
+  }
+
+
+
+  .grafico-subtitle {
+    font-size: 0;
+  }
+
+  .filtro-tempo-container {
+    align-self: center;
+
+  }
+}
+
+@media (max-width: 480px) {
+
+  .metricas-layout-custom {
+    grid-template-columns: 1fr;
+  }
+
+  .growth-row {
+    justify-content: center;
+  }
+
+  .admin-content h1 {
+    font-size: 1.25rem;
+  }
+
+  .metricas-grid-simple {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .metrica-card {
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .metrica-valor {
+    font-size: 1.6rem;
+  }
+
+  .error-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .error-banner button {
+    width: 100%;
+    padding: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .metrica-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
 }
