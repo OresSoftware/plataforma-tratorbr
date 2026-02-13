@@ -5,6 +5,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const { generalLimiter, loginLimiter, contatoLimiter } = require("../middleware/rateLimiter");
+const helmet = require("helmet");
 
 const adminRoutes = require("./routes/adminRoutes");
 const contatoRoutes = require("./routes/contatoRoutes");
@@ -33,6 +34,8 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(helmet());
 
 app.use(express.json());
 app.use(cookieParser());
