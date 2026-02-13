@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const path = require("path");
+const { generalLimiter, loginLimiter, contatoLimiter } = require("../middleware/rateLimiter");
 
 const adminRoutes = require("./routes/adminRoutes");
 const contatoRoutes = require("./routes/contatoRoutes");
@@ -12,10 +13,8 @@ const adminEnterpriseRoutes = require("./routes/adminEnterpriseRoutes");
 
 const app = express();
 
-// Se houver proxy reverso (NGINX/Cloudflare), isso garante IP correto
 app.set("trust proxy", 1);
 
-// CORS DINÂMICO (lendo do .env) 
 function parseOrigins(list) {
   return (list || "")
     .split(",")
@@ -35,21 +34,11 @@ app.use(
   })
 );
 
-// Body & cookies
 app.use(express.json());
 app.use(cookieParser());
-
-// ---------- Healthcheck (sem /api) ----------
+app.use("/api/", generalLimiter);
 app.get("/healthz", (req, res) => res.status(200).send("ok"));
 
-/**
- * ---------- Servir logos locais ----------
- * Expõe a pasta das logos para o front:
- *   GET /images/manufacturer/<arquivo.ext>
- *
- * Defina MANUFACTURER_DIR no .env se quiser sobrescrever.
- * Ex.: MANUFACTURER_DIR=/app/frontend/public/images/manufacturer
- */
 const manufacturerDir =
   process.env.MANUFACTURER_DIR ||
   path.resolve(__dirname, "../frontend/public/images/manufacturer");
@@ -63,7 +52,6 @@ app.use(
   })
 );
 
-// Rotas de consentimento de cookies 
 app.post("/api/consent", (req, res) => {
   const { consent } = req.body;
   res.cookie("cookieConsent", consent, {
@@ -84,13 +72,11 @@ app.post("/api/consent/clear", (req, res) => {
   res.json({ message: "Consentimento removido" });
 });
 
-// Suas rotas /api 
 app.use("/api/admin/enterprises", adminEnterpriseRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/contatos", contatoRoutes);
 
-// Tratamento básico de erros (inclui erro de CORS) 
 app.use((err, req, res, next) => {
   if (err && /Not allowed by CORS/i.test(err.message)) {
     return res.status(403).json({ error: "CORS bloqueado para esta origem." });

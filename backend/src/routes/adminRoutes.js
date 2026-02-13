@@ -7,6 +7,7 @@ const adminEnterpriseRoutes = require('./adminEnterpriseRoutes');
 const cityController = require('../controllers/cityController');
 const adminUserRoutes = require('./adminUserRoutes');
 const adminLogoRoutes = require('./adminLogoRoutes');
+const { loginLimiter } = require('../../middleware/rateLimiter');
 
 
 const router = express.Router();
@@ -45,7 +46,7 @@ const exigirMaster = (req, res, next) => {
 };
 
 // Rotas públicas de Admin //
-router.post('/login', adminAuthController.loginAdmin);
+router.post('/login', loginLimiter, adminAuthController.loginAdmin);
 router.get('/verificar-token', adminAuthController.verificarToken);
 router.get('/ping', verificarAdmin, (req, res) => res.json({ ok: true, adminId: req.admin.id }));
 
