@@ -1,3 +1,4 @@
+const { getValidatedOrderBy } = require("../config/sortAllowLists");
 const pool = require("../config/db");
 
 // Helpers gerais 
@@ -210,12 +211,8 @@ async function listarEmpresas(req, res) {
       ) AS score
     `;
 
-    // ORDER BY
-    let orderSql = 'ORDER BY score DESC, e.fantasia ASC';
-    if (order === 'az') orderSql = 'ORDER BY e.fantasia ASC';
-    else if (order === 'za') orderSql = 'ORDER BY e.fantasia DESC';
-    else if (order === 'oldest') orderSql = 'ORDER BY e.enterprise_id ASC';
-    else if (order === 'newest') orderSql = 'ORDER BY e.enterprise_id DESC';
+    // ORDER BY - PROTEGIDO CONTRA SQL INJECTION
+    const orderSql = getValidatedOrderBy(order, 'enterprises', 'default');
 
     const [rows] = await pool.query(
       `

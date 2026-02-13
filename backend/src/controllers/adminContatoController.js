@@ -1,6 +1,6 @@
+const { getValidatedOrderBy } = require("../config/sortAllowLists");
 const pool = require("../config/db");
 
-// GET /api/admin/contatos?status=pendente|respondido|todos&page=1&pageSize=20
 async function listarContatos(req, res) {
   try {
     const status = String(req.query.status || "pendente").toLowerCase();
@@ -8,7 +8,6 @@ async function listarContatos(req, res) {
     const pageSize = Math.min(100, Math.max(5, parseInt(req.query.pageSize || "20", 10)));
     const offset = (page - 1) * pageSize;
 
-    // WHERE e parâmetros
     let where = "deleted_at IS NULL";
     const params = [];
 
@@ -17,31 +16,14 @@ async function listarContatos(req, res) {
       params.push(status);
     }
 
-    // ORDER BY dinâmico:
-    // - respondido  -> responded_at DESC
-    // - pendente/todos -> created_at DESC
-    const orderBy =
-      status === "respondido" ? "ORDER BY responded_at DESC" : "ORDER BY created_at DESC";
+    const orderBy = getValidatedOrderBy(status, 'contatos', 'pendente');
 
-    // SELECT inclui sempre os campos de auditoria; quando pendente, eles virão null
     const [rows] = await pool.query(
-      `
-      SELECT
-        id,
-        nome,
-        email,
-        telefone,
-        mensagem,
-        status,
-        created_at,
-        responded_at,
-        responded_by,
-        response_channel
-      FROM contatos
-      WHERE ${where}
-      ${orderBy}
-      LIMIT ? OFFSET ?
-      `,
+      `SELECT id, nome, email, telefone, mensagem, status, created_at, responded_at, responded_by, response_channel
+       FROM contatos
+       WHERE ${where}
+       ${orderBy}
+       LIMIT ? OFFSET ?`,
       [...params, pageSize, offset]
     );
 
