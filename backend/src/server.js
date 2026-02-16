@@ -81,14 +81,6 @@ app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/contatos", contatoRoutes);
 
-// app.use((err, req, res, next) => {
-//   if (err && /Not allowed by CORS/i.test(err.message)) {
-//     return res.status(403).json({ error: "CORS bloqueado para esta origem." });
-//   }
-//   console.error("Unhandled error:", err);
-//   res.status(500).json({ error: "Erro interno do servidor." });
-// });
-
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
     return res.status(400).json({ ok: false, error: err.message });
