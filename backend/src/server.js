@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const { generalLimiter, loginLimiter, contatoLimiter } = require("../middleware/rateLimiter");
 const helmet = require("helmet");
+const multer = require("multer");
 
 const adminRoutes = require("./routes/adminRoutes");
 const contatoRoutes = require("./routes/contatoRoutes");
@@ -79,6 +80,24 @@ app.use("/api/admin/enterprises", adminEnterpriseRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/contatos", contatoRoutes);
+
+// app.use((err, req, res, next) => {
+//   if (err && /Not allowed by CORS/i.test(err.message)) {
+//     return res.status(403).json({ error: "CORS bloqueado para esta origem." });
+//   }
+//   console.error("Unhandled error:", err);
+//   res.status(500).json({ error: "Erro interno do servidor." });
+// });
+
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({ ok: false, error: err.message });
+  }
+  if (err && err.message.includes("Extensão não permitida")) {
+    return res.status(400).json({ ok: false, error: err.message });
+  }
+  next(err);
+});
 
 app.use((err, req, res, next) => {
   if (err && /Not allowed by CORS/i.test(err.message)) {
