@@ -1,3 +1,4 @@
+const { getValidatedOrderBy } = require("../config/sortAllowLists");
 const pool = require("../config/db");
 const bcrypt = require('bcrypt');
 
@@ -23,12 +24,9 @@ async function listarUsuarios(req, res) {
     const dateFrom = String(req.query.date_from || '').trim();
     const dateTo = String(req.query.date_to || '').trim();
 
-    // Ordenação
+    // Ordenação - PROTEGIDO CONTRA SQL INJECTION
     const rawSort = String(req.query.sort || 'name_asc').toLowerCase();
-    let orderSql = 'u.firstname ASC, u.lastname ASC';
-    if (rawSort === 'name_desc') orderSql = 'u.firstname DESC, u.lastname DESC';
-    else if (rawSort === 'date_asc') orderSql = 'u.date_added ASC, u.user_id ASC';
-    else if (rawSort === 'date_desc') orderSql = 'u.date_added DESC, u.user_id DESC';
+    const orderSql = getValidatedOrderBy(rawSort, 'users', 'name_asc');
 
     const where = ["1=1"];
     const params = [];
