@@ -13,6 +13,8 @@ const contatoRoutes = require("./routes/contatoRoutes");
 const publicRoutes = require("./routes/publicRoutes");
 const adminEnterpriseRoutes = require("./routes/adminEnterpriseRoutes");
 
+const adminFuncionariosRoutes = require("./routes/adminFuncionariosRoutes");
+
 const app = express();
 
 app.set("trust proxy", 1);
@@ -79,7 +81,8 @@ app.post("/api/consent/clear", (req, res) => {
 app.use("/api/admin/enterprises", adminEnterpriseRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/contatos", contatoRoutes);
+app.use("/api/contatos", contatoRoutes);  
+app.use("/api/admin/funcionarios", adminFuncionariosRoutes);
 
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
