@@ -14,11 +14,10 @@ const Footer = () => {
             <ul className="footer-links">
               <li className='footer-titulo'>Empresa</li>
               <li><Link to="/contato#contato" onClick={() => window.scrollTo(0, 0)}>Contato</Link></li>
-              <li><Link to="/sobre-nos" onClick={() => window.scrollTo(0, 0)}>Sobre nós</Link></li>
+              <li><Link to="/quem-somos" onClick={() => window.scrollTo(0, 0)}>Sobre nós</Link></li>
               {/* <li><Link to="/excluir-conta" onClick={() => window.scrollTo(0, 0)}>Excluir Conta</Link></li> */}
               {/* <li><Link to="#" onClick={() => window.scrollTo(0, 0)}>Área do Gestor</Link></li> */}
               <li><Link to="/ajuda" onClick={() => window.scrollTo(0, 0)}>Central de ajuda</Link></li>
-              <li><Link to="/avaliar" onClick={() => window.scrollTo(0, 0)}>Avaliar o TratorBR</Link></li>
             </ul>
           </div>
 
@@ -26,10 +25,10 @@ const Footer = () => {
           <div className="footer-section-dois">
             <ul className="footer-links">
               <li className='footer-titulo'>Recursos</li>
-              <li><Link smooth to="/ajuda#proximos-passos">Passo a Passo</Link></li>
+              <li><Link to="/sobre-app" onClick={() => window.scrollTo(0, 0)}>Sobre o App</Link></li>
               <li><Link to="/planos-creditos" onClick={() => window.scrollTo(0, 0)}>Planos e Créditos</Link></li>
               <li><Link smooth to="/#app-contato">Baixar o aplicativo</Link></li>
-              <li><Link to="/aplicativo#agendamento" onClick={() => window.scrollTo(0, 0)}>Agendar Demonstração</Link></li>
+              <li><Link to="/#agendamento" onClick={() => window.scrollTo(0, 0)}>Agendar Demonstração</Link></li>
             </ul>
           </div>
         </div>

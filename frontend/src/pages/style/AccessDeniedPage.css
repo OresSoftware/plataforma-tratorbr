@@ -1,0 +1,119 @@
+.access-denied-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #15383E 0%, #1E4D54 100%);
+  padding: 1rem;
+}
+
+.access-denied-card {
+  background: white;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.access-denied-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  color: #ef4444;
+}
+
+.access-denied-icon svg {
+  width: 64px;
+  height: 64px;
+}
+
+.access-denied-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.access-denied-message {
+  font-size: 1.125rem;
+  color: #374151;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.access-denied-description {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.access-denied-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.logout-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #15383E;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.logout-button:hover {
+  background-color: #1E4D54;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(21, 56, 62, 0.3);
+}
+
+.access-denied-info {
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.access-denied-info p {
+  margin: 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .access-denied-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .access-denied-title {
+    font-size: 1.5rem;
+  }
+
+  .access-denied-message {
+    font-size: 1rem;
+  }
+
+  .access-denied-description {
+    font-size: 0.875rem;
+  }
+
+  .logout-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
