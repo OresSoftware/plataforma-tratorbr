@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, MapPin, LogOut, MessageCircleQuestion, Building2, Users, UserCog, User } from "lucide-react";
+import { Menu, X, LayoutDashboard, MapPin, LogOut, MessageCircleQuestion, Building2, Users, UserCog, User, Star } from "lucide-react";
 import './style/AdminSidebar.css';
 
 const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
@@ -14,7 +14,7 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
   const hasPermission = (pageKey) => {
     if (isMaster) return true; // Master tem acesso liberado a tudo
     if (!admin || !admin.permissoes) return false; // Se não tiver permissões carregadas, bloqueia por segurança
-    
+
     // Procura na lista de permissões do usuário se a chave da página existe lá
     return admin.permissoes.some(p => p === pageKey || p.page_key === pageKey);
   };
@@ -71,7 +71,7 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
         </div>
 
         <nav className="sidebar-nav">
-          
+
           {hasPermission('dashboard') && (
             <button className={`nav-item ${isActive('/admin/dashboard') ? 'active' : ''}`} onClick={() => handleMenuItemClick('/admin/dashboard')}>
               <LayoutDashboard className="nav-icon" size={22} />
@@ -97,6 +97,13 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
             <button className={`nav-item ${isActive('/admin/contato') ? 'active' : ''}`} onClick={() => handleMenuItemClick('/admin/contato')}>
               <MessageCircleQuestion className="nav-icon" size={22} />
               Contatos
+            </button>
+          )}
+
+          {hasPermission('avaliacoes') && (
+            <button className={`nav-item ${isActive('/admin/avaliacoes') ? 'active' : ''}`} onClick={() => handleMenuItemClick('/admin/avaliacoes')}>
+              <Star className="nav-icon" size={22} />
+              Avaliações
             </button>
           )}
 

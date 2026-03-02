@@ -13,6 +13,9 @@ import ExcluirContaPage from './pages/ExcluirContaPage';
 import SobreNosPage from './pages/SobreNosPage';
 import SobreApp from './pages/SobreApp';
 import AdminFuncionariosPage from './admin-gestao/AdminFuncionariosPage';
+import AdminAvaliacoes from './admin-gestao/AdminAvaliacoesPage';
+import Home from './pages/HomePage';
+import Anuncios from './pages/AnunciosPage';
 
 import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
@@ -52,7 +55,9 @@ function AppRoutes() {
       <Routes>
 
         {/* Páginas Públicas */}
-        <Route path="/" element={<Aplicativo />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/anuncios" element={<Anuncios />} />
+        <Route path="/aplicativo" element={<Aplicativo />} />
         <Route path="/contato" element={<ContatoPage />} />
         <Route path="/politicasdeprivacidade.html" element={<TermosEPolitica />} />
         <Route path="/planos-creditos" element={<PlanoseCreditos />} />
@@ -70,7 +75,7 @@ function AppRoutes() {
             <ProtectedRoute requiredPermission="dashboard" key={location.pathname}>
               <AdminDashboardPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/admin/dashboard"
@@ -78,7 +83,7 @@ function AppRoutes() {
             <ProtectedRoute requiredPermission="dashboard" key={location.pathname}>
               <AdminDashboardPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/admin/ips"
@@ -86,7 +91,7 @@ function AppRoutes() {
             <ProtectedRoute requireMaster={true} key={location.pathname}>
               <AdminIpsPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/admin/contato"
@@ -94,7 +99,7 @@ function AppRoutes() {
             <ProtectedRoute requiredPermission="contatos" key={location.pathname}>
               <AdminContatoPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/admin/empresas"
@@ -102,7 +107,7 @@ function AppRoutes() {
             <ProtectedRoute requiredPermission="empresas" key={location.pathname}>
               <AdminEnterprisesPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/admin/usuarios"
@@ -110,7 +115,15 @@ function AppRoutes() {
             <ProtectedRoute requiredPermission="usuarios" key={location.pathname}>
               <AdminUsersPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
+        />
+        <Route
+          path="/admin/avaliacoes"
+          element={
+            <ProtectedRoute requiredPermission="avaliacoes" key={location.pathname}>
+              <AdminAvaliacoes key={location.pathname} />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/funcionarios"
@@ -118,7 +131,7 @@ function AppRoutes() {
             <ProtectedRoute requireMaster={true} key={location.pathname}>
               <AdminFuncionariosPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
 
         {/* Página de Acesso Negado */}
