@@ -3,21 +3,18 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const speakeasy = require('speakeasy');
 
-// Login do administrador com verificação de IP
 exports.loginAdmin = async (req, res) => {
   try {
     const { username, password, otp } = req.body;
 
-    // Validação básica dos campos
     if (!username || !password || !otp) {
       return res.status(400).json({ message: 'Todos os campos são obrigatórios' });
     }
 
-    // Verificar se o usuário existe
     const [admins] = await db.query(
-      `SELECT id, username, password_hash AS senha_hash, role, ativo, twofa_secret
-   FROM admins
-   WHERE username = ? AND ativo = 1`,
+      `SELECT id, username, nome, sobrenome,password_hash AS senha_hash, role, ativo, twofa_secret
+       FROM admins
+       WHERE username = ? AND ativo = 1`,
       [username]
     );
 
@@ -28,7 +25,15 @@ exports.loginAdmin = async (req, res) => {
 
     const admin = admins[0];
 
-    // Verificar senha
+    if (admin.ativo === 0) {
+      console.log(`Tentativa de login com conta inativa: ${username}`);
+      return res.status(403).json({
+        code: 'ACCOUNT_NOT_ACTIVATED',
+        message: 'Sua conta ainda não foi ativada. Verifique seu email para o link de ativação.',
+        requiresActivation: true
+      });
+    }
+
     const ok = await bcrypt.compare(password, admin.senha_hash);
     if (!ok) {
       console.log(`Senha incorreta para usuário: ${username}`);
@@ -48,13 +53,24 @@ exports.loginAdmin = async (req, res) => {
       return res.status(401).json({ message: 'Código 2FA inválido' });
     }
 
-    // Atualizar ultimo_login
     await db.query(
       `UPDATE admins SET ultimo_login = NOW() WHERE id = ?`,
       [admin.id]
     );
 
     console.log(`Login bem-sucedido: ${username}`);
+
+    let permissoes = [];
+    if (admin.role === 'funcionario') {
+      const [perms] = await db.query(
+        `SELECT sp.page_key 
+         FROM user_permissions up
+         JOIN system_pages sp ON up.page_id = sp.id
+         WHERE up.user_id = ?`,
+        [admin.id]
+      );
+      permissoes = perms.map(p => p.page_key);
+    }
 
     const token = jwt.sign(
       { id: admin.id, username: admin.username, role: admin.role, tipo: 'admin' },
@@ -67,7 +83,10 @@ exports.loginAdmin = async (req, res) => {
       admin: {
         id: admin.id,
         username: admin.username,
-        role: admin.role
+        nome: admin.nome,
+        sobrenome: admin.sobrenome,
+        role: admin.role,
+        permissoes
       }
     });
 
@@ -77,7 +96,6 @@ exports.loginAdmin = async (req, res) => {
   }
 };
 
-// Verificar se o token é válido
 exports.verificarToken = async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
@@ -92,11 +110,22 @@ exports.verificarToken = async (req, res) => {
       return res.status(403).json({ message: 'Acesso negado' });
     }
 
+    let permissoes = [];
+    if (decoded.role === 'funcionario') {
+      const [perms] = await db.query(
+        `SELECT sp.page_key FROM user_permissions up JOIN system_pages sp ON up.page_id = sp.id WHERE up.user_id = ?`,
+        [decoded.id]
+      );
+      permissoes = perms.map(p => p.page_key);
+    }
+
     res.json({
       valid: true,
       admin: {
         id: decoded.id,
-        username: decoded.username
+        username: decoded.username,
+        role: decoded.role,
+        permissoes
       }
     });
 
@@ -104,5 +133,3 @@ exports.verificarToken = async (req, res) => {
     res.status(401).json({ message: 'Token inválido' });
   }
 };
-
-

@@ -9,7 +9,6 @@ import { Search, ChevronLeft, ChevronRight, Edit, Power, Key, User } from 'lucid
 import useNoindex from '../hooks/useNoindex';
 import { solicitarRedefinicaoSenha } from "../services/apiPublicAuth";
 
-// ===== Select pesquisável (com busca + lista rolável de 5 itens) =====
 const SearchableSelect = ({
   options = [],
   value,

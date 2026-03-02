@@ -1,20 +1,24 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, MapPin, LogOut, MessageCircleQuestion, Building2, Users } from "lucide-react";
+import { Menu, X, LayoutDashboard, MapPin, LogOut, MessageCircleQuestion, Building2, Users, UserCog, User } from "lucide-react";
 import './style/AdminSidebar.css';
 
 const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  // dados do admin salvos no login
   const admin = JSON.parse(localStorage.getItem('adminData') || '{}');
   const isMaster = admin?.role === 'master';
-
-  // helper para destacar o item atual do menu
   const isActive = (path) => location.pathname.startsWith(path);
 
-  // Fechar menu ao clicar fora (backdrop)
+  // NOVA LÓGICA: Verifica se o usuário tem permissão para a página
+  const hasPermission = (pageKey) => {
+    if (isMaster) return true; // Master tem acesso liberado a tudo
+    if (!admin || !admin.permissoes) return false; // Se não tiver permissões carregadas, bloqueia por segurança
+    
+    // Procura na lista de permissões do usuário se a chave da página existe lá
+    return admin.permissoes.some(p => p === pageKey || p.page_key === pageKey);
+  };
+
   useEffect(() => {
     const handleBackdropClick = () => {
       if (menuOpen) {
@@ -24,7 +28,7 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
 
     if (menuOpen) {
       document.addEventListener('click', handleBackdropClick);
-      document.body.style.overflow = 'hidden'; // Prevenir scroll do body
+      document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -43,38 +47,21 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
 
   const handleMenuItemClick = (path) => {
     navigate(path);
-    setMenuOpen(false); // Fechar menu após navegação
+    setMenuOpen(false);
   };
 
   return (
     <>
-      {/* Botão hamburger (mobile) */}
       <button
-        className={`hamburger-btn ${menuOpen ? 'menu-open' : ''}`}
-        aria-label="Abrir menu"
-        aria-expanded={menuOpen}
-        onClick={(e) => {
-          e.stopPropagation();
-          setMenuOpen(true);
-        }}
-      >
+        className={`hamburger-btn ${menuOpen ? 'menu-open' : ''}`} aria-label="Abrir menu" aria-expanded={menuOpen}
+        onClick={(e) => { e.stopPropagation(); setMenuOpen(true); }}>
         <Menu size={24} />
       </button>
 
-      {/* Backdrop para mobile */}
       {menuOpen && <div className="sidebar-backdrop" onClick={() => setMenuOpen(false)} />}
 
-      {/* Sidebar (fixa no desktop; off-canvas no mobile) */}
-      <aside
-        className={`admin-sidebar ${menuOpen ? 'is-open' : ''}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Fechar (mobile) */}
-        <button
-          className="close-sidebar"
-          aria-label="Fechar menu"
-          onClick={() => setMenuOpen(false)}
-        >
+      <aside className={`admin-sidebar ${menuOpen ? 'is-open' : ''}`} onClick={(e) => e.stopPropagation()}>
+        <button className="close-sidebar" aria-label="Fechar menu" onClick={() => setMenuOpen(false)}>
           <X size={22} />
         </button>
 
@@ -84,48 +71,53 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
         </div>
 
         <nav className="sidebar-nav">
-          <button
-            className={`nav-item ${isActive('/admin/dashboard') ? 'active' : ''}`}
-            onClick={() => handleMenuItemClick('/admin/dashboard')}
-          >
-            <LayoutDashboard className="nav-icon" size={22} />
-            Dashboard
-          </button>
-
-          {/* {isMaster && (
-            <button
-              className={`nav-item ${isActive('/admin/ips') ? 'active' : ''}`}
-              onClick={() => handleMenuItemClick('/admin/ips')}
-            >
-              <MapPin className="nav-icon" size={22} />
-              IP de Acesso
+          
+          {hasPermission('dashboard') && (
+            <button className={`nav-item ${isActive('/admin/dashboard') ? 'active' : ''}`} onClick={() => handleMenuItemClick('/admin/dashboard')}>
+              <LayoutDashboard className="nav-icon" size={22} />
+              Dashboard
             </button>
-          )} */}
+          )}
 
-          <button
-            className={`nav-item ${isActive('/admin/usuarios') ? 'active' : ''}`}
-            onClick={() => handleMenuItemClick('/admin/usuarios')}
-          >
-            <Users className="nav-icon" size={22} />
-            Usuários APP
-          </button>
+          {hasPermission('usuarios') && (
+            <button className={`nav-item ${isActive('/admin/usuarios') ? 'active' : ''}`} onClick={() => handleMenuItemClick('/admin/usuarios')}>
+              <Users className="nav-icon" size={22} />
+              Usuários APP
+            </button>
+          )}
 
-          <button
-            className={`nav-item ${isActive('/admin/empresas') ? 'active' : ''}`}
-            onClick={() => handleMenuItemClick('/admin/empresas')}
-          >
-            <Building2 className="nav-icon" size={22} />
-            Empresas
-          </button>
+          {hasPermission('empresas') && (
+            <button className={`nav-item ${isActive('/admin/empresas') ? 'active' : ''}`} onClick={() => handleMenuItemClick('/admin/empresas')}>
+              <Building2 className="nav-icon" size={22} />
+              Empresas
+            </button>
+          )}
 
-          <button
-            className={`nav-item ${isActive('/admin/contato') ? 'active' : ''}`}
-            onClick={() => handleMenuItemClick('/admin/contato')}
-          >
-            <MessageCircleQuestion className="nav-icon" size={22} />
-            Contatos
-          </button>
+          {hasPermission('contatos') && (
+            <button className={`nav-item ${isActive('/admin/contato') ? 'active' : ''}`} onClick={() => handleMenuItemClick('/admin/contato')}>
+              <MessageCircleQuestion className="nav-icon" size={22} />
+              Contatos
+            </button>
+          )}
+
+          {isMaster && (
+            <button
+              className={`nav-item ${isActive('/admin/funcionarios') ? 'active' : ''}`}
+              onClick={() => handleMenuItemClick('/admin/funcionarios')}
+            >
+              <UserCog className="nav-icon" size={22} />
+              Gerenciamento
+            </button>
+          )}
         </nav>
+
+        <div className="sidebar-user-info">
+          <User size={20} />
+          <div className="user-details">
+            <span className="user-username">{admin?.username}</span>
+            <span className="user-name">{admin?.nome}</span>
+          </div>
+        </div>
 
         <button className="sidebar-logout" onClick={logout}>
           <LogOut className="nav-icon" size={22} />
