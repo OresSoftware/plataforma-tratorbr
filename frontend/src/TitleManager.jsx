@@ -5,35 +5,43 @@ const TitleManager = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const titles = {
-
-      // MARKTEPLACE
-      '/': 'TratorBR - Início',
-      '/aplicativo': 'TratorBR - Aplicativo',
-      '/contato': 'TratorBR - Contato',
-      '/termos-e-politicas': 'TratorBR - Termos e Políticas',
-      '/planos-creditos': 'TratorBR - Planos e Créditos',
-      '/ajuda': 'TratorBR - Ajuda',
-      '/excluir-conta': 'TratorBR - Excluir Conta',
-      '/quem-somos': 'TratorBR - Quem Somos',
-      '/sobre-app': 'TratorBR - Sobre o App',
-
-      // ADMIN
-      '/admin/login': 'TratorBR - Login Admin',
-      '/admin/dashboard': 'TratorBR - Dashboard Admin',
-      '/admin/ips': 'TratorBR - Gerenciar IPS Admin',
-      '/admin/contato': 'TratorBR - Contato Admin',
-      '/admin/usuarios': 'TratorBR - Usuarios Admin',
-      '/admin/empresas': 'TratorBR - Empresas Admin'
-
+    const pages = {
+      '/': {
+        title: 'TratorBR',
+        description: 'Plataforma completa de avaliação técnica e precisa de máquinas agrícolas usadas para concessionárias, revendas e profissionais.'
+      },
+      '/contato': {
+        title: 'Contato - TratorBR',
+        description: 'Entre em contato com a equipe da TratorBR. Estamos prontos para ajudar com suas dúvidas e sugestões sobre avaliação de máquinas agrícolas.'
+      },
+      '/quem-somos': {
+        title: 'Quem Somos - TratorBR',
+        description: 'Conheça a história e a missão da TratorBR, a plataforma líder em avaliação técnica de máquinas agrícolas usadas.'
+      },
+      '/sobre-app': {
+        title: 'Sobre o App - TratorBR',
+        description: 'Descubra como o aplicativo TratorBR pode revolucionar a forma como você avalia máquinas agrícolas com precisão e rapidez.'
+      },
+      '/ajuda': {
+        title: 'Ajuda e FAQ - TratorBR',
+        description: 'Encontre respostas para as perguntas mais frequentes sobre o TratorBR e o aplicativo de avaliação de máquinas agrícolas.'
+      }
     };
 
-    const title = titles[location.pathname] || 'TratorBR';
-    document.title = title;
+    const page = pages[location.pathname] || pages['/'];
+    
+    document.title = page.title;
+    
+    let metaDescription = document.querySelector('meta[name="description"]');
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta');
+      metaDescription.name = 'description';
+      document.head.appendChild(metaDescription);
+    }
+    metaDescription.content = page.description;
   }, [location]);
 
   return null;
 };
 
 export default TitleManager;
-
