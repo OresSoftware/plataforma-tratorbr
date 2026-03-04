@@ -20,7 +20,6 @@ import Anuncios from './pages/AnunciosPage';
 import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
 import Analytics from "./components/Analytics";
-import StructuredDataAdvanced from "./components/StructuredDataAdvanced";
 import { MobileMenuProvider } from "./contexts/MobileMenuContext";
 import AdminContatoPage from './admin-gestao/AdminContatoPage';
 import AdminEnterprisesPage from './admin-gestao/AdminEnterprisesPage';
@@ -149,7 +148,6 @@ function App() {
   return (
     <MobileMenuProvider>
       <Router>
-        <StructuredDataAdvanced />
 
         <AppRoutes />
 
