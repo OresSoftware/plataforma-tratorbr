@@ -273,9 +273,7 @@ async function resetarSenha(req, res) {
     // TODO: enviar e-mail com a nova senha ao usuário
     res.json({
       ok: true,
-      message: `Senha resetada com sucesso! Nova senha: ${novaSenha}`,
-      novaSenha: novaSenha,
-      email: user.email
+      message: `Uma nova senha foi enviada para o e-mail ${user.email}.`
     });
   } catch (e) {
     console.error("resetarSenha:", e);

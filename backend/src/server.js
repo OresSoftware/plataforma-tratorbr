@@ -40,6 +40,24 @@ app.use(
 
 app.use(helmet());
 
+app.use((req, res, next) => {
+  if (["POST", "PUT", "PATCH"].includes(req.method)) {
+    const contentType = req.get("content-type");
+    const contentLength = req.get("content-length");
+
+    // Se há corpo na requisição, validar Content-Type
+    if (contentLength && contentLength !== "0") {
+      if (!contentType || !contentType.includes("application/json")) {
+        return res.status(415).json({
+          error: "Unsupported Media Type",
+          message: "A API espera Content-Type: application/json"
+        });
+      }
+    }
+  }
+  next();
+});
+
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/", generalLimiter);
@@ -81,7 +99,7 @@ app.post("/api/consent/clear", (req, res) => {
 app.use("/api/admin/enterprises", adminEnterpriseRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/contatos", contatoRoutes);  
+app.use("/api/contatos", contatoRoutes);
 app.use("/api/admin/funcionarios", adminFuncionariosRoutes);
 
 app.use((err, req, res, next) => {
