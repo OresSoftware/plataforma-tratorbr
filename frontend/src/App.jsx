@@ -12,8 +12,8 @@ import AdminIpsPage from './admin-gestao/AdminIpsPage';
 import ExcluirContaPage from './pages/ExcluirContaPage';
 import SobreNosPage from './pages/SobreNosPage';
 import SobreApp from './pages/SobreApp';
+import Avaliar from './pages/AvaliacaoPage';
 import AdminFuncionariosPage from './admin-gestao/AdminFuncionariosPage';
-
 import AdminAvaliacoes from './admin-gestao/AdminAvaliacoesPage';
 import Home from './pages/HomePage';
 import Anuncios from './pages/AnunciosPage';
@@ -70,6 +70,7 @@ function AppRoutes() {
         <Route path="/sobre-app" element={<SobreApp />} />
         <Route path="/entrar" element={<Entrar />} />
         <Route path="/cadastrar" element={<Cadastro />} />
+        <Route path="/avaliar" element={<Avaliar />} />
 
         {/* Área Administrativa */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
