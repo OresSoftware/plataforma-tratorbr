@@ -1,0 +1,357 @@
+/* Auth.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+@font-face {
+  font-family: 'Ethnocentric';
+  src: url('/fontes/ethnocentric.otf') format('opentype');
+  font-style: normal;
+  font-weight: normal;
+}
+
+:root {
+  --primary: #15383E;
+  --text: #15383E;
+  --white: #FFFFFF;
+}
+
+.auth-page {
+  min-height: 100dvh;
+  background: var(--white);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: clamp(24px, 2vw, 20px) clamp(16px, 3vw, 32px);
+  position: absolute;
+  animation: fadeIn 0.8s ease-in-out forwards;
+  width: 100%; 
+  box-sizing: border-box; 
+  z-index: 10;
+}
+
+.back-button {
+  justify-self: start;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font: 600 0.95rem/1 'Montserrat', sans-serif;
+  color: #15383E;
+  cursor: pointer;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-button svg {
+  flex-shrink: 0;
+}
+
+.back-button--white {
+  color: var(--white) !important;
+}
+
+.back-button--white svg {
+  stroke: var(--white);
+}
+
+.back-button:focus,
+.back-button:hover,
+.back-button:active {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.brand {
+  justify-self: center;
+  letter-spacing: 0.02em;
+  font-size: clamp(1rem, 2.4vw, 1.35rem);
+}
+
+.header-spacer {
+  justify-self: end;
+}
+
+.auth-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  min-height: 0;
+  flex: 1;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+}
+
+.info-section,
+.form-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(24px, 4vw, 48px);
+}
+
+.info-section {
+  background: var(--primary);
+  color: var(--white);
+  text-align: center;
+  gap: 40px;
+  animation: slideInFromRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.info-title {
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  margin-bottom: 1rem;
+}
+
+.info-subtitle {
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.logo-image {
+  /* position: absolute; */
+  bottom: 2rem;
+  width: 3rem;
+}
+
+.form-wrapper {
+  width: 100%;
+  max-width: 420px;
+  animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.form-title {
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+  margin-bottom: .5rem;
+  color: (var(--text));
+}
+
+.form-subtitle {
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+.title-ethnocentric {
+  font-family: 'Ethnocentric', sans-serif;
+  font-weight: normal;
+  text-align: center;
+}
+
+.subtitle-montserrat {
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+}
+
+.auth-page .input-field {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 9999px;
+  margin-bottom: 1.25rem;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.auth-page .password-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.auth-page .password-wrapper .input-field {
+  padding-right: 2.5rem;
+  margin-bottom: 0;
+}
+
+.auth-page .password-toggle-icon {
+  position: absolute;
+  top: 50%;
+  right: .75rem;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+}
+
+.auth-page .password-toggle-icon:hover {
+  color: var(--primary);
+}
+
+.auth-page .submit-button {
+  width: 100%;
+  padding: .9rem;
+  background: var(--primary);
+  color: var(--white);
+  font-weight: 700;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s, background-color .2s;
+  margin-top: 1rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.auth-page .submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .12);
+}
+
+.auth-page .secondary-button {
+  padding: .75rem 2rem;
+  background: transparent;
+  color: var(--white);
+  border: 1px solid var(--white);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s, background-color .2s, color .2s;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.auth-page .secondary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .15);
+}
+
+.auth-page .no-underline {
+  text-decoration: none;
+}
+
+.auth-page .error-message {
+  background: #fde8e8;
+  color: #9b2c2c;
+  padding: .75rem;
+  border-radius: .25rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.auth-page .success-message {
+  background: #e8f9f0;
+  color: #2c7a4b;
+  padding: .75rem;
+  border-radius: .25rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.auth--login {
+  grid-template-columns: 2fr 1fr;
+  grid-template-areas: "form info";
+}
+
+@media (max-width: 1028px) {
+  .auth-container {
+    grid-template-columns: 1fr;
+  }
+
+  .form-section {
+    order: 1;
+    align-items: stretch;
+    padding: 5rem 2rem 4rem;
+  }
+
+  .form-wrapper {
+    max-width: 100%;
+  }
+
+  .info-section {
+    order: 2;
+    position: static;
+    padding: 2rem 1.5rem 3rem;
+    /* display: grid; */
+    place-items: center;
+    text-align: center;
+    gap: 0;
+    animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .logo-image {
+    position: static;
+    margin-top: 1.25rem;
+  }
+
+  .back-button {
+    font-size: .95rem;
+    color: var(--text);
+  }
+
+  .back-button--white {
+    color: var(--text) !important;
+  }
+
+  .back-button--white svg {
+    stroke: var(--primary);
+
+  }
+
+  .brand {
+    font-size: 1.1rem;
+  }
+}
+
+.auth-page .input-field:focus {
+  outline: none;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .08);
+  border-color: #cfcfcf;
+}
+
+@media (max-width: 1028px) {
+  .auth-container {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "form"
+      "info";
+  }
+}
+
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
