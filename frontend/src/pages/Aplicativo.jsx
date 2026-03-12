@@ -149,8 +149,8 @@ const PlanosPage = () => {
           <section className="section-trator">
             <div className="text-content">
               <div className="logo-container">
-                <img src={imgApp} alt="Logo Trator BR" className='imgApp' />
-                <img src={imgLogoE} alt="Logo Trator BR" className='imgLogo' />
+                <img src={imgApp} alt="Logo TratorBR" className='imgApp' />
+                <img src={imgLogoE} alt="Logo TratorBR" className='imgLogo' />
                 {/* <h1>TratorBR</h1> */}
               </div>
               <h2>Conectando o campo à tecnologia</h2>

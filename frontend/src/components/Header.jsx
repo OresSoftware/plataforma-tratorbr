@@ -28,9 +28,9 @@ const Header = () => {
           )}
         </button>
 
-        <Link to="/" className="logo" aria-label="Trator BR — Início">
+        <Link to="/" className="logo" aria-label="TratorBR — Início">
           <span className="logo-mark" aria-hidden="true">
-            <img src="/logo-site.png" alt="Trator BR — Negócios Agrícolas" className="logo-img" />
+            <img src="/logo-site.png" alt="TratorBR — Negócios Agrícolas" className="logo-img" />
           </span>
         </Link>
 
@@ -54,14 +54,20 @@ const Header = () => {
           </div>
         </nav>
 
+        <div className="admin-suporte-mobile">
+          <a href="https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar%20com%20o%20aplicativo?" target="_blank" rel="noopener noreferrer"><img src="/footer/suporte.png" alt="WhatsApp" />
+            <span className="admin-suporte-texto">Suporte</span>
+          </a>
+        </div>
+
         <div className="user-area">
           <Link to="/cadastrar" className="admin-btn">
             Cadastre-se
-          </Link> 
+          </Link>
 
           <Link to="/entrar" id="login" className="admin-btn">
             Acessar Conta
-          </Link> 
+          </Link>
 
           {/* <div className="admin-btn">
             <CalendlyLinkHeader />
@@ -74,11 +80,12 @@ const Header = () => {
           </div>
         </div>
 
+
         {/*MOBILE MENU */}
         <div className={`mobile-menu-container ${isMobileMenuOpen ? 'open' : ''}`}>
           <div className="mobile-menu-header">
-            <Link to="/" className="logo-mobile-menu" aria-label="Trator BR — Início" onClick={toggleMobileMenu}>
-              <img src="/logo-site.png" alt="Trator BR — Negócios Agrícolas" className="logo-img" />
+            <Link to="/" className="logo-mobile-menu" aria-label="TratorBR — Início" onClick={toggleMobileMenu}>
+              <img src="/logo-site.png" alt="TratorBR — Negócios Agrícolas" className="logo-img" />
             </Link>
 
             <button className="close-menu" onClick={toggleMobileMenu}>
@@ -110,16 +117,25 @@ const Header = () => {
 
           </nav>
           <div className="mobile-menu-actions">
-            {/* <Link to="/admin/login" className="login-btn-mobile" onClick={toggleMobileMenu}>
-              Acessar Painel
+
+            <Link to="/entrar" id="login" className="login-btn-mobile" onClick={toggleMobileMenu}>
+              Acessar Conta
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 6, verticalAlign: 'middle' }}>
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </Link>
+
+            <Link to="/cadastrar" className="login-btn-mobile" onClick={toggleMobileMenu}>
+              Cadastre-se
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 6, verticalAlign: 'middle' }}>
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
                 <polyline points="10 17 15 12 10 7" />
                 <line x1="15" y1="12" x2="3" y2="12" />
               </svg>
-            </Link> */}
+            </Link>
 
-            <div className="login-btn-mobile">
+            {/* <div className="login-btn-mobile">
               <CalendlyLinkHeader />
             </div>
 
@@ -127,7 +143,7 @@ const Header = () => {
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <image href="/iconwhats.svg" x="2" y="2" height="22" width="22" />
               </svg>
-            </a>
+            </a> */}
 
           </div>
         </div>

@@ -401,7 +401,12 @@ body {
 .login-btn-mobile {
   background-color: #15383E;
   color: white;
+  font-size: 1.05rem;
+}
 
+#login.login-btn-mobile {
+  background-color: #F3F5F5;
+  color: #15383E;
   font-size: 1.05rem;
 }
 
@@ -632,19 +637,66 @@ body {
   height: auto;
 }
 
-.admin-btn {
+/* -- */
+
+.admin-suporte-mobile {
+  background-color: white;
+  padding: 0.7rem;
+  border-radius: 20px 0 20px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: none;
+  text-align: center;
+  -webkit-transition: max-width 0.3s ease-in-out, padding 0.3s ease-in-out;
+  transition: max-width 0.3s ease-in-out, padding 0.3s ease-in-out;
+  margin-right: 5px;
+}
+
+.admin-suporte-texto--mobile {
+  max-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: max-width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+  color: #15383E;
+  margin-left: 0;
+  line-height: 30px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.admin-suporte-mobile:hover .admin-suporte-texto--mobile {
+  max-width: 150px;
+  margin-left: 0.75rem;
+}
+
+.admin-suporte-mobile a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-suporte-mobile img {
+  width: 28px;
+  height: auto;
+}
+
+.admin-btn,
+#login.admin-btn {
   background-color: #15383E;
   color: white;
   padding: 0.80rem 1.4rem;
   border-radius: 20px 0 20px 20px;
   font-weight: 600;
   font-size: 16px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat', sans-serif !important;
   cursor: pointer;
   position: relative;
   overflow: hidden;
   text-decoration: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 .admin-btn::before {
@@ -662,7 +714,7 @@ body {
   left: 100%;
 }
 
-#login.admin-btn{
+#login.admin-btn {
   background-color: #F3F5F5;
   color: #15383E;
 }
@@ -680,4 +732,13 @@ body {
 
 #login.admin-btn:hover::before {
   left: 100%;
+}
+
+
+
+@media (max-width: 1028px) {
+  .admin-suporte-mobile {
+    display: flex;
+  }
+
 }

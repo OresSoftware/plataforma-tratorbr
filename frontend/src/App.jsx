@@ -15,6 +15,7 @@ import SobreApp from './pages/SobreApp';
 import AdminFuncionariosPage from './admin-gestao/AdminFuncionariosPage';
 import Cadastro from './pages-auth/CadastroPage';
 import Entrar from './pages-auth/LoginPage';
+import Gestao from './pages-gestao/HomeGestaoPage';
 
 import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
@@ -61,8 +62,14 @@ function AppRoutes() {
         <Route path="/excluir-conta" element={<ExcluirContaPage />} />
         <Route path="/quem-somos" element={<SobreNosPage />} />
         <Route path="/sobre-app" element={<SobreApp />} />
+
+        {/* Páginas Auth */}
         <Route path="/entrar" element={<Entrar />} />
         <Route path="/cadastrar" element={<Cadastro />} />
+
+        {/* Páginas de Gestão */}
+        <Route path="/gestao" element={<Gestao />} />
+
 
         {/* Área Administrativa */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
