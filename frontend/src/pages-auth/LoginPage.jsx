@@ -1,36 +1,42 @@
-// src/pages/LoginPage.jsx
 import React, { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '/logo.png';
 import './style/LoginPage.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { loginUsuario } from '../services/apiUserAuth';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-    const redirectTo = searchParams.get('redirect') || '/';
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
-        try {
-            const response = await axios.post('http://localhost:3001/api/auth/login', { email, senha });
-            localStorage.setItem('token', response.data.token);
+        setLoading(true);
 
-            navigate(redirectTo, { replace: true });
+        try {
+            const response = await loginUsuario({ email, senha });
+            navigate('/gestao', { replace: true });
+
         } catch (err) {
-            if (err.response?.status === 401) {
-                setError('Dados incorretos. Verifique seu e-mail e senha.');
+            console.error('Erro no login:', err);
+
+            if (err.response?.status === 401 || err.response?.status === 404) {
+                setError('E-mail ou senha incorretos. Tente novamente.');
             } else if (err.response?.status === 403) {
-                setError('Sua conta foi desativada. Entre em contato com o suporte.');
+                setError('Sua conta está inativa ou bloqueada. Entre em contato com o suporte.');
+            } else if (err.code === 'ERR_NETWORK') {
+                setError('Erro de conexão. Verifique sua internet e tente novamente.');
             } else {
-                setError(err.response?.data?.message || 'Erro ao fazer login. Tente novamente.');
+                const apiMessage = err.response?.data?.message || err.response?.data?.error;
+                setError(apiMessage || 'Erro ao conectar com o servidor. Tente novamente mais tarde.');
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -55,14 +61,18 @@ const LoginPage = () => {
                         {error && <p className="error-message">{error}</p>}
 
                         <form onSubmit={handleLogin}>
-                            <input className="input-field" placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                            <input className="input-field" placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={loading} />
 
                             <div className="password-wrapper">
-                                <input className="input-field" placeholder="Senha" type={showPassword ? 'text' : 'password'} value={senha} onChange={(e) => setSenha(e.target.value)} required />
-                                <span className="password-toggle-icon" onClick={() => setShowPassword(!showPassword)}> {showPassword ? <FaEyeSlash /> : <FaEye />}</span>
+                                <input className="input-field" placeholder="Senha" type={showPassword ? 'text' : 'password'} value={senha} onChange={(e) => setSenha(e.target.value)} required disabled={loading} />
+                                <span className="password-toggle-icon" onClick={() => setShowPassword(!showPassword)} role="button" tabIndex={0} aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}>
+                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                </span>
                             </div>
 
-                            <button className="submit-button" type="submit">Entrar</button>
+                            <button className="submit-button" type="submit" disabled={loading}>
+                                {loading ? 'Entrando...' : 'Entrar'}
+                            </button>
                         </form>
                     </div>
 

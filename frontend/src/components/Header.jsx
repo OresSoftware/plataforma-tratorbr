@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useMobileMenu } from '../contexts/MobileMenuContext';
 import CalendlyLinkHeader from "../components/CalendlyLink-header";
+import { useNavigate } from 'react-router-dom';
+import { isUsuarioLogado, logoutUsuario } from '../services/apiUserAuth';
 import './style/Header.css';
 
 const Header = () => {
   const { isMobileMenuOpen, toggleMobileMenu } = useMobileMenu();
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const [usuarioLogado, setUsuarioLogado] = useState(false);
+  const navigate = useNavigate();
 
   const isActive = (path) => {
     return location.pathname === path ? 'active' : '';
   };
+
+  useEffect(() => {
+    setUsuarioLogado(isUsuarioLogado());
+  }, []);
 
   return (
     <header className="header">
@@ -65,9 +73,20 @@ const Header = () => {
             Cadastre-se
           </Link>
 
-          <Link to="/entrar" id="login" className="admin-btn">
+          {/* <Link to="/entrar" id="login" className="admin-btn">
             Acessar Conta
-          </Link>
+          </Link> */}
+
+          {usuarioLogado ? (
+            <button onClick={() => { logoutUsuario(); navigate('/'); }}
+              className="admin-btn" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}>
+              Sair
+            </button>
+          ) : (
+            <Link to="/entrar" id="login" className="admin-btn">
+              Acessar Conta
+            </Link>
+          )}
 
           {/* <div className="admin-btn">
             <CalendlyLinkHeader />

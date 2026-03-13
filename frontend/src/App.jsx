@@ -26,6 +26,7 @@ import AdminEnterprisesPage from './admin-gestao/AdminEnterprisesPage';
 import AdminUsersPage from './admin-gestao/AdminUsersPage';
 import AccessDeniedPage from './pages/AccessDeniedPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRouteUser from './components/ProtectedRouteUser';
 import { useLocation, useNavigationType } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -68,8 +69,7 @@ function AppRoutes() {
         <Route path="/cadastrar" element={<Cadastro />} />
 
         {/* Páginas de Gestão */}
-        <Route path="/gestao" element={<Gestao />} />
-
+        <Route path="/gestao" element={<ProtectedRouteUser> <Gestao /> </ProtectedRouteUser>} />
 
         {/* Área Administrativa */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -80,7 +80,7 @@ function AppRoutes() {
             <ProtectedRoute requiredPermission="dashboard" key={location.pathname}>
               <AdminDashboardPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/admin/dashboard"
@@ -88,7 +88,7 @@ function AppRoutes() {
             <ProtectedRoute requiredPermission="dashboard" key={location.pathname}>
               <AdminDashboardPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/admin/ips"
@@ -96,7 +96,7 @@ function AppRoutes() {
             <ProtectedRoute requireMaster={true} key={location.pathname}>
               <AdminIpsPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/admin/contato"
@@ -104,7 +104,7 @@ function AppRoutes() {
             <ProtectedRoute requiredPermission="contatos" key={location.pathname}>
               <AdminContatoPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/admin/empresas"
@@ -112,7 +112,7 @@ function AppRoutes() {
             <ProtectedRoute requiredPermission="empresas" key={location.pathname}>
               <AdminEnterprisesPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/admin/usuarios"
@@ -120,7 +120,7 @@ function AppRoutes() {
             <ProtectedRoute requiredPermission="usuarios" key={location.pathname}>
               <AdminUsersPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/admin/funcionarios"
@@ -128,7 +128,7 @@ function AppRoutes() {
             <ProtectedRoute requireMaster={true} key={location.pathname}>
               <AdminFuncionariosPage key={location.pathname} />
             </ProtectedRoute>
-          } 
+          }
         />
 
         {/* Página de Acesso Negado */}
