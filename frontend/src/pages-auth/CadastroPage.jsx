@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { cadastroUsuario } from '../services/apiUserCadastro';
-import { getOcupacoes } from '../services/apiOcupacoes'; import logo from '/logo.png';
+import { getOcupacoes } from '../services/apiOcupacoes';
+import logo from '/logo.png';
+import Select from 'react-select';
 import './style/LoginPage.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
@@ -39,7 +41,23 @@ const RegisterPage = () => {
   }, []);
 
   const formatarTelefone = (valor) => {
-    return valor.replace(/\D/g, '');
+    if (!valor) return "";
+    let v = valor.replace(/(?!^\+)\D/g, "");
+    if (v.startsWith('+')) {
+      let nums = v.replace(/\D/g, "");
+      if (nums.length === 0) return "+";
+      if (nums.length <= 2) return `+${nums}`;
+      if (nums.length <= 4) return `+${nums.slice(0, 2)} (${nums.slice(2)}`;
+      if (nums.length <= 8) return `+${nums.slice(0, 2)} (${nums.slice(2, 4)}) ${nums.slice(4)}`;
+      if (nums.length <= 12) return `+${nums.slice(0, 2)} (${nums.slice(2, 4)}) ${nums.slice(4, 8)}-${nums.slice(8)}`;
+      return `+${nums.slice(0, 2)} (${nums.slice(2, 4)}) ${nums.slice(4, 9)}-${nums.slice(9, 13)}`;
+    }
+    let nums = v.replace(/\D/g, "");
+    if (nums.length === 0) return "";
+    if (nums.length <= 2) return `(${nums}`;
+    if (nums.length <= 6) return `(${nums.slice(0, 2)}) ${nums.slice(2)}`;
+    if (nums.length <= 10) return `(${nums.slice(0, 2)}) ${nums.slice(2, 6)}-${nums.slice(6)}`;
+    return `(${nums.slice(0, 2)}) ${nums.slice(2, 7)}-${nums.slice(7, 11)}`;
   };
 
   const handleRegister = async (e) => {
@@ -47,17 +65,24 @@ const RegisterPage = () => {
     setError('');
     setSuccess('');
 
-    if (senha !== confirmarSenha) {
-      setError('As senhas não coincidem.');
-      return;
-    }
-
     if (!firstname || !lastname || !email || !senha || !ocupacao_id || !fone) {
       setError('Todos os campos são obrigatórios.');
       return;
     }
 
-    if (fone.length < 10) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Por favor, insira um endereço de e-mail válido.');
+      return;
+    }
+
+    if (senha !== confirmarSenha) {
+      setError('As senhas não coincidem.');
+      return;
+    }
+
+    const apenasNumerosTelefone = fone.replace(/\D/g, '');
+    if (apenasNumerosTelefone.length < 10) {
       setError('Telefone deve ter pelo menos 10 dígitos.');
       return;
     }
@@ -65,16 +90,16 @@ const RegisterPage = () => {
     setLoading(true);
 
     try {
-      const resultado = await cadastroUsuario({
+      await cadastroUsuario({
         firstname,
         lastname,
         ocupacao_id: parseInt(ocupacao_id),
-        fone,
+        fone: fone.replace(/(?!^\+)\D/g, ""),
         email,
         senha
       });
 
-      setSuccess('Cadastro realizado com sucesso! Verifique seu e-mail para ativar a conta.');
+      setSuccess('Falta pouco! Enviamos um link de confirmação para o seu e-mail. Por favor, verifique sua caixa de entrada (ou spam) para ativar sua conta.');
 
       setFirstname('');
       setLastname('');
@@ -84,7 +109,6 @@ const RegisterPage = () => {
       setSenha('');
       setConfirmarSenha('');
 
-      setTimeout(() => navigate('/entrar'), 2000);
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {
         setError(err.response.data.error);
@@ -96,6 +120,11 @@ const RegisterPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCloseNotification = () => {
+    setSuccess('');
+    navigate('/entrar');
   };
 
   return (
@@ -112,12 +141,8 @@ const RegisterPage = () => {
       <main className="auth-container">
         <section className="info-section">
           <div className="text-center">
-            <h2 className="title-ethnocentric info-title">
-              BEM-VINDO NOVAMENTE
-            </h2>
-            <p className="subtitle-montserrat info-subtitle">
-              Já se cadastrou na TratorBR? Clique abaixo para fazer o login.
-            </p>
+            <h2 className="title-ethnocentric info-title">BEM-VINDO NOVAMENTE</h2>
+            <p className="subtitle-montserrat info-subtitle">Já se cadastrou na TratorBR? Clique abaixo para fazer o login.</p>
             <Link to="/entrar" className="no-underline">
               <button className="secondary-button">Faça o Login</button>
             </Link>
@@ -130,64 +155,71 @@ const RegisterPage = () => {
         <section className="form-section">
           <div className="form-wrapper">
             <h1 className="title-ethnocentric form-title">CADASTRE-SE</h1>
-            <p className="subtitle-montserrat form-subtitle">
-              Preencha os dados abaixo para se cadastrar.
-            </p>
+            <p className="subtitle-montserrat form-subtitle">Preencha os dados abaixo para se cadastrar.</p>
 
             {error && <p className="error-message">{error}</p>}
-            {success && <p className="success-message">{success}</p>}
 
             <form onSubmit={handleRegister}>
-              <input className="input-field" placeholder="Nome" type="text" value={firstname} onChange={(e) => setFirstname(e.target.value)} required aria-label="Nome" disabled={loading} />
-
-              <input className="input-field" placeholder="Sobrenome" type="text" value={lastname} onChange={(e) => setLastname(e.target.value)} required aria-label="Sobrenome" disabled={loading} />
+              <input className="input-field" placeholder="Nome" type="text" value={firstname} onChange={(e) => setFirstname(e.target.value)} required disabled={loading} />
+              <input className="input-field" placeholder="Sobrenome" type="text" value={lastname} onChange={(e) => setLastname(e.target.value)} required disabled={loading} />
 
               <div className="select-wrapper">
-                <select className="input-field custom-select" value={ocupacao_id} onChange={(e) => setOcupacao_id(e.target.value)} required aria-label="Ramo de Atividade" disabled={loading || loadingOcupacoes}>
-                  <option value="" disabled hidden>
-                    {loadingOcupacoes ? 'Carregando...' : 'Selecione seu Ramo de Atividade'}
-                  </option>
-                  {ocupacoes.map((ocupacao) => (
-                    <option className = "custom-drop" key={ocupacao.ocupacao_id} value={ocupacao.ocupacao_id}>
-                      {ocupacao.name}
-                    </option>
-                  ))}
-                </select>
+                <Select name="ocupacao" options={ocupacoes.map((ocp) => ({ value: ocp.ocupacao_id, label: ocp.name }))}
+                  value={ocupacao_id ? { value: ocupacao_id, label: ocupacoes.find(o => o.ocupacao_id === parseInt(ocupacao_id))?.name } : null} onChange={(option) => setOcupacao_id(option?.value || '')}
+                  placeholder="Selecione seu Ramo de Atividade" isDisabled={loading || loadingOcupacoes} isLoading={loadingOcupacoes} isClearable={false} isSearchable={false} classNamePrefix="react-select"
+                  styles={{
+                    control: (base) => ({ ...base, borderRadius: '9999px', padding: '0.9rem 1rem', border: '1px solid #ccc', fontSize: '14px', fontFamily: "'Montserrat', sans-serif", cursor: 'pointer', transition: 'all 0.2s ease', marginBottom: '20px' }),
+                    menu: (base) => ({ ...base, borderRadius: '8px', marginTop: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)' }),
+                    option: (base, state) => ({ ...base, backgroundColor: state.isSelected ? '#15383E' : state.isFocused ? '#f0f0f0' : '#fff', color: state.isSelected ? '#fff' : '#333', padding: '12px 16px', cursor: 'pointer', fontFamily: "'Montserrat', sans-serif" })
+                  }}
+                />
               </div>
 
-              <input className="input-field" placeholder="Telefone de Contato (apenas números)" type="tel" value={fone} onChange={(e) => setFone(formatarTelefone(e.target.value))} required aria-label="Telefone" disabled={loading}
-              />
-
-              <input className="input-field" placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                required aria-label="Email" disabled={loading} />
+              <input className="input-field" placeholder="Telefone de Contato (apenas números)" type="tel" value={fone} onChange={(e) => setFone(formatarTelefone(e.target.value))} required disabled={loading} />
+              <input className="input-field" placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={loading} />
 
               <div className="password-wrapper">
-                <input className="input-field" placeholder="Senha" type={showPassword ? "text" : "password"} value={senha} onChange={(e) => setSenha(e.target.value)} required aria-label="Senha" disabled={loading} />
-                <span className="password-toggle-icon" onClick={() => setShowPassword(!showPassword)} role="button" tabIndex={0} aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}>
+                <input className="input-field" placeholder="Senha" type={showPassword ? "text" : "password"} value={senha} onChange={(e) => setSenha(e.target.value)} required disabled={loading} />
+                <span className="password-toggle-icon" onClick={() => setShowPassword(!showPassword)} role="button" tabIndex={0}>
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </span>
               </div>
 
               <div className="password-wrapper">
-                <input className="input-field" placeholder="Confirmar Senha" type={showConfirmPassword ? "text" : "password"} value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)} required aria-label="Confirmar senha"
-                  disabled={loading}
-                />
-                <span className="password-toggle-icon" onClick={() => setShowConfirmPassword(!showConfirmPassword)} role="button" tabIndex={0} aria-label={showConfirmPassword ? "Ocultar senha" : "Mostrar senha"}>
+                <input className="input-field" placeholder="Confirmar Senha" type={showConfirmPassword ? "text" : "password"} value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)} required disabled={loading} />
+                <span className="password-toggle-icon" onClick={() => setShowConfirmPassword(!showConfirmPassword)} role="button" tabIndex={0}>
                   {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                 </span>
               </div>
 
-              <button
-                className="submit-button"
-                type="submit"
-                disabled={loading}
-              >
+              <button className="submit-button" type="submit" disabled={loading}>
                 {loading ? 'Cadastrando...' : 'Cadastrar'}
               </button>
             </form>
           </div>
         </section>
       </main>
+
+      {success && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-icon">✉️</div>
+            <h2 className="title-ethnocentric">Cadastro Concluído!</h2>
+
+            <p className="subtitle-montserrat">
+              Falta pouco! Enviamos um link de confirmação para o seu e-mail.
+            </p>
+
+            <div className="highlight-box">
+              <strong>Por favor, verifique sua caixa de entrada (ou a pasta de spam) para ativar sua conta.</strong>
+            </div>
+
+            <button className="submit-button" onClick={handleCloseNotification}>
+              Entendi, ir para o Login
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

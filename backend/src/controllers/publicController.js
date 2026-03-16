@@ -102,7 +102,7 @@ async function getOcupacoes(req, res) {
       SELECT ocupacao_id, name 
       FROM ocbr_ocupacao 
       WHERE status = 1 
-      ORDER BY name ASC
+      ORDER BY sequencial ASC
     `;
 
     const [rows] = await require('../config/db').query(sql);

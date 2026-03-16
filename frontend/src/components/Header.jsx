@@ -17,6 +17,15 @@ const Header = () => {
     return location.pathname === path ? 'active' : '';
   };
 
+  const handleAcessarConta = () => {
+    if (usuarioLogado) {
+      navigate('/gestao');
+    } else {
+      navigate('/entrar');
+    }
+  };
+
+
   useEffect(() => {
     setUsuarioLogado(isUsuarioLogado());
   }, []);
@@ -69,28 +78,17 @@ const Header = () => {
         </div>
 
         <div className="user-area">
-          <Link to="/cadastrar" className="admin-btn">
-            Cadastre-se
-          </Link>
-
-          {/* <Link to="/entrar" id="login" className="admin-btn">
-            Acessar Conta
-          </Link> */}
-
-          {usuarioLogado ? (
-            <button onClick={() => { logoutUsuario(); navigate('/'); }}
-              className="admin-btn" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}>
-              Sair
-            </button>
-          ) : (
-            <Link to="/entrar" id="login" className="admin-btn">
-              Acessar Conta
-            </Link>
-          )}
-
           {/* <div className="admin-btn">
             <CalendlyLinkHeader />
           </div> */}
+
+          <button onClick={() => navigate('/cadastrar')} className="admin-btn" >
+            Cadastre-se
+          </button>
+
+          <button onClick={handleAcessarConta} id="login" className="admin-btn">
+            Acessar Conta
+          </button>
 
           <div className="admin-suporte">
             <a href="https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar%20com%20o%20aplicativo?" target="_blank" rel="noopener noreferrer"><img src="/footer/suporte.png" alt="WhatsApp" />
@@ -137,32 +135,26 @@ const Header = () => {
           </nav>
           <div className="mobile-menu-actions">
 
-            <Link to="/entrar" id="login" className="login-btn-mobile" onClick={toggleMobileMenu}>
+            <button onClick={() => { toggleMobileMenu(); handleAcessarConta(); }} id="login" className="login-btn-mobile">
               Acessar Conta
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 6, verticalAlign: 'middle' }}>
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
-            </Link>
+            </button>
 
-            <Link to="/cadastrar" className="login-btn-mobile" onClick={toggleMobileMenu}>
+            <button onClick={() => { toggleMobileMenu(); navigate('/cadastrar'); }} className="login-btn-mobile">
               Cadastre-se
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 6, verticalAlign: 'middle' }}>
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
                 <polyline points="10 17 15 12 10 7" />
                 <line x1="15" y1="12" x2="3" y2="12" />
               </svg>
-            </Link>
+            </button>
 
             {/* <div className="login-btn-mobile">
               <CalendlyLinkHeader />
-            </div>
-
-            <a href="https://wa.me/5543991895458" className="whatsapp-btn-header" target="_blank" rel="noopener noreferrer" style={{}}> Fale com a gente
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <image href="/iconwhats.svg" x="2" y="2" height="22" width="22" />
-              </svg>
-            </a> */}
+            </div> */}
 
           </div>
         </div>
