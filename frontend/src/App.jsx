@@ -16,6 +16,7 @@ import AdminFuncionariosPage from './admin-gestao/AdminFuncionariosPage';
 import Cadastro from './pages-auth/CadastroPage';
 import Entrar from './pages-auth/LoginPage';
 import Gestao from './pages-gestao/HomeGestaoPage';
+import GestaoPerfilPage from './pages-gestao/GestaoPerfilPage';
 
 import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
@@ -70,6 +71,7 @@ function AppRoutes() {
 
         {/* Páginas de Gestão */}
         <Route path="/gestao" element={<ProtectedRouteUser> <Gestao /> </ProtectedRouteUser>} />
+        <Route path="/gestao/perfil" element={<GestaoPerfilPage />} />
 
         {/* Área Administrativa */}
         <Route path="/admin/login" element={<AdminLoginPage />} />

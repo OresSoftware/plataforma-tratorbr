@@ -60,7 +60,7 @@
 }
 
 .back-button--white {
-  color: var(--white) !important;
+  color: var(--white);
 }
 
 .back-button--white svg {
@@ -293,7 +293,7 @@
   }
 
   .back-button--white {
-    color: var(--text) !important;
+    color: var(--text);
   }
 
   .back-button--white svg {
@@ -430,7 +430,7 @@
   animation: fadeIn 0.3s ease-in-out;
 }
 
-.modal-content {
+.modal-content-success {
   background-color: #ffffff;
   padding: 40px;
   border-radius: 16px;
@@ -449,13 +449,13 @@
   margin-bottom: 10px;
 }
 
-.modal-content h2 {
+.modal-content-success h2 {
   color: #15383E;
   margin: 0;
   font-size: 20px;
 }
 
-.modal-content p {
+.modal-content-success p {
   color: #555;
   line-height: 1.5;
   margin-bottom: 20px;
@@ -485,7 +485,7 @@
 }
 
 @media (max-width: 480px) {
-  .modal-content {
+  .modal-content-success {
     padding: 25px 20px;
   }
 

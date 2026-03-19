@@ -1,10 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
 @font-face {
   font-family: 'Ethnocentric';
   src: url('/fontes/ethnocentric.otf') format('opentype');
   font-style: normal;
   font-weight: normal;
+}
+
+.gestao-sidebar {
+  font-family: 'Montserrat', sans-serif;
+  width: 280px;
+  background-color: #15383E;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  transition: transform 0.3s ease;
 }
 
 .hamburger-btn {
@@ -41,20 +56,6 @@
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
   backdrop-filter: blur(2px);
-}
-
-.gestao-sidebar {
-  width: 280px;
-  background-color: #15383E;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  height: 100vh;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  transition: transform 0.3s ease;
 }
 
 .close-sidebar {
@@ -103,9 +104,9 @@
 .sidebar-header p {
   font-size: 0.9rem;
   font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
   margin: 0;
   opacity: 0.8;
-  font-weight: 400;
 }
 
 .sidebar-nav {
@@ -126,8 +127,8 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-weight: 700;
   font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
 }
 
 .nav-item:hover {
@@ -139,7 +140,6 @@
   background-color: #409535;
   color: white;
   font-weight: 700;
-  font-family: 'Montserrat', sans-serif;
 }
 
 .nav-icon {
@@ -158,7 +158,6 @@
   padding: 1rem 1.5rem;
   text-align: left;
   font-size: 1rem;
-  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -166,8 +165,8 @@
   gap: 0.75rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: auto;
-  font-weight: 700;
   font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
 }
 
 .sidebar-logout:hover {
@@ -199,9 +198,9 @@
 
 .user-username {
   font-size: 0.85rem;
-  font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -211,6 +210,7 @@
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.6);
   font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -300,6 +300,246 @@
   gap: 0.75rem;
 }
 
+.perfil-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 0 auto;
+}
+
+.perfil-banner {
+  background: linear-gradient(135deg, #0e2428 0%, #15383E 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  box-shadow: 0 10px 25px -5px rgba(21, 56, 62, 0.3);
+  color: #ffffff;
+}
+
+.foto-section-banner {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.foto-perfil-banner {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 1);
+}
+
+.foto-placeholder-banner {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+}
+
+.empresa-abaixo-foto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.07);
+  padding: 0.4rem 0.9rem;
+  border-radius: 30px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.7);
+
+}
+
+.logo-empresa-miniatura {
+  height: 32px;
+  width: auto;
+  max-width: 50px;
+  object-fit: contain;
+  padding: 2px;
+  border-radius: 8px;
+}
+
+.nome-empresa-foto {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.info-section-banner {
+  flex: 1;
+}
+
+.info-section-banner h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 1rem 0;
+  letter-spacing: -0.5px;
+}
+
+.badges-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.info-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+}
+
+/* .badge-destaque {
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+} */
+
+.badge-neutra {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.03);
+  color: #e2e8f0;
+}
+
+.action-section-banner {
+  margin-left: auto;
+}
+
+.btn-edit-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-edit-banner:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.perfil-section {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.section-title svg {
+  color: #15383E;
+}
+
+.dados-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 1rem;
+}
+
+.grid-duas-colunas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.dado-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background-color: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+  transition: background-color 0.2s ease;
+}
+
+.dado-item:hover {
+  background-color: #f1f5f9;
+}
+
+.dado-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dado-item span {
+  font-size: 0.95rem;
+  color: #0f172a;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.destaque-data {
+  font-family: monospace;
+  font-size: 1rem !important;
+  color: #334155 !important;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.status-badge.ativo {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #34d399;
+}
+
+.status-badge.inativo {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #f87171;
+}
+
 @media (max-width: 1028px) {
   .hamburger-btn {
     display: flex;
@@ -340,6 +580,10 @@
   #back {
     width: auto;
   }
+
+  .empresa-abaixo-foto{
+    width: 100%;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -356,6 +600,12 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .grid-duas-colunas {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .sidebar-logos {
     gap: 10px;
@@ -366,6 +616,32 @@
     width: 45px;
     height: 45px;
     padding: 3px;
+  }
+
+  .perfil-banner {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 2rem 1rem;
+  }
+
+  .info-badge {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .badges-container {
+    justify-content: center;
+  }
+
+  .action-section-banner {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .btn-edit-banner {
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -379,5 +655,19 @@
     width: 40px;
     height: 40px;
     padding: 2px;
+  }
+
+  .perfil-section {
+    padding: 1.25rem;
+  }
+
+  .foto-perfil-banner,
+  .foto-placeholder-banner {
+    width: 100px;
+    height: 100px;
+  }
+
+  .info-section-banner h2 {
+    font-size: 1.5rem;
   }
 }

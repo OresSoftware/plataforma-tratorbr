@@ -47,7 +47,7 @@ app.use((req, res, next) => {
 
     // Se há corpo na requisição, validar Content-Type
     if (contentLength && contentLength !== "0") {
-      if (!contentType || !contentType.includes("application/json")) {
+      if (!contentType || (!contentType.includes("application/json") && !contentType.includes("multipart/form-data"))) {
         return res.status(415).json({
           error: "Unsupported Media Type",
           message: "A API espera Content-Type: application/json"

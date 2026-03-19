@@ -202,7 +202,7 @@ const RegisterPage = () => {
 
       {success && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content-success">
             <div className="modal-icon">✉️</div>
             <h2 className="title-ethnocentric">Cadastro Concluído!</h2>
 
