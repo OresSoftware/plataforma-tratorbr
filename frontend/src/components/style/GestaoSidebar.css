@@ -1,0 +1,383 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+@font-face {
+  font-family: 'Ethnocentric';
+  src: url('/fontes/ethnocentric.otf') format('opentype');
+  font-style: normal;
+  font-weight: normal;
+}
+
+.hamburger-btn {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  background: #15383E;
+  color: white;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.hamburger-btn:hover {
+  background: #1a4147;
+  transform: scale(1.05);
+}
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+
+.gestao-sidebar {
+  width: 280px;
+  background-color: #15383E;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+.close-sidebar {
+  display: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.close-sidebar:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-header {
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-headers {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.3rem;
+}
+
+.sidebar-header h1 {
+  font-size: 1.3rem;
+  font-weight: 300;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: 0.5px;
+  font-family: 'Ethnocentric', sans-serif;
+  font-style: normal !important;
+}
+
+.sidebar-header p {
+  font-size: 0.9rem;
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 1.5rem 0;
+}
+
+.nav-item {
+  width: 100%;
+  background: none;
+  border: none;
+  color: white;
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding-left: 2rem;
+}
+
+.nav-item.active {
+  background-color: #409535;
+  color: white;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar-logout {
+  background: none;
+  border: none;
+  color: white;
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.sidebar-logout:hover {
+  background-color: white;
+  color: #15383E;
+  transition: all 0.5s ease-out;
+}
+
+.sidebar-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  margin-top: auto;
+  color: white;
+}
+
+.sidebar-user-info svg {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.user-username {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-name {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-logos {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.sidebar-logo {
+  width: 50px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+  padding: 4px;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 1);
+}
+
+.sidebar-logo:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+#back {
+  width: 100%;
+  transition: all 0.2s ease
+}
+
+#back:hover {
+  transform: scale(1.03);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 1);
+  flex-shrink: 0;
+}
+
+.settings-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(74, 222, 128, 0);
+  border: 0px solid #4ade80;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  padding: 0;
+  margin-right: 10px;
+}
+
+.settings-button:active {
+  transform: scale(0.95);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.settings-button.rotating {
+  animation: spin 0.6s ease-in-out;
+}
+
+.sidebar-user-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+@media (max-width: 1028px) {
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+  }
+
+  .gestao-sidebar {
+    transform: translateX(-100%);
+    width: min(280px, 85vw);
+    box-shadow: none;
+  }
+
+  .gestao-sidebar.is-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .close-sidebar {
+    display: flex;
+  }
+
+  .hamburger-btn.menu-open {
+    display: none;
+  }
+
+  .sidebar-header {
+    padding: 1.5rem 1rem;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  #back {
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav-item {
+    transition: all 0.3s ease;
+  }
+
+  .hamburger-btn {
+    transition: all 0.2s ease;
+  }
+
+  .gestao-sidebar {
+    transition: transform 0.3s ease;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-logos {
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .sidebar-logo {
+    width: 45px;
+    height: 45px;
+    padding: 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-logos {
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .sidebar-logo {
+    width: 40px;
+    height: 40px;
+    padding: 2px;
+  }
+}

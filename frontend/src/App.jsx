@@ -20,6 +20,8 @@ import Anuncios from './pages/AnunciosPage';
 
 import Cadastro from './pages-auth/CadastroPage';
 import Entrar from './pages-auth/LoginPage';
+import Gestao from './pages-gestao/HomeGestaoPage';
+import GestaoPerfilPage from './pages-gestao/GestaoPerfilPage';
 
 import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
@@ -30,6 +32,7 @@ import AdminEnterprisesPage from './admin-gestao/AdminEnterprisesPage';
 import AdminUsersPage from './admin-gestao/AdminUsersPage';
 import AccessDeniedPage from './pages/AccessDeniedPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRouteUser from './components/ProtectedRouteUser';
 import { useLocation, useNavigationType } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -68,9 +71,16 @@ function AppRoutes() {
         <Route path="/excluir-conta" element={<ExcluirContaPage />} />
         <Route path="/quem-somos" element={<SobreNosPage />} />
         <Route path="/sobre-app" element={<SobreApp />} />
+
+        {/* Páginas Auth */}
         <Route path="/entrar" element={<Entrar />} />
         <Route path="/cadastrar" element={<Cadastro />} />
         <Route path="/avaliar" element={<Avaliar />} />
+
+        {/* Páginas de Gestão */}
+        <Route path="/gestao" element={<ProtectedRouteUser> <Gestao /> </ProtectedRouteUser>} />
+        <Route path="/gestao/dashboard" element={<ProtectedRouteUser> <Gestao /> </ProtectedRouteUser>} />
+        <Route path="/gestao/perfil" element={<GestaoPerfilPage />} />
 
         {/* Área Administrativa */}
         <Route path="/admin/login" element={<AdminLoginPage />} />

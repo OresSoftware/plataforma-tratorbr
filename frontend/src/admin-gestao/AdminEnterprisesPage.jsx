@@ -76,10 +76,14 @@ const formatCEP = (value) => {
 /** ===================== LOGO from /public/images/manufacturer ===================== */
 const FALLBACK_LOGO = '/images/manufacturer/sua_logo_aqui.png';
 
-const getLogoSrc = (fileName) => {
-  if (!fileName) return FALLBACK_LOGO;
-  const onlyFile = String(fileName).split('/').pop().trim();
-  return `/images/manufacturer/${onlyFile}`;
+const getLogoSrc = (logoFileName) => {
+  if (!logoFileName) {
+    // Retorna uma imagem placeholder se não houver logo
+    return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23f0f0f0" width="100" height="100"/%3E%3Ctext x="50" y="50" text-anchor="middle" dy=".3em" fill="%23999" font-size="12"%3ESem Logo%3C/text%3E%3C/svg%3E';
+  }
+
+  // Construir URL completa usando o mesmo padrão que funciona na gestão
+  return `https://app.tratorbr.com/images/manufacturer/${logoFileName}`;
 };
 
 const onImgError = (e) => {
@@ -496,8 +500,21 @@ export default function AdminEnterprisesPage() {
     setModalAberto(true);
   };
 
-  const abrirModalForm = (empresa = null) => {
-    const empresaFmt = empresa ? { ...empresa, cnpj: formatCNPJ(empresa.cnpj) } : null;
+  const abrirModalForm = (empresa) => {
+
+    const extractLogoName = (logoPath) => {
+      if (!logoPath) return '';
+      return logoPath.split('/').pop();
+    };
+
+    const empresaFmt = {
+      ativo: 1,
+      inscricao_estadual: "",
+      ...empresa,
+      logo: extractLogoName(empresa?.enterprise_image_logo),
+      representada_logo: extractLogoName(empresa?.representada_image_logo),
+    };
+
     setEmpresaSelecionada(empresaFmt);
     setModalContent('form');
     setModalAberto(true);

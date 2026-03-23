@@ -66,7 +66,7 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
         </button>
 
         <div className="sidebar-header">
-          <h1>TRATOR BR</h1>
+          <h1>TRATORBR</h1>
           <p>Sistema Interno</p>
         </div>
 
