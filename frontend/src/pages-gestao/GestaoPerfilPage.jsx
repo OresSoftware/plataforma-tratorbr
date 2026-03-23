@@ -44,15 +44,6 @@ const GestaoPerfilPage = () => {
                                 <User size={48} />
                             </div>
                         )}
-
-                        {/* <div className="empresa-abaixo-foto">
-                            {logoEmpresa && (
-                                <img src={logoEmpresa} alt="Logo da Empresa" className="logo-empresa-miniatura" onError={(e) => { e.target.style.display = 'none'; }} />
-                            )}
-                            <span className="nome-empresa-foto">
-                                {userData?.enterprise_fantasia || userData?.enterprise_razao || 'Empresa não informada'}
-                            </span>
-                        </div> */}
                     </div>
 
                     <div className="info-section-banner">
@@ -80,32 +71,41 @@ const GestaoPerfilPage = () => {
                         </div>
                     </div>
 
-                    <div className="action-section-banner">
-                        <button className="btn-edit-banner" onClick={() => { }}>
-                            <Edit2 size={16} />
-                            Editar Perfil
-                        </button>
-                    </div>
+
                 </div>
 
                 <div className="perfil-section">
-                    <h2 className="section-title"><User size={20} /> Dados Pessoais</h2>
+                    <div id="perfil" className="section-title">
+                        <h2 id='titulo' className="section-title"><User size={20} />Dados Pessoais</h2>
+                        <div className="action-section-banner">
+                            <button className="btn-edit-banner" onClick={() => { }}>
+                                <Edit2 size={16} />
+                                Editar Perfil
+                            </button>
+                        </div>
+                    </div>
+
                     <div className="dados-grid">
                         <div className="dado-item">
-                            <label><Mail size={14} /> Email</label>
-                            <span>{userData?.email || '—'}</span>
-                        </div>
-                        <div className="dado-item">
-                            <label><User size={14} /> Nome Completo</label>
+                            <label><User size={14} />Nome Completo</label>
                             <span>{userData?.firstname} {userData?.lastname}</span>
                         </div>
                         <div className="dado-item">
-                            <label><Phone size={14} /> Telefone</label>
-                            <span>{userData?.fone || 'Não informado'}</span>
+                            <label><Mail size={14} />Email</label>
+                            <span>{userData?.email || '—'}</span>
                         </div>
                         <div className="dado-item">
-                            <label><FileText size={14} /> CPF</label>
+                            <label><FileText size={14} />CPF</label>
                             <span>{userData?.cpf || 'Não informado'}</span>
+                        </div>
+                        <div className="dado-item">
+                            <label><Phone size={14} />Telefone</label>
+                            <span>{userData?.fone || 'Não informado'}</span>
+                        </div>
+
+                        <div className="dado-item">
+                            <label>Ramo de Atividade</label>
+                            <span>{userData?.ocupacao_name || '—'}</span>
                         </div>
                     </div>
                 </div>
@@ -114,15 +114,15 @@ const GestaoPerfilPage = () => {
                     <h2 className="section-title"><Building size={20} /> Empresa Vinculada</h2>
                     <div className="dados-grid">
                         <div className="dado-item">
-                            <label><Building size={14} /> Razão Social</label>
+                            <label> Razão Social</label>
                             <span>{userData?.enterprise_razao || '—'}</span>
                         </div>
                         <div className="dado-item">
-                            <label><Building size={14} /> Nome Fantasia</label>
+                            <label> Nome Fantasia</label>
                             <span>{userData?.enterprise_fantasia || '—'}</span>
                         </div>
                         <div className="dado-item">
-                            <label><FileText size={14} /> CNPJ</label>
+                            <label> CNPJ</label>
                             <span>{userData?.enterprise_cnpj || '—'}</span>
                         </div>
                         <div className="dado-item">
@@ -143,9 +143,9 @@ const GestaoPerfilPage = () => {
                 <div className="grid-duas-colunas">
                     <div className="perfil-section">
                         <h2 className="section-title"><Calendar size={20} /> Plano e Status</h2>
-                        <div className="dados-grid">
+                        <div id="plano-status" className="dados-grid">
                             <div className="dado-item">
-                                <label><Calendar size={14} /> Plano Válido Até</label>
+                                <label> Plano Válido Até</label>
                                 <span className="destaque-data">
                                     {userData?.plano_valido
                                         ? new Date(userData.plano_valido).toLocaleDateString('pt-BR')
@@ -158,20 +158,6 @@ const GestaoPerfilPage = () => {
                                 <span className={`status-badge ${userData?.status === 1 ? 'ativo' : 'inativo'}`}>
                                     {userData?.status === 1 ? 'Ativo' : 'Inativo'}
                                 </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="perfil-section">
-                        <h2 className="section-title"><Briefcase size={20} /> Atuação</h2>
-                        <div className="dados-grid">
-                            <div className="dado-item">
-                                <label>Ocupação</label>
-                                <span>{userData?.ocupacao_name || '—'}</span>
-                            </div>
-                            <div className="dado-item">
-                                <label>Cargo</label>
-                                <span>{userData?.cargo_name || '—'}</span>
                             </div>
                         </div>
                     </div>

@@ -20,7 +20,7 @@ const LoginPage = () => {
 
         try {
             const response = await loginUsuario({ email, senha });
-            navigate('/gestao', { replace: true });
+            navigate('/gestao/dashboard', { replace: true });
 
         } catch (err) {
             console.error('Erro no login:', err);

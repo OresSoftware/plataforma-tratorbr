@@ -128,8 +128,8 @@ const GestaoSidebar = ({ menuOpen, setMenuOpen }) => {
 
         <nav className="sidebar-nav">
           <button
-            className={`nav-item ${isActive('/gestao') ? 'active' : ''}`}
-            onClick={() => handleMenuItemClick('/gestao')}
+            className={`nav-item ${isActive('/gestao/dashboard') ? 'active' : ''}`}
+            onClick={() => handleMenuItemClick('/gestao/dashboard')}
           >
             <LayoutDashboard className="nav-icon" size={22} />
             Dashboard

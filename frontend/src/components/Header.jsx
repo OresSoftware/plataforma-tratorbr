@@ -19,7 +19,7 @@ const Header = () => {
 
   const handleAcessarConta = () => {
     if (usuarioLogado) {
-      navigate('/gestao');
+      navigate('/gestao/dashboard');
     } else {
       navigate('/entrar');
     }

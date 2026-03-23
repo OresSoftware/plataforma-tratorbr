@@ -71,6 +71,7 @@ function AppRoutes() {
 
         {/* Páginas de Gestão */}
         <Route path="/gestao" element={<ProtectedRouteUser> <Gestao /> </ProtectedRouteUser>} />
+        <Route path="/gestao/dashboard" element={<ProtectedRouteUser> <Gestao /> </ProtectedRouteUser>} />
         <Route path="/gestao/perfil" element={<GestaoPerfilPage />} />
 
         {/* Área Administrativa */}

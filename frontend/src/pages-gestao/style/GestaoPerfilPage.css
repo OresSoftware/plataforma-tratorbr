@@ -7,6 +7,13 @@
   font-weight: normal;
 }
 
+.header-content h1 {
+  color: #15383E;
+  margin-bottom: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
 .gestao-sidebar {
   font-family: 'Montserrat', sans-serif;
   width: 280px;
@@ -427,8 +434,8 @@
   gap: 0.5rem;
   padding: 0.6rem 1.2rem;
   background: rgba(255, 255, 255, 0.05);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #15383E;
+  border: 1px solid #15383E;
   border-radius: 6px;
   font-weight: 500;
   font-size: 0.95rem;
@@ -437,9 +444,18 @@
 }
 
 .btn-edit-banner:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.4);
+  color: white;
+  border: 1px solid #15383E;
+  background-color: #15383E;
   transform: translateY(-1px);
+}
+
+.btn-edit-banner svg {
+  color: #15383E;
+}
+
+.btn-edit-banner:hover svg {
+  color: white;
 }
 
 .perfil-section {
@@ -454,12 +470,27 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #1e293b;
+  font-size: 1.3rem;
+  color: #15383E;
   margin: 0 0 1.5rem 0;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid #e2e8f0;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+}
+
+#titulo.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.3rem;
+  color: #15383E;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0rem;
+  border-bottom: 0px solid #e2e8f0;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  margin: 0;
 }
 
 .section-title svg {
@@ -472,9 +503,13 @@
   gap: 1rem;
 }
 
+#plano-status {
+  grid-template-columns: 1fr 1fr;
+}
+
 .grid-duas-colunas {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* grid-template-columns: 1fr 1fr; */
   gap: 1.5rem;
 }
 
@@ -482,11 +517,12 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  background-color: #f8fafc;
-  padding: 1rem;
+  background-color: white;
+  padding: 1.1rem;
   border-radius: 8px;
-  border: 1px solid #f1f5f9;
+  border-left: 5px solid #15383E;
   transition: background-color 0.2s ease;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
 }
 
 .dado-item:hover {
@@ -541,6 +577,14 @@
 }
 
 @media (max-width: 1028px) {
+  .header-content h1 {
+    text-align: end;
+  }
+
+  #plano-status {
+    grid-template-columns: 1fr;
+  }
+
   .hamburger-btn {
     display: flex;
   }
@@ -581,7 +625,7 @@
     width: auto;
   }
 
-  .empresa-abaixo-foto{
+  .empresa-abaixo-foto {
     width: 100%;
   }
 }
@@ -612,6 +656,15 @@
     margin-top: 12px;
   }
 
+  #perfil.section-title {
+    justify-content: space-between;
+  }
+
+  .btn-edit-banner {
+     padding: 0.4rem 1rem;
+    ;
+  }
+
   .sidebar-logo {
     width: 45px;
     height: 45px;
@@ -636,13 +689,13 @@
 
   .action-section-banner {
     margin-left: 0;
-    width: 100%;
+    /* width: 100%; */
   }
 
-  .btn-edit-banner {
+  /* .btn-edit-banner {
     width: 100%;
     justify-content: center;
-  }
+  } */
 }
 
 @media (max-width: 480px) {
