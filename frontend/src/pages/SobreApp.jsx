@@ -348,7 +348,6 @@ const AjudaPage = () => {
         }
     ];
 
-    // Auto-rotação de imagens a cada 4 segundos
     useEffect(() => {
         const interval = setInterval(() => {
             setActiveImageSlide((prev) =>
@@ -379,12 +378,6 @@ const AjudaPage = () => {
         <div className="ajuda-page">
             <Header />
 
-            {/* <div className="tabs-header" style={{ marginTop: '7rem' }}>
-        <h2>Como Podemos Ajudar?</h2>
-        <div className='divisoria'></div>
-        <p>Aqui está o passo a passo de como usar o nosso aplicativo, para você extrair o melhor do nosso sistema. Aproveite tudo que nossa plataforma oferece!</p>
-      </div> */}
-
             {/* VIDEO DE CADASTRO */}
             <section className="texto-video-section">
                 <div className="texto-video-container">
@@ -395,14 +388,6 @@ const AjudaPage = () => {
                                 Aqui está o passo a passo de como usar o nosso aplicativo, para você extrair o melhor do nosso sistema. Aproveite tudo que nossa plataforma oferece!
                             </p>
                         </div>
-
-                        {/* <div className="texto-video-video">
-              <div className="video-placeholder">
-                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Video mostrando todo o processo do cadastro" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen style={{ borderRadius: '12px' }}
-                ></iframe>
-              </div>
-            </div> */}
-
 
                         <div className="recursos-grid-novo">
 
@@ -492,13 +477,6 @@ const AjudaPage = () => {
                             <div className="tabs-left-column">
                                 <h3 className="tabs-text-title">{tabsData[activeTab].title}</h3>
                                 <p className="tabs-text-description">{tabsData[activeTab].description}</p>
-
-                                {/* <div className="video-placeholder-new">
-                  <iframe
-                    width="100%" height="100%" src={tabsData[activeTab].videoUrl} title={`Video - ${tabsData[activeTab].label}`}
-                    frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen style={{ borderRadius: '12px' }}
-                  ></iframe>
-                </div> */}
                                 <div className='recursos-ajuda'>
                                     {tabsData[activeTab].recursosCards && tabsData[activeTab].recursosCards.map((card, index) => (
                                         <div
@@ -650,8 +628,6 @@ const AjudaPage = () => {
                     </div>
                 </div>
             </section>
-
-
             <CalendlyFlutuante />
             <VoltarAoTopoBtn />
             <Footer />

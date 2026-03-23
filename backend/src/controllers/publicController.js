@@ -7,7 +7,6 @@ async function proxyEsqueciSenha(req, res) {
       return res.status(400).json({ ok: false, error: "Email é obrigatório" });
     }
 
-    // >>> ajuste aqui se a rota externa mudar
     const url = "https://app.tratorbr.com/usuario/esqueci-senha";
 
     const { data } = await axios.post(
@@ -16,7 +15,6 @@ async function proxyEsqueciSenha(req, res) {
       { headers: { "Content-Type": "application/json" }, timeout: 15000 }
     );
 
-    // devolve exatamente o JSON que o serviço externo retornar
     return res.status(200).json(data);
   } catch (e) {
     const status = e?.response?.status || 500;
@@ -30,7 +28,6 @@ async function proxyLoginUsuario(req, res) {
   try {
     const { email, senha } = req.body;
 
-    // Validação básica
     if (!email || !senha) {
       return res.status(400).json({
         ok: false,
@@ -38,10 +35,8 @@ async function proxyLoginUsuario(req, res) {
       });
     }
 
-    // URL da API externa (usando variável de ambiente)
     const url = `${process.env.APP_API_URL}/usuario/login`;
 
-    // Fazer requisição para a API externa
     const { data } = await axios.post(
       url,
       { email, senha },
@@ -51,7 +46,6 @@ async function proxyLoginUsuario(req, res) {
       }
     );
 
-    // Retornar exatamente o que a API externa retornar
     return res.status(200).json(data);
   } catch (e) {
     const status = e?.response?.status || 500;
@@ -65,7 +59,6 @@ async function proxyRegistroUsuario(req, res) {
   try {
     const { firstname, lastname, ocupacao_id, fone, email, senha } = req.body;
 
-    // Validação básica
     if (!firstname || !lastname || !email || !senha || !ocupacao_id || !fone) {
       return res.status(400).json({
         ok: false,
@@ -73,10 +66,8 @@ async function proxyRegistroUsuario(req, res) {
       });
     }
 
-    // URL da API externa (usando variável de ambiente)
     const url = `${process.env.APP_API_URL}/usuario/cadastro`;
 
-    // Fazer requisição para a API externa
     const { data } = await axios.post(
       url,
       { firstname, lastname, ocupacao_id, fone, email, senha },
@@ -86,7 +77,6 @@ async function proxyRegistroUsuario(req, res) {
       }
     );
 
-    // Retornar exatamente o que a API externa retornar
     return res.status(200).json(data);
   } catch (e) {
     const status = e?.response?.status || 500;

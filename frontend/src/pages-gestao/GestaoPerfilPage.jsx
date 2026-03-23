@@ -75,8 +75,8 @@ const GestaoPerfilPage = () => {
                 </div>
 
                 <div className="perfil-section">
-                    <div id="perfil" className="section-title">
-                        <h2 id='titulo' className="section-title"><User size={20} />Dados Pessoais</h2>
+                    <div id="perfil" className="section-title-titile">
+                        <h2 id='titulo' className="section-title-titile"><User size={20} />Dados Pessoais</h2>
                         <div className="action-section-banner">
                             <button className="btn-edit-banner" onClick={() => { }}>
                                 <Edit2 size={16} />
@@ -111,7 +111,7 @@ const GestaoPerfilPage = () => {
                 </div>
 
                 <div className="perfil-section">
-                    <h2 className="section-title"><Building size={20} /> Empresa Vinculada</h2>
+                    <h2 className="section-title-titile"><Building size={20} /> Empresa Vinculada</h2>
                     <div className="dados-grid">
                         <div className="dado-item">
                             <label> Razão Social</label>
@@ -142,7 +142,7 @@ const GestaoPerfilPage = () => {
 
                 <div className="grid-duas-colunas">
                     <div className="perfil-section">
-                        <h2 className="section-title"><Calendar size={20} /> Plano e Status</h2>
+                        <h2 className="section-title-titile"><Calendar size={20} /> Plano e Status</h2>
                         <div id="plano-status" className="dados-grid">
                             <div className="dado-item">
                                 <label> Plano Válido Até</label>

@@ -17,14 +17,14 @@ exports.obterMetricasDashboard = async (_req, res) => {
       FROM admin_ips 
       WHERE ativo = 1
     `);
-    
+
     const adminsOnline = await safeCount(`
       SELECT COUNT(DISTINCT admin_id) AS total 
       FROM admin_ips 
       WHERE ativo = 1 
       AND last_seen_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
     `);
-    
+
     const contatosPendentes = await safeCount(`
       SELECT COUNT(*) AS total 
       FROM contatos 

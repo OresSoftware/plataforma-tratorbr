@@ -39,7 +39,6 @@ async function listarContatos(req, res) {
   }
 }
 
-// PATCH /api/admin/contatos/:id/respondido
 async function marcarRespondido(req, res) {
   try {
     const id = Number(req.params.id);
@@ -49,7 +48,6 @@ async function marcarRespondido(req, res) {
       return res.status(400).json({ ok: false, error: "Canal inválido. Use 'email' ou 'whatsapp'." });
     }
 
-    // Quem está marcando (vem do middleware de admin autenticado)
     const adminId = req.admin?.id || null;
 
     const [result] = await pool.query(
@@ -73,14 +71,11 @@ async function marcarRespondido(req, res) {
   }
 }
 
-
-// DELETE /api/admin/contatos/:id  (hard delete ou soft delete)
 async function excluirContato(req, res) {
   try {
     const id = Number(req.params.id);
     if (!id) return res.status(400).json({ ok: false, error: "ID inválido." });
 
-    // soft delete (recomendado):
     await pool.query(
       `UPDATE contatos SET deleted_at=NOW() WHERE id=? AND deleted_at IS NULL`,
       [id]
@@ -93,7 +88,6 @@ async function excluirContato(req, res) {
   }
 }
 
-// GET /api/admin/contatos/contador
 async function contadorPendentes(req, res) {
   try {
     const [[{ total }]] = await pool.query(

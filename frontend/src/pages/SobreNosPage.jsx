@@ -119,11 +119,9 @@ const SobreNosPage = () => {
         </div>
       </section>
 
-      {/* Diferenciais - ORDEM MODIFICADA PARA MOBILE */}
       <section className="diferenciais-section">
         <div className="container-sobre">
           <div className="content-grid-reverse">
-            {/* TEXTO MOVIDO PARA PRIMEIRO - aparecerá antes dos ícones no mobile */}
             <div className="text-content">
               <h2 className="section-title">Por que escolher a TratorBR?</h2>
               <p className="section-description">
@@ -133,7 +131,6 @@ const SobreNosPage = () => {
                 Combinamos inovação, segurança e agilidade em um ambiente digital confiável. Ao escolher a TratorBR, você garante suporte especializado e parcerias que geram valor, conectando oportunidades e viabilizando negócios de forma prática e eficiente.
               </p>
             </div>
-            {/* ÍCONES AGORA VÊM DEPOIS NO HTML */}
             <div className="visual-content-diferenciais">
               <div className="feature-list">
                 <div className="feature-item">

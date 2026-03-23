@@ -5,14 +5,13 @@ const bcrypt = require('bcrypt');
 const soNumeros = (str) => String(str || '').replace(/\D/g, '');
 const isISODate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s || '').trim());
 
-/* GET /api/admin/users */
 async function listarUsuarios(req, res) {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
     const pageSize = Math.min(100, Math.max(5, parseInt(req.query.pageSize || "20", 10)));
     const offset = (page - 1) * pageSize;
 
-    const status = String(req.query.status || 'todos').toLowerCase(); // 'todos' | 'ativos' | 'inativos'
+    const status = String(req.query.status || 'todos').toLowerCase();
     const busca = String(req.query.busca || '').trim();
 
     // filtros por relacionamento
@@ -64,7 +63,6 @@ async function listarUsuarios(req, res) {
       params.push(...subParams);
     }
 
-    // data (inclusivo)
     if (dateFrom && isISODate(dateFrom) && dateTo && isISODate(dateTo)) {
       where.push("u.date_added BETWEEN ? AND ?");
       params.push(`${dateFrom} 00:00:00`, `${dateTo} 23:59:59`);
@@ -78,7 +76,6 @@ async function listarUsuarios(req, res) {
 
     const whereSql = where.join(' AND ');
 
-    // dados
     const [rows] = await pool.query(
       `SELECT 
          u.*,
@@ -98,7 +95,6 @@ async function listarUsuarios(req, res) {
       [...params, pageSize, offset]
     );
 
-    // total
     const [[{ total }]] = await pool.query(
       `SELECT COUNT(*) AS total
          FROM ocbr_user u
@@ -117,7 +113,6 @@ async function listarUsuarios(req, res) {
   }
 }
 
-/* GET /api/admin/users/:id */
 async function buscarUsuarioPorId(req, res) {
   try {
     const { id } = req.params;
@@ -143,7 +138,6 @@ async function buscarUsuarioPorId(req, res) {
       return res.status(404).json({ ok: false, error: 'Usuário não encontrado.' });
     }
 
-    // Remover campos sensíveis
     delete user.password;
     delete user.salt;
     delete user.tmp_password;
@@ -155,7 +149,6 @@ async function buscarUsuarioPorId(req, res) {
   }
 }
 
-/* PUT /api/admin/users/:id */
 async function atualizarUsuario(req, res) {
   try {
     const { id } = req.params;
@@ -186,7 +179,6 @@ async function atualizarUsuario(req, res) {
 
     payload.date_modified = new Date();
 
-    // Validar email único (exceto o próprio registro)
     if (payload.email) {
       const [[existing]] = await pool.query(
         'SELECT user_id FROM ocbr_user WHERE email = ? AND user_id != ?',
@@ -206,7 +198,6 @@ async function atualizarUsuario(req, res) {
   }
 }
 
-/* PATCH /api/admin/users/:id/status */
 async function ativarDesativarUsuario(req, res) {
   try {
     const { id } = req.params;
@@ -241,7 +232,6 @@ async function ativarDesativarUsuario(req, res) {
   }
 }
 
-/* POST /api/admin/users/:id/reset-password */
 async function resetarSenha(req, res) {
   try {
     const { id } = req.params;
@@ -255,13 +245,8 @@ async function resetarSenha(req, res) {
       return res.status(404).json({ ok: false, error: 'Usuário não encontrado.' });
     }
 
-    // Gerar senha temporária (6 dígitos)
     const novaSenha = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // Hash da senha
     const hashedPassword = await bcrypt.hash(novaSenha, 10);
-
-    // Definir limite de 24 horas para usar a senha temporária
     const tmpLimite = new Date();
     tmpLimite.setHours(tmpLimite.getHours() + 24);
 
@@ -270,7 +255,6 @@ async function resetarSenha(req, res) {
       [hashedPassword, tmpLimite, new Date(), id]
     );
 
-    // TODO: enviar e-mail com a nova senha ao usuário
     res.json({
       ok: true,
       message: `Uma nova senha foi enviada para o e-mail ${user.email}.`
@@ -281,7 +265,6 @@ async function resetarSenha(req, res) {
   }
 }
 
-/* GET /api/admin/users/contador/ativos */
 async function contadorAtivos(req, res) {
   try {
     const [[{ total }]] = await pool.query(
@@ -294,7 +277,6 @@ async function contadorAtivos(req, res) {
   }
 }
 
-// GET /api/admin/cities
 async function listarCidades(req, res) {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));

@@ -3,7 +3,6 @@ const fetch = require('node-fetch');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 
-// util de IP 
 function isPrivateIp(ip) {
   if (!ip) return true;
   const s = String(ip).toLowerCase();
@@ -21,7 +20,6 @@ function isPrivateIp(ip) {
   );
 }
 
-// detecção de colunas (sem cache) 
 async function hasLocationColumns() {
   try {
     const [rows] = await db.query(`SHOW COLUMNS FROM admin_ips LIKE 'last_city'`);
@@ -31,7 +29,6 @@ async function hasLocationColumns() {
   }
 }
 
-// geolocalização (multi-fonte) 
 async function fetchJson(url, opt = {}) {
   try {
     const r = await fetch(url, { ...opt, timeout: 7000 });
@@ -104,7 +101,6 @@ async function geoLookupFull(ip) {
   return { data: null, errors };
 }
 
-// mantém sua função auxiliar original (string curta "cidade - estado")
 async function geoCidadeEstado(ip) {
   const { data } = await geoLookupFull(ip);
   if (!data) return '';
@@ -114,7 +110,6 @@ async function geoCidadeEstado(ip) {
   return parts.join(' - ');
 }
 
-// helper: pegar admin alvo pelo role 
 async function getAdminByRole(role) {
   const [rows] = await db.query(
     `SELECT id, username FROM admins WHERE role = ? AND ativo = 1 LIMIT 1`,
@@ -124,7 +119,6 @@ async function getAdminByRole(role) {
   return rows[0];
 }
 
-// GET /api/admin/ips-autorizados
 exports.listarIpsAutorizados = async (req, res) => {
   try {
     const clientIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
@@ -208,7 +202,6 @@ exports.listarIpsAutorizados = async (req, res) => {
   }
 };
 
-// POST /api/admin/ips-autorizados
 exports.adicionarIpAutorizado = async (req, res) => {
   const { ip, descricao, targetRole } = req.body;
 
@@ -225,7 +218,7 @@ exports.adicionarIpAutorizado = async (req, res) => {
   }
 
   try {
-    const targetAdmin = await getAdminByRole(role); // { id, username }
+    const targetAdmin = await getAdminByRole(role);
     console.log('Admin encontrado:', targetAdmin);
 
     const secret = speakeasy.generateSecret({
@@ -284,7 +277,6 @@ exports.adicionarIpAutorizado = async (req, res) => {
   }
 };
 
-// DELETE /api/admin/ips-autorizados/:id
 exports.removerIpAutorizado = async (req, res) => {
   try {
     const { id } = req.params;
@@ -359,7 +351,6 @@ exports.removerIpAutorizado = async (req, res) => {
   }
 };
 
-// POST /api/admin/ips-autorizados/:id/refresh-location
 exports.refreshIpLocation = async (req, res) => {
   try {
     const id = req.params.id;

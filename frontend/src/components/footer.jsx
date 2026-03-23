@@ -16,7 +16,7 @@ const Footer = () => {
               <li><Link to="/contato#contato" onClick={() => window.scrollTo(0, 0)}>Contato</Link></li>
               <li><Link to="/quem-somos" onClick={() => window.scrollTo(0, 0)}>Sobre nós</Link></li>
               {/* <li><Link to="/excluir-conta" onClick={() => window.scrollTo(0, 0)}>Excluir Conta</Link></li> */}
-              {/* <li><Link to="#" onClick={() => window.scrollTo(0, 0)}>Área do Gestor</Link></li> */}
+              <li><Link to="/gestao" onClick={() => window.scrollTo(0, 0)}>Área do Gestor</Link></li>
               <li><Link to="/ajuda" onClick={() => window.scrollTo(0, 0)}>Central de ajuda</Link></li>
             </ul>
           </div>
@@ -27,8 +27,8 @@ const Footer = () => {
               <li className='footer-titulo'>Recursos</li>
               <li><Link to="/sobre-app" onClick={() => window.scrollTo(0, 0)}>Sobre o App</Link></li>
               <li><Link to="/planos-creditos" onClick={() => window.scrollTo(0, 0)}>Planos e Créditos</Link></li>
-              <li><Link smooth to="/#app-contato">Baixar o aplicativo</Link></li>
-              <li><Link to="/#agendamento" onClick={() => window.scrollTo(0, 0)}>Agendar Demonstração</Link></li>
+              <li><Link smooth to="/aplicativo#app-contato">Baixar o aplicativo</Link></li>
+              <li><Link to="/aplicativo#agendamento" onClick={() => window.scrollTo(0, 0)}>Agendar Demonstração</Link></li>
             </ul>
           </div>
         </div>
@@ -40,7 +40,6 @@ const Footer = () => {
           <div className='separacao'></div>
           <div className="social-media">
             <a href="https://www.linkedin.com/company/trator-br/posts/?feedView=all" target="_blank" rel="noopener noreferrer"><img src="/footer/linkedin.png" alt="LinkedIn" /></a>
-            {/* <a href="https://www.facebook.com/profile.php?id=61569540673369&locale=pt_BR" target="_blank" rel="noopener noreferrer"><img src="/footer/facebook.png" alt="Facebook" /></a> */}
             <a href="https://www.instagram.com/tratorbr.oficial/" target="_blank" rel="noopener noreferrer"><img src="/footer/instagram.png" alt="Instagram" /></a>
             <a href="https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar?" target="_blank" rel="noopener noreferrer"><img src="/footer/whatsapp.png" alt="WhatsApp" /></a>
           </div>

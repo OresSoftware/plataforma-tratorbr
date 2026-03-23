@@ -57,15 +57,14 @@ export const PLANOS_CONFIG = {
 };
 
 export const WHATSAPP_CONFIG = {
-  numero: '5543999999999', // Número do WhatsApp (incluir código do país)
+  numero: '5543999999999', 
   mensagemBase: 'Olá! Gostaria de assinar um plano do TratorBR.',
 };
 
 /**
- * Gera URL do WhatsApp com mensagem personalizada para o plano
- * @param {Object} plano - Objeto do plano selecionado
- * @param {Object} dadosUsuario - Dados opcionais do usuário (nome, email, etc.)
- * @returns {string} URL do WhatsApp
+ * @param {Object} plano 
+ * @param {Object} dadosUsuario 
+ * @returns {string} 
  */
 export const gerarUrlWhatsApp = (plano, dadosUsuario = {}) => {
   const { numero, mensagemBase } = WHATSAPP_CONFIG;
@@ -96,10 +95,9 @@ export const gerarUrlWhatsApp = (plano, dadosUsuario = {}) => {
 };
 
 /**
- * Prepara dados do plano para futuro sistema de pagamento
- * @param {string} planoId - ID do plano
- * @param {Object} dadosUsuario - Dados do usuário
- * @returns {Object} Dados estruturados para pagamento
+ * @param {string} planoId 
+ * @param {Object} dadosUsuario 
+ * @returns {Object} 
  */
 export const prepararDadosPagamento = (planoId, dadosUsuario = {}) => {
   const plano = PLANOS_CONFIG[planoId];
@@ -109,7 +107,6 @@ export const prepararDadosPagamento = (planoId, dadosUsuario = {}) => {
   }
   
   return {
-    // Dados do produto/plano
     produto: {
       id: plano.id,
       nome: plano.titulo,
@@ -120,7 +117,6 @@ export const prepararDadosPagamento = (planoId, dadosUsuario = {}) => {
       tipo: 'assinatura'
     },
     
-    // Dados do cliente
     cliente: {
       nome: dadosUsuario.nome || '',
       email: dadosUsuario.email || '',
@@ -128,7 +124,6 @@ export const prepararDadosPagamento = (planoId, dadosUsuario = {}) => {
       documento: dadosUsuario.cpf || dadosUsuario.cnpj || ''
     },
     
-    // Metadados para tracking
     metadata: {
       origem: 'pagina_planos',
       timestamp: new Date().toISOString(),
@@ -136,7 +131,6 @@ export const prepararDadosPagamento = (planoId, dadosUsuario = {}) => {
       valor_total: plano.precoNumerico
     },
     
-    // URLs de retorno (para futuro gateway de pagamento)
     urls: {
       sucesso: `${window.location.origin}/pagamento/sucesso`,
       erro: `${window.location.origin}/pagamento/erro`,
@@ -146,14 +140,12 @@ export const prepararDadosPagamento = (planoId, dadosUsuario = {}) => {
 };
 
 /**
- * Valida dados antes de processar pagamento
- * @param {Object} dadosPagamento - Dados preparados para pagamento
- * @returns {Object} Resultado da validação
+ * @param {Object} dadosPagamento 
+ * @returns {Object} 
  */
 export const validarDadosPagamento = (dadosPagamento) => {
   const erros = [];
   
-  // Validar produto
   if (!dadosPagamento.produto.id) {
     erros.push('ID do plano é obrigatório');
   }
@@ -162,7 +154,6 @@ export const validarDadosPagamento = (dadosPagamento) => {
     erros.push('Preço do plano inválido');
   }
   
-  // Validar cliente (dados mínimos)
   if (!dadosPagamento.cliente.email && !dadosPagamento.cliente.telefone) {
     erros.push('Email ou telefone é obrigatório');
   }
@@ -174,16 +165,13 @@ export const validarDadosPagamento = (dadosPagamento) => {
 };
 
 /**
- * Simula processamento de pagamento (para desenvolvimento)
- * @param {Object} dadosPagamento - Dados do pagamento
- * @returns {Promise} Resultado simulado
+ * @param {Object} dadosPagamento 
+ * @returns {Promise} 
  */
 export const simularPagamento = async (dadosPagamento) => {
-  // Simular delay de processamento
   await new Promise(resolve => setTimeout(resolve, 2000));
   
-  // Simular sucesso/erro aleatório para testes
-  const sucesso = Math.random() > 0.2; // 80% de chance de sucesso
+  const sucesso = Math.random() > 0.2; 
   
   if (sucesso) {
     return {
@@ -198,17 +186,15 @@ export const simularPagamento = async (dadosPagamento) => {
 };
 
 /**
- * Obtém todos os planos disponíveis
- * @returns {Array} Lista de planos
+ * @returns {Array} 
  */
 export const obterPlanos = () => {
   return Object.values(PLANOS_CONFIG);
 };
 
 /**
- * Obtém plano por ID
- * @param {string} planoId - ID do plano
- * @returns {Object|null} Plano encontrado ou null
+ * @param {string} planoId 
+ * @returns {Object|null} 
  */
 export const obterPlanoPorId = (planoId) => {
   return PLANOS_CONFIG[planoId] || null;

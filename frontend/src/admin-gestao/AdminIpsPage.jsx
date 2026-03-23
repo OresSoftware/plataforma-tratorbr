@@ -1,4 +1,3 @@
-// frontend/src/admin-gestao/AdminIpsPage.jsx
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { Plus, Trash2, RefreshCw, X, MapPin } from "lucide-react";
@@ -36,7 +35,7 @@ export default function AdminIpsPage() {
   const [lista, setLista] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
-  const [toast, setToast] = useState(null); // {type:'success'|'error', msg:string}
+  const [toast, setToast] = useState(null);
   const [refreshingId, setRefreshingId] = useState(null);
 
   const [modalAberto, setModalAberto] = useState(false);
@@ -47,9 +46,8 @@ export default function AdminIpsPage() {
 
   const [refreshingAll, setRefreshingAll] = useState(false);
 
-  // tempos
-  const MIN_SPIN_MS = 1200; // giro mínimo do botão
-  const TOAST_MS = 4500; // tempo de exibição do toast
+  const MIN_SPIN_MS = 1200;
+  const TOAST_MS = 4500;
 
   const carregar = async () => {
     setErro("");
@@ -73,7 +71,6 @@ export default function AdminIpsPage() {
     carregar();
   }, []);
 
-  // controla quanto tempo o toast fica visível
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), TOAST_MS);
@@ -368,20 +365,20 @@ export default function AdminIpsPage() {
                   <div className="form-group">
                     <label htmlFor="ip">Endereço IP</label>
                     <div className="ip-input-container">
-                      <input 
-                        id="ip" 
-                        type="text" 
-                        className="form-input" 
+                      <input
+                        id="ip"
+                        type="text"
+                        className="form-input"
                         value={form.ip}
                         onChange={(e) => setForm((f) => ({ ...f, ip: e.target.value }))}
-                        placeholder="Adicionar IP" 
-                        required 
+                        placeholder="Adicionar IP"
+                        required
                       />
-                      <button 
-                        type="button" 
-                        className="button-secondary ip-button" 
+                      <button
+                        type="button"
+                        className="button-secondary ip-button"
                         onClick={pegarMeuIpPublico}
-                        disabled={pegandoMeuIp} 
+                        disabled={pegandoMeuIp}
                         title="Usar meu IP público atual"
                       >
                         {pegandoMeuIp ? "..." : "Meu IP"}
@@ -390,13 +387,13 @@ export default function AdminIpsPage() {
                   </div>
                   <div className="form-group">
                     <label htmlFor="descricao">Descrição (opcional)</label>
-                    <input 
-                      id="descricao" 
-                      type="text" 
-                      className="form-input" 
+                    <input
+                      id="descricao"
+                      type="text"
+                      className="form-input"
                       value={form.descricao}
-                      onChange={(e) => setForm((f) => ({ ...f, descricao: e.target.value }))} 
-                      placeholder="Ex: Escritório principal" 
+                      onChange={(e) => setForm((f) => ({ ...f, descricao: e.target.value }))}
+                      placeholder="Ex: Escritório principal"
                     />
                   </div>
                   {erro && <div className="form-error">{erro}</div>}

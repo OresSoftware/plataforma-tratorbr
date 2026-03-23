@@ -35,20 +35,6 @@
   border-left: 4px solid #15383E;
 }
 
-/* .card-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-} */
-
-/* .card-icon svg {
-  color: white;
-} */
-
 .card-content {
   flex-direction: column;
   gap: 0.25rem;
@@ -505,7 +491,7 @@
   gap: 1.5rem;
 }
 
-.info-section {
+.info-section-func {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
@@ -522,7 +508,7 @@
   display: block;
   grid-column: 1 / -1;
   font-weight: 600;
-  color: #374151;
+  color: #15383E;
   margin-bottom: 0.5rem;
 }
 
@@ -938,21 +924,10 @@
     font-size: 0.875rem;
   }
 
-  /* 
-  .card-icon {
-    width: 40px;
-    height: 40px;
-  } */
-
   .card-number {
     font-size: 1.5rem;
   }
 }
-
-
-/* ========================================
-   PASSWORD INPUT WRAPPER - TOGGLE VISIBILIDADE
-   ======================================== */
 
 .password-input-wrapper {
   position: relative;

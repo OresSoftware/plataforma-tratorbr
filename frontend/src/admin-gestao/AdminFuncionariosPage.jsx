@@ -448,7 +448,7 @@ export default function AdminFuncionariosPage() {
         {isViewModalOpen && funcionarioSelecionado && (
           <Modal onClose={closeViewModal} title={`${funcionarioSelecionado.nome} ${funcionarioSelecionado.sobrenome}`}>
             <div className="view-modal-content">
-              <div className="info-section">
+              <div className="info-section-func">
                 <div className="info-item">
                   <label>Nome Completo</label>
                   <p>{funcionarioSelecionado.nome} {funcionarioSelecionado.sobrenome}</p>
@@ -459,7 +459,7 @@ export default function AdminFuncionariosPage() {
                 </div>
               </div>
 
-              <div className="info-section">
+              <div className="info-section-func">
                 <div className="info-item">
                   <label>Email</label>
                   <p>{funcionarioSelecionado.email}</p>
@@ -475,7 +475,7 @@ export default function AdminFuncionariosPage() {
               </div>
 
               {funcionarioSelecionado.role === 'funcionario' && funcionarioSelecionado.permissoes && funcionarioSelecionado.permissoes.length > 0 && (
-                <div className="info-section">
+                <div className="info-section-func">
                   <label className="info-item">Páginas que pode usar</label>
                   <div className="permissions-list">
                     {funcionarioSelecionado.permissoes.map(perm => (
@@ -485,7 +485,7 @@ export default function AdminFuncionariosPage() {
                 </div>
               )}
 
-              <div className="info-section">
+              <div className="info-section-func">
                 <div className="info-item">
                   <label>Data de Cadastro</label>
                   <p>{funcionarioSelecionado.created_at ? new Date(funcionarioSelecionado.created_at).toLocaleString('pt-BR') : 'Não informado'}</p>
@@ -496,7 +496,7 @@ export default function AdminFuncionariosPage() {
                 </div>
               </div>
 
-              <div className="info-section">
+              <div className="info-section-func">
                 <label className="info-item">Código 2FA</label>
                 <div className="twofa-display">
                   <span className="code-value">{funcionarioSelecionado.twofa_secret}</span>

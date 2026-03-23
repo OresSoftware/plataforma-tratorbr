@@ -1,4 +1,3 @@
-// frontend/src/admin-gestao/AdminEnterprisesPage.jsx
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import { apiAdminEnterprises } from "../services/apiAdminEnterprises";
@@ -9,7 +8,6 @@ import useNoindex from '../hooks/useNoindex';
 import { Search, PlusCircle, ChevronLeft, ChevronRight, Edit, Power, ChevronDown } from 'lucide-react';
 import LogoSelector from './components/LogoSelector';
 
-/** ===================== CNPJ UTILS (sanitize, validate, format) ===================== */
 const sanitizeCNPJ = (value = "") => String(value).replace(/\D/g, "").slice(0, 14);
 
 const isCNPJ = (value = "") => {
@@ -41,17 +39,13 @@ const formatCNPJ = (value = "") => {
   if (v.length <= 12) return v.replace(/(\d{2})(\d{3})(\d{3})(\d{1,4})/, "$1.$2.$3/$4");
   return v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})/, "$1.$2.$3/$4-$5");
 };
-/** ==================================================================================== */
 
-/** ===================== IE (Inscrição Estadual) – helpers simples ==================== */
 const sanitizeIEInput = (value = "") => {
   const v = String(value || "");
   if (v.trim().toUpperCase() === "ISENTO") return "ISENTO";
   return v.replace(/\D/g, "").slice(0, 14);
 };
-/** ==================================================================================== */
 
-// Outras máscaras
 const formatPhone = (value) => {
   const numbers = String(value || "").replace(/\D/g, '');
   if (numbers.length <= 10) {
@@ -73,16 +67,13 @@ const formatCEP = (value) => {
     .slice(0, 9);
 };
 
-/** ===================== LOGO from /public/images/manufacturer ===================== */
 const FALLBACK_LOGO = '/images/manufacturer/sua_logo_aqui.png';
 
 const getLogoSrc = (logoFileName) => {
   if (!logoFileName) {
-    // Retorna uma imagem placeholder se não houver logo
     return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23f0f0f0" width="100" height="100"/%3E%3Ctext x="50" y="50" text-anchor="middle" dy=".3em" fill="%23999" font-size="12"%3ESem Logo%3C/text%3E%3C/svg%3E';
   }
 
-  // Construir URL completa usando o mesmo padrão que funciona na gestão
   return `https://app.tratorbr.com/images/manufacturer/${logoFileName}`;
 };
 
@@ -93,8 +84,7 @@ const onImgError = (e) => {
   img.src = FALLBACK_LOGO;
 };
 
-/* =================== Modal “estrito” (não fecha fora/ESC) =================== */
-const Modal = ({ children /*, onClose */ }) => {
+const Modal = ({ children }) => {
   const contentRef = useRef(null);
 
   useEffect(() => {
@@ -135,9 +125,7 @@ const Modal = ({ children /*, onClose */ }) => {
     </div>
   );
 };
-/* ============================================================================ */
 
-/* =================== CityDropdown (com fallback para edição) =================== */
 const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -155,7 +143,6 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel =
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // 🔧 dispara busca apenas quando o menu está aberto (com debounce)
   useEffect(() => {
     if (!isOpen) return;
     const timer = setTimeout(() => onSearchChange(searchTerm), 300);
@@ -183,13 +170,7 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel =
         <div className="city-dropdown-menu">
           <div className="city-dropdown-search">
             <Search size={16} />
-            <input
-              type="text"
-              placeholder="Buscar cidade..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              autoFocus
-            />
+            <input type="text" placeholder="Buscar cidade..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} autoFocus />
           </div>
           <div className="city-dropdown-list">
             {cidades.length === 0 ? (
@@ -211,16 +192,13 @@ const CityDropdown = ({ value, onChange, cidades, onSearchChange, currentLabel =
     </div>
   );
 };
-/* ============================================================================ */
 
-/* ====== NOVO: Dropdown de Matrizes ativas (autocomplete simples) ====== */
 const MatrizDropdown = ({ value, onChange, currentLabel = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [options, setOptions] = useState([]);
   const dropdownRef = useRef(null);
 
-  // buscar matrizes
   const fetchOptions = useCallback(async (q) => {
     try {
       const { data } = await api.get('/admin/enterprises/matrizes', { params: { search: q || '' } });
@@ -234,7 +212,6 @@ const MatrizDropdown = ({ value, onChange, currentLabel = '' }) => {
 
   useEffect(() => { if (isOpen) fetchOptions(''); }, [isOpen, fetchOptions]);
 
-  // debounce de busca
   useEffect(() => {
     if (!isOpen) return;
     const t = setTimeout(() => fetchOptions(searchTerm), 250);
@@ -304,9 +281,7 @@ const MatrizDropdown = ({ value, onChange, currentLabel = '' }) => {
     </div>
   );
 };
-/* ============================================================================ */
 
-/* ====== NOVO: limpeza de payload antes do POST/PUT ====== */
 const limparEmpresaPayload = (dados) => {
   const removidos = [
     "enterprise_id",
@@ -352,7 +327,6 @@ const MFTag = ({ tipo }) => {
 };
 
 
-/* =================== Componente FilterDropdown =================== */
 const FilterDropdown = ({ label, value, options, onChange, placeholder = "Selecione..." }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -421,7 +395,6 @@ export default function AdminEnterprisesPage() {
   const [modalContent, setModalContent] = useState(null);
   const [empresaSelecionada, setEmpresaSelecionada] = useState(null);
 
-  // NOVOS ESTADOS PARA FILTRAGEM
   const [ordenacao, setOrdenacao] = useState('');
   const [tipoFiltro, setTipoFiltro] = useState('');
   const [cidadeFiltro, setCidadeFiltro] = useState(0);
@@ -435,9 +408,9 @@ export default function AdminEnterprisesPage() {
         status,
         page,
         busca: termoBuscado,
-        order: ordenacao,      // NOVO
-        tipo: tipoFiltro,      // NOVO
-        city_id: cidadeFiltro  // NOVO
+        order: ordenacao,
+        tipo: tipoFiltro,
+        city_id: cidadeFiltro
       });
       setEmpresas(result.data || []);
       setTotalPages(Math.ceil(result.total / result.pageSize));
@@ -475,7 +448,6 @@ export default function AdminEnterprisesPage() {
     }
   }, []);
 
-  // Carregar cidades ao montar o componente
   useEffect(() => {
     carregarCidades('');
   }, [carregarCidades]);
@@ -758,7 +730,6 @@ export default function AdminEnterprisesPage() {
             </table>
           </div>
 
-          {/* Cards para mobile */}
           <div className="cards-container">
             {loading ? (
               <div className="center">Carregando...</div>
@@ -833,14 +804,13 @@ export default function AdminEnterprisesPage() {
   );
 }
 
-/* ====================== SUBCOMPONENTE: Endereço de Cobrança (com rádio) ======================= */
 const BillingAddressInline = ({
   enterpriseId,
   draft,
   setDraft,
   mainAddr,
 }) => {
-  const [mode, setMode] = useState('same'); // 'same' | 'different'
+  const [mode, setMode] = useState('same');
   const [cidades, setCidades] = useState([]);
   const [labelCidadeAtual, setLabelCidadeAtual] = useState('');
 
@@ -878,7 +848,6 @@ const BillingAddressInline = ({
           }
         }
       } catch {
-        // sem cobrança existente
       }
     };
     fetchAtual();
@@ -988,9 +957,7 @@ const BillingAddressInline = ({
     </div>
   );
 };
-/* ============================================================================ */
 
-// Formulário de criação/edição
 const FormEmpresa = ({ empresa, onSave, onClose }) => {
   const [dados, setDados] = useState(() => ({
     ativo: 1,
@@ -1002,14 +969,9 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
   const [cidades, setCidades] = useState([]);
   const [cnpjTouched, setCnpjTouched] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-
-  // rascunho do endereço de cobrança (salvo junto no submit)
   const [cobrancaDraft, setCobrancaDraft] = useState(null);
-
-  // estado auxiliar para exibir rótulo da matriz atual (em edição)
   const [matrizLabel, setMatrizLabel] = useState('');
 
-  // 🔧 memoiza a função de busca para o CityDropdown
   const carregarCidades = React.useCallback(async (busca) => {
     try {
       const { data } = await api.get('/admin/cities', { params: { busca } });
@@ -1019,12 +981,10 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
     }
   }, []);
 
-  // carrega lista inicial apenas uma vez
   useEffect(() => {
     carregarCidades('');
   }, [carregarCidades]);
 
-  // pré-carrega label da matriz atual em edição (se houver)
   useEffect(() => {
     (async () => {
       try {
@@ -1058,7 +1018,6 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
     setDados(prev => ({ ...prev, [name]: formattedValue }));
   };
 
-  // NOVO: mudar tipo (Matriz/Filial)
   const handleTipoChange = (e) => {
     const tipo = e.target.value;
     if (tipo === 'Matriz') {
@@ -1110,7 +1069,6 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
       </div>
 
       <div className="modal-body">
-        {/* ========= NOVO BLOCO: Tipo (Matriz/Filial) + Matriz ========= */}
         <div className="form-grid">
           <div className="form-field full-width">
             <label>Tipo *</label>
@@ -1152,7 +1110,6 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
             </div>
           )}
         </div>
-        {/* ============================================================= */}
 
         <div className="form-grid">
           <div className="form-field">
@@ -1222,7 +1179,7 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
           <div className="form-field">
             <label>Cidade</label>
             <CityDropdown
-              value={dados.city_id ? Number(dados.city_id) : ''}   // mantém '' quando não selecionado
+              value={dados.city_id ? Number(dados.city_id) : ''}
               onChange={handleChange}
               cidades={cidades}
               onSearchChange={carregarCidades}
@@ -1251,7 +1208,6 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
             <input type="url" name="site" value={dados.site || ''} onChange={handleChange} />
           </div>
 
-          {/* Logo agora é nome de arquivo na pasta /images/manufacturer */}
           <div className="form-field full-width">
             <LogoSelector
               value={dados.logo || ''}
@@ -1271,7 +1227,6 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
           </div>
         </div>
 
-        {/* ===== Endereço de Cobrança com rádio ===== */}
         <BillingAddressInline
           enterpriseId={empresa?.enterprise_id || null}
           draft={cobrancaDraft}
@@ -1290,7 +1245,6 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
   );
 };
 
-// Detalhes
 const DetalhesEmpresa = ({ empresa, onClose }) => {
   const [aba, setAba] = useState('usuarios');
   const [usuarios, setUsuarios] = useState([]);
@@ -1301,7 +1255,6 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
 
   useEffect(() => {
     carregarUsuarios();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -1481,7 +1434,6 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
             <>
               <h3>Filiais Vinculadas</h3>
 
-              {/* se a empresa NÃO for Matriz, apenas avisa */}
               {empresa.matriz_filial !== 'Matriz' ? (
                 <p className="empty-text">
                   Esta empresa é uma <strong>Filial</strong>{empresa.matriz_nome ? ` da Matriz ${empresa.matriz_nome}` : ''} e não possui filiais.

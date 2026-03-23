@@ -10,12 +10,10 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
   const isMaster = admin?.role === 'master';
   const isActive = (path) => location.pathname.startsWith(path);
 
-  // NOVA LÓGICA: Verifica se o usuário tem permissão para a página
   const hasPermission = (pageKey) => {
-    if (isMaster) return true; // Master tem acesso liberado a tudo
-    if (!admin || !admin.permissoes) return false; // Se não tiver permissões carregadas, bloqueia por segurança
+    if (isMaster) return true; 
+    if (!admin || !admin.permissoes) return false; 
 
-    // Procura na lista de permissões do usuário se a chave da página existe lá
     return admin.permissoes.some(p => p === pageKey || p.page_key === pageKey);
   };
 

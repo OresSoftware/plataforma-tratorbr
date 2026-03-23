@@ -93,7 +93,6 @@
 
 .table-container {
   overflow-x: auto;
-  /* display: none; */
 }
 
 .table-container.show {
@@ -281,12 +280,7 @@
 }
 
 .cards-container {
-  /* display: none;
-  gap: 15px;
-  padding: 15px; */
-
   display: flex;
-  /* Deixe visível ou flex por padrão se for usar cards */
   flex-direction: column;
   gap: 15px;
   padding: 15px;
@@ -617,7 +611,6 @@
   }
 }
 
-/* Acessibilidade */
 @media (prefers-reduced-motion: reduce) {
 
   .avaliacoes-table tbody tr,
@@ -647,7 +640,6 @@
   font-size: 1rem;
 }
 
-/* ESTILOS PARA MÉDIA DE ESTRELAS */
 .media-estrelas-card {
   background: linear-gradient(135deg, #409535 0%, #2d6b26 100%);
   border-radius: 12px;

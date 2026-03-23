@@ -61,12 +61,12 @@ const StructuredDataSitelinks = () => {
           "name": "Home",
           "item": baseUrl
         },
-        // {
-        //   "@type": "ListItem",
-        //   "position": 2,
-        //   "name": "Aplicativo",
-        //   "item": `${baseUrl}/aplicativo`
-        // },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Aplicativo",
+          "item": `${baseUrl}/aplicativo`
+        },
         {
           "@type": "ListItem",
           "position": 3,
@@ -104,9 +104,9 @@ const StructuredDataSitelinks = () => {
       script.type = 'application/ld+json';
       script.textContent = JSON.stringify(data);
       script.id = id;
-      
+
       document.head.appendChild(script);
-      
+
       return script;
     };
 

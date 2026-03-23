@@ -53,8 +53,7 @@ const Header = () => {
 
         <nav className="nav-menu">
           <Link to="/" className={`nav-link ${isActive('/')}`} onClick={() => window.scrollTo(0, 0)}>Início</Link>
-          <Link to="/contato" className={`nav-link ${isActive('/contato')}`} onClick={() => window.scrollTo(0, 0)}>Contato</Link>
-
+          <Link to="/anuncios" className={`nav-link ${isActive('/anuncios')}`} onClick={() => window.scrollTo(0, 0)}>Anúncios</Link>
           <div className="nav-dropdown">
             <button className={`nav-link dropdown-btn`}>Tratorbr
               <span className="profile-arrow">
@@ -69,6 +68,8 @@ const Header = () => {
               <Link to="/quem-somos" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Quem Somos</Link>
             </div>
           </div>
+          <Link to="/contato" className={`nav-link ${isActive('/contato')}`} onClick={() => window.scrollTo(0, 0)}>Contato</Link>
+          <Link to="/aplicativo" className={`nav-link ${isActive('/aplicativo')}`} onClick={() => window.scrollTo(0, 0)}>App</Link>
         </nav>
 
         <div className="admin-suporte-mobile">
@@ -116,6 +117,8 @@ const Header = () => {
           <nav className="mobile-nav-menu">
             <Link to="/" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Início</Link>
 
+            <Link to="/anuncios" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Anúncios</Link>
+
             <div className={`mobile-dropdown-item ${open ? "active" : ""}`}>
               <button className="mobile-dropdown-btn" onClick={() => setOpen(!open)}>
                 Tratorbr
@@ -131,6 +134,8 @@ const Header = () => {
               <Link to="/quem-somos" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Quem Somos</Link>
             </div>
             <Link to="/contato" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Contato</Link>
+
+            <Link to="/aplicativo" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>App</Link>
 
           </nav>
           <div className="mobile-menu-actions">

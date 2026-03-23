@@ -1,10 +1,9 @@
 const { getValidatedOrderBy } = require("../config/sortAllowLists");
 const pool = require("../config/db");
 
-// Helpers gerais 
 const soNumeros = (str) => String(str || '').replace(/\D/g, '');
 
-// Validação de CNPJ (DV oficial)
+// Validação de CNPJ 
 const isCNPJ = (value = "") => {
   const cnpj = soNumeros(value);
   if (cnpj.length !== 14) return false;
@@ -26,7 +25,7 @@ const isCNPJ = (value = "") => {
   return cnpj.endsWith(String(dv1) + String(dv2));
 };
 
-// IE – normalização e validação mínima
+// IE 
 const normalizeIE = (value = "") => String(value || "").trim();
 const onlyDigits = (s = "") => String(s).replace(/\D/g, "");
 
@@ -46,7 +45,6 @@ function prepararIEParaSalvar(ieRaw = "") {
   return onlyDigits(ie);
 }
 
-// UF por city_id + duplicidade IE por UF
 async function getUFByCityId(cityId) {
   if (!cityId) return null;
   const [[row]] = await pool.query(
@@ -75,7 +73,7 @@ async function existeIEDuplicadaMesmaUF({ ie, uf, ignorarEnterpriseId = null }) 
   return !!dup;
 }
 
-// Helpers para Matriz / Filial
+// Matriz / Filial
 async function isMatrizAtiva(matrizId) {
   if (!matrizId) return false;
   const [[row]] = await pool.query(
@@ -101,8 +99,6 @@ async function countFiliaisByMatriz(matrizId) {
   return row?.qt ?? 0;
 }
 
-// LISTAR EMPRESAS (com filtros) 
-// GET /api/admin/enterprises
 async function listarEmpresas(req, res) {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
@@ -111,9 +107,9 @@ async function listarEmpresas(req, res) {
 
     const status = String(req.query.status || 'todos').toLowerCase();
     const buscaRaw = String(req.query.busca || '').trim();
-    const order = String(req.query.order || '').toLowerCase();      // az | za | oldest | newest
-    const tipo = String(req.query.tipo || '').toLowerCase();        // matriz | filial
-    const cityIdFilter = Number(req.query.city_id || 0);            // city_id
+    const order = String(req.query.order || '').toLowerCase();
+    const tipo = String(req.query.tipo || '').toLowerCase();
+    const cityIdFilter = Number(req.query.city_id || 0);
 
     const like = `%${buscaRaw}%`;
     const cnpjDigits = soNumeros(buscaRaw);
@@ -192,7 +188,6 @@ async function listarEmpresas(req, res) {
     const likeIE = ieDigits ? `%${ieDigits}%` : '__NO_MATCH__';
     const isentoChave = buscaIsento ? 'ISENTO' : '__NO_MATCH__';
 
-    // Mesmo se busca for vazia, passamos valores; MySQL tratará "LIKE '%%'"
     paramsScore.push(like, like, like, like, like);
     paramsScore.push(eqCNPJ, likeCNPJ, eqIE, likeIE, isentoChave);
 
@@ -211,7 +206,6 @@ async function listarEmpresas(req, res) {
       ) AS score
     `;
 
-    // ORDER BY - PROTEGIDO CONTRA SQL INJECTION
     const orderSql = getValidatedOrderBy(order, 'enterprises', 'default');
 
     const [rows] = await pool.query(
@@ -249,8 +243,6 @@ async function listarEmpresas(req, res) {
   }
 }
 
-/* BUSCAR POR ID */
-// GET /api/admin/enterprises/:id
 async function buscarEmpresaPorId(req, res) {
   try {
     const id = Number(req.params.id);
@@ -276,8 +268,6 @@ async function buscarEmpresaPorId(req, res) {
   }
 }
 
-/* LISTAR MATRIZES ATIVAS (autocomplete) */
-// GET /api/admin/enterprises/matrizes
 async function listarMatrizesAtivas(req, res) {
   try {
     const { search } = req.query;
@@ -307,13 +297,10 @@ async function listarMatrizesAtivas(req, res) {
   }
 }
 
-/* CRIAR EMPRESA */
-// POST /api/admin/enterprises
 async function criarEmpresa(req, res) {
   try {
     const dados = { ...req.body };
 
-    // Campos que não podem vir no INSERT direto
     delete dados.enterprise_id;
     delete dados.score;
     delete dados.cidade_nome;
@@ -371,14 +358,14 @@ async function criarEmpresa(req, res) {
       }
     }
 
-    // Regras de MATRIZ/FILIAL no CREATE
+    // Regras de MATRIZ/FILIAL 
     const tipo = dados.matriz_filial;
     if (tipo !== 'Matriz' && tipo !== 'Filial') {
       return res.status(400).json({ ok: false, error: 'Tipo deve ser "Matriz" ou "Filial".' });
     }
 
     if (tipo === 'Matriz') {
-      dados.matriz_id = null; // sempre nulo para Matriz
+      dados.matriz_id = null;
     } else {
       // Filial
       if (dados.matriz_id == null) {
@@ -409,8 +396,6 @@ async function criarEmpresa(req, res) {
   }
 }
 
-/* ATUALIZAR EMPRESA */
-// PUT /api/admin/enterprises/:id
 async function atualizarEmpresa(req, res) {
   try {
     const { id } = req.params;
@@ -424,7 +409,6 @@ async function atualizarEmpresa(req, res) {
     delete payload.created_at;
     delete payload.updated_at;
 
-    // Estado atual
     const [[empAtual]] = await pool.query(
       'SELECT enterprise_id, matriz_filial, matriz_id, city_id, inscricao_estadual FROM ocbr_enterprise WHERE enterprise_id = ? LIMIT 1',
       [id]
@@ -501,7 +485,7 @@ async function atualizarEmpresa(req, res) {
       return res.status(422).json({ ok: false, error: "CNPJ não pode ser vazio." });
     }
 
-    // Regras de MATRIZ/FILIAL no UPDATE
+    // MATRIZ/FILIAL UPDATE
     const tipoAtual = empAtual.matriz_filial;
     const tipoNovo = Object.prototype.hasOwnProperty.call(payload, 'matriz_filial')
       ? payload.matriz_filial
@@ -565,8 +549,6 @@ async function atualizarEmpresa(req, res) {
   }
 }
 
-/* ATIVAR/DESATIVAR */
-// PATCH /api/admin/enterprises/:id/status
 async function ativarDesativarEmpresa(req, res) {
   try {
     const id = Number(req.params.id);
@@ -601,8 +583,6 @@ async function ativarDesativarEmpresa(req, res) {
   }
 }
 
-/* CONTADOR ATIVOS */
-// GET /api/admin/enterprises/contador/ativos
 async function contadorAtivos(req, res) {
   try {
     const [[{ total }]] = await pool.query(
@@ -615,8 +595,6 @@ async function contadorAtivos(req, res) {
   }
 }
 
-/* USUÁRIOS DA EMPRESA */
-// GET /api/admin/enterprises/:id/users
 async function listarUsuariosDaEmpresa(req, res) {
   try {
     const { id } = req.params;
@@ -644,8 +622,6 @@ async function listarUsuariosDaEmpresa(req, res) {
   }
 }
 
-/* FILIAIS DA MATRIZ */
-// GET /api/admin/enterprises/:id/filiais
 async function listarFiliaisDaMatriz(req, res) {
   try {
     const { id } = req.params;
@@ -673,8 +649,6 @@ async function listarFiliaisDaMatriz(req, res) {
   }
 }
 
-/* COBRANÇA (GET/PUT/DELETE) */
-// GET /api/admin/enterprises/:id/cobranca
 async function obterEnderecoCobranca(req, res) {
   try {
     const enterpriseId = Number(req.params.id);
@@ -695,7 +669,6 @@ async function obterEnderecoCobranca(req, res) {
   }
 }
 
-// PUT /api/admin/enterprises/:id/cobranca  (upsert)
 async function salvarEnderecoCobranca(req, res) {
   try {
     const enterpriseId = Number(req.params.id);
@@ -703,7 +676,6 @@ async function salvarEnderecoCobranca(req, res) {
 
     const input = req.body || {};
 
-    // garante que a empresa existe
     const [[emp]] = await pool.query(
       'SELECT enterprise_id, endereco, numero, complemento, bairro, cep, city_id FROM ocbr_enterprise WHERE enterprise_id = ? LIMIT 1',
       [enterpriseId]
@@ -715,7 +687,6 @@ async function salvarEnderecoCobranca(req, res) {
     let toSave;
 
     if (input.same_as_enterprise) {
-      // Copiar do endereço principal da empresa
       toSave = {
         endereco: emp.endereco || null,
         numero: emp.numero || null,
@@ -726,7 +697,6 @@ async function salvarEnderecoCobranca(req, res) {
         updated_at: new Date()
       };
     } else {
-      // Usar o payload enviado
       toSave = {
         endereco: input.endereco ?? null,
         numero: input.numero ?? null,
@@ -738,7 +708,6 @@ async function salvarEnderecoCobranca(req, res) {
       };
     }
 
-    // verifica se já existe cobrança
     const [[existe]] = await pool.query(
       'SELECT cobranca_id FROM ocbr_enterprise_cobranca WHERE enterprise_id = ? LIMIT 1',
       [enterpriseId]
@@ -756,7 +725,6 @@ async function salvarEnderecoCobranca(req, res) {
       );
     }
 
-    // retorna o registro atualizado
     const [rows] = await pool.query(`
       SELECT cb.*, ci.name AS cidade_nome, ci.code AS cidade_uf
         FROM ocbr_enterprise_cobranca cb
@@ -772,7 +740,6 @@ async function salvarEnderecoCobranca(req, res) {
   }
 }
 
-// DELETE /api/admin/enterprises/:id/cobranca
 async function removerEnderecoCobranca(req, res) {
   try {
     const enterpriseId = Number(req.params.id);

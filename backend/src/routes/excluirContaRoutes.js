@@ -6,7 +6,6 @@ router.post('/excluir-conta', async (req, res) => {
   const { email, recaptchaToken } = req.body;
 
   try {
-    // Verificar reCAPTCHA
     const recaptchaResponse = await axios.post(
       'https://www.google.com/recaptcha/api/siteverify',
       null,
@@ -24,9 +23,6 @@ router.post('/excluir-conta', async (req, res) => {
         error: 'Verificação reCAPTCHA falhou'
       });
     }
-
-    // Processar exclusão da conta
-    // ... sua lógica aqui ...
 
     res.json({ success: true, message: 'Conta excluída com sucesso' });
   } catch (error) {

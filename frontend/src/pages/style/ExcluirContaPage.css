@@ -56,7 +56,6 @@
   animation: fadeInDown 0.8s ease-out forwards;
 }
 
-/* Seção Principal */
 .excluir-conta-main {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -87,7 +86,6 @@
   animation: fadeInDown 0.8s ease-out forwards;
 }
 
-/* Formulário */
 .excluir-conta-form-container {
   background: #E7EDF3;
   padding: 3rem;
@@ -150,7 +148,6 @@
   box-shadow: 0 6px 20px #0f2a2e63;
 }
 
-/* reCAPTCHA */
 .recaptcha-container {
   display: flex;
   justify-content: center;
@@ -187,7 +184,6 @@
   color: #374151;
 }
 
-/* Seção de Vantagens */
 .vantagens-section {
   text-align: center;
   margin-top: 6rem;
@@ -205,7 +201,7 @@
   font-family: 'Montserrat', sans-serif;
 }
 
-.vantagens-section > p {
+.vantagens-section>p {
   font-size: 1.1rem;
   color: #6b7280;
   margin-bottom: 3rem;
@@ -234,19 +230,18 @@
 
 .vantagem-card:hover {
   transform: translateY(-10px) scale(1.05);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilização de cards específicos (ids pares) */
-div#card-2{
+div#card-2 {
   background-color: #E7EDF3 !important;
 }
 
-div#card-4{
+div#card-4 {
   background-color: #E7EDF3 !important;
 }
 
-div#card-6{
+div#card-6 {
   background-color: #E7EDF3 !important;
 }
 
@@ -288,12 +283,12 @@ div#card-6{
 }
 
 
-/* Animações */
 @keyframes fadeInDown {
   from {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -305,13 +300,13 @@ div#card-6{
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* Responsividade */
 @media (max-width: 1200px) {
   .excluir-conta-container {
     padding: 0px 60px;
@@ -322,11 +317,11 @@ div#card-6{
   .excluir-conta-container {
     padding: 0px 40px;
   }
-  
+
   .excluir-conta-main {
     gap: 3rem;
   }
-  
+
   .vantagens-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
@@ -337,7 +332,7 @@ div#card-6{
   .excluir-conta-content {
     padding: 2rem 1rem;
   }
-  
+
   .excluir-conta-container {
     padding: 0px 20px;
   }
@@ -378,34 +373,34 @@ div#card-6{
   .excluir-conta-container {
     padding: 0px 15px;
   }
-  
+
   .excluir-conta-content {
     padding: 1.5rem 0.5rem;
   }
-  
+
   .excluir-conta-header h1 {
     font-size: 1.3rem;
   }
-  
+
   .excluir-conta-info h2 {
     font-size: 1.4rem;
   }
-  
+
   .excluir-conta-info p {
     font-size: 0.95rem;
   }
-  
+
   .excluir-conta-form-container {
     padding: 1.5rem;
   }
-  
+
   .recaptcha-placeholder {
     min-width: 100%;
     flex-direction: column;
     gap: 0.5rem;
     text-align: center;
   }
-  
+
   .recaptcha-logo {
     margin-left: 0;
     text-align: center;
@@ -463,7 +458,6 @@ div#card-6{
   }
 }
 
-/* Melhorias adicionais para suavidade */
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

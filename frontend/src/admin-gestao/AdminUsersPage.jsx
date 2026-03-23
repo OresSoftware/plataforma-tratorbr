@@ -228,7 +228,6 @@ const SimpleSelect = ({
 
       {open && (
         <div className="ss-dropdown" role="listbox" onMouseDown={(e) => e.preventDefault()}>
-          {/* sem barra de busca */}
           <ul
             className="ss-options"
             style={{ maxHeight: `${maxVisible * 40}px`, overflowY: 'auto' }}

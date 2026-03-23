@@ -217,12 +217,10 @@ function DepoimentosCarrossel() {
       </div>
 
       <div className="depoimentos-carrossel-container">
-        {/* Linha de Cima - Move para Esquerda */}
         <div className="carrossel-track carrossel-top">
           <div className="carrossel-inner">
             {avaliacoesTop.map((avaliacao, index) => (
               <div key={`top-${index}`} className="depoimento-card">
-                {/* ... seu conteúdo do card ... */}
                 <div className="depoimento-header">
                   <h3>{avaliacao.nome}</h3>
                 </div>
@@ -235,12 +233,10 @@ function DepoimentosCarrossel() {
           </div>
         </div>
 
-        {/* Linha de Baixo - Move para Direita */}
         <div className="carrossel-track carrossel-bottom">
           <div className="carrossel-inner">
             {avaliacoesBottom.map((avaliacao, index) => (
               <div key={`bottom-${index}`} className="depoimento-card">
-                {/* ... seu conteúdo do card ... */}
                 <div className="depoimento-header">
                   <h3>{avaliacao.nome}</h3>
                 </div>
@@ -254,7 +250,6 @@ function DepoimentosCarrossel() {
         </div>
       </div>
 
-      {/* CTA */}
       <div className="depoimentos-cta">
         <div className="cta-text">
           <h3>O que falam da <strong>TratorBR?</strong></h3>
@@ -320,16 +315,13 @@ export default function Home() {
       </section>
 
       <section >
-
         <div className="filtragem">
+          
         </div>
-
       </section>
 
       <section>
-
         <h2 className="subTitulo-left">Tipos</h2>
-
       </section>
 
       <section className="logo-carousel-section">
@@ -372,9 +364,9 @@ export default function Home() {
             <div className="context-item">
               <img src={img_um} alt="Trator no campo" className="context-image" />
               <div className="context-overlay">
-                <h2 className='titulo'><strong>Revendedor</strong></h2>
-                <p>Anuncie agora em nossa plataforma e alcance compradores qualificados de todo o Brasil. Dê ao seu equipamento a visibilidade que ele merece e venha vender conosco!</p>
-                <a href="#"><button className="context-btn">Anuncie Agora</button></a>
+                <h2 className='titulo'><strong>Negocioar</strong></h2>
+                <p>Negocie maquinário agrícola sem riscos usando a plataforma da TratorBR. Validamos dados e laudos técnicos para assegurar que cada negócio no campo seja 100% confiável!</p>
+                <Link to="/aplicativo#app-contato" onClick={() => window.scrollTo(0, 0)}><button className="context-btn">Baixar Agora</button></Link>
               </div>
             </div>
             <div className="context-item">
@@ -382,7 +374,7 @@ export default function Home() {
               <div className="context-overlay">
                 <h2 className='titulo'><strong>Contato</strong></h2>
                 <p>Tem alguma dúvida ou precisa de suporte especializado em agronegócio? Entre em contato com a TratorBR, que nós vamos te ajudar a fechar o melhor negócio!</p>
-                <a href="#"><button className="context-btn">Whatsapp</button></a>
+                <a href={'https://api.whatsapp.com/send?phone=5543991895458&text=Olá,%20poderia%20me%20ajudar?'} target="_blank" rel="noreferrer"><button className="context-btn">Whatsapp</button></a>
               </div>
             </div>
           </div>

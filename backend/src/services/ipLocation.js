@@ -1,7 +1,6 @@
 const axios = require('axios');
 let maxmindReader = null;
 
-// Carrega MaxMind se MAXMIND_DB_PATH estiver configurado
 async function ensureMaxMind() {
   if (!process.env.MAXMIND_DB_PATH) return null;
   if (maxmindReader) return maxmindReader;
@@ -34,12 +33,10 @@ function isPrivate(ip) {
   );
 }
 
-/** Retorna { city, region, country, lat, lon, source } ou null */
 async function lookupIp(ip) {
   try {
     if (!ip || isPrivate(ip)) return null;
 
-    // 1) Tenta MaxMind local
     const mm = await ensureMaxMind();
     if (mm) {
       const r = mm.get(ip);
@@ -55,7 +52,6 @@ async function lookupIp(ip) {
       }
     }
 
-    // 2) Fallback simples: ipapi.co (gratuito / limitado)
     const { data } = await axios.get(`https://ipapi.co/${ip}/json/`, { timeout: 6000 });
     if (data?.error) return null;
 

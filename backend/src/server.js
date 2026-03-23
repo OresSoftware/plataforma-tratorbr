@@ -45,7 +45,6 @@ app.use((req, res, next) => {
     const contentType = req.get("content-type");
     const contentLength = req.get("content-length");
 
-    // Se há corpo na requisição, validar Content-Type
     if (contentLength && contentLength !== "0") {
       if (!contentType || (!contentType.includes("application/json") && !contentType.includes("multipart/form-data"))) {
         return res.status(415).json({

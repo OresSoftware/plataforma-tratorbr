@@ -125,7 +125,6 @@
 }
 
 .logo-image {
-  /* position: absolute; */
   bottom: 2rem;
   width: 3rem;
 }
@@ -275,7 +274,6 @@
     order: 2;
     position: static;
     padding: 2rem 1.5rem 3rem;
-    /* display: grid; */
     place-items: center;
     text-align: center;
     gap: 0;

@@ -94,7 +94,6 @@
   margin: 0;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .access-denied-card {
     padding: 2rem 1.5rem;

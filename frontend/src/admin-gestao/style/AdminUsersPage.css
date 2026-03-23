@@ -1193,17 +1193,6 @@
   background: #ECF4FF;
 }
 
-/* @media (max-width: 1027px) {
-  .users-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .users-actions {
-    justify-content: space-between;
-  }
-} */
-
 @media (max-width: 1027px) {
   .users-header {
     display: block;
@@ -1218,7 +1207,7 @@
     align-items: stretch;
   }
 
-  .status-buttons{
+  .status-buttons {
     justify-content: space-between;
   }
 
@@ -1267,7 +1256,7 @@
     justify-content: center;
   }
 
-  .btn{
+  .btn {
     width: 30%;
     justify-content: center;
   }

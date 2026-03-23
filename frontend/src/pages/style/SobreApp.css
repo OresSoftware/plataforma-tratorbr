@@ -171,10 +171,8 @@
     max-width: 340px;
     object-fit: cover;
     border-radius: 40px;
-    /* box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); */
 }
 
-/* teste */
 .carousel-images {
     position: relative;
     width: 100%;
@@ -210,7 +208,6 @@
     height: 100%;
     object-fit: contain;
     border-radius: 40px;
-    /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); */
 }
 
 
@@ -343,7 +340,6 @@
     font-weight: normal;
 }
 
-/* Animações */
 @keyframes fadeInDown {
     from {
         opacity: 0;
@@ -368,7 +364,6 @@
     }
 }
 
-/* RESPONSIVIDADE */
 @media (max-width: 1027px) {
 
     .recursos-ajuda {
@@ -675,7 +670,6 @@
     }
 
     .tabs-header p {
-        /* font-size: 0.85rem; */
         padding: 20px;
         margin: 0;
     }
@@ -852,7 +846,6 @@
     transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Efeito de foco mais suave e profissional */
 .faq-question:focus {
     outline: 2px solid rgba(37, 211, 102, 0.3);
     outline-offset: 2px;
@@ -890,5 +883,4 @@
 
 html {
     scroll-behavior: smooth;
-    /* Faz a rolagem ser suave em vez de um pulo seco */
 }

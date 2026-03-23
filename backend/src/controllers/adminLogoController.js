@@ -6,7 +6,6 @@ function isImageName(name) {
   return /\.(png|jpe?g|webp|gif|svg)$/i.test(name);
 }
 
-// GET /api/admin/logos
 async function listarLogos(req, res) {
   try {
     const dir = getManufacturerDir();
@@ -23,7 +22,6 @@ async function listarLogos(req, res) {
   }
 }
 
-// POST /api/admin/upload/logo  (form-data: file)
 async function uploadLogo(req, res) {
   try {
     if (!req.file) {

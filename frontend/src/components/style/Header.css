@@ -638,8 +638,6 @@ body {
   height: auto;
 }
 
-/* -- */
-
 .admin-suporte-mobile {
   background-color: white;
   padding: 0.7rem;
@@ -735,8 +733,6 @@ body {
 #login.admin-btn:hover::before {
   left: 100%;
 }
-
-
 
 @media (max-width: 1028px) {
   .admin-suporte-mobile {

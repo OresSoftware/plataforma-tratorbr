@@ -19,10 +19,12 @@
   margin: 0 auto;
   padding: 3rem 2rem;
 }
-.att{
+
+.att {
   font-style: italic;
 
 }
+
 .termos-uso-title {
   font-weight: normal;
   font-size: 1.6em;
@@ -72,20 +74,19 @@
   margin-bottom: 0;
 }
 
-/* Responsividade */
 @media (max-width: 1027px) {
   .termos-uso-main {
     padding: 2rem 1rem;
   }
-  
+
   .termos-uso-title {
     margin-bottom: 2rem;
   }
-  
+
   .termos-uso-content {
     padding: 2rem 1.5rem;
   }
-  
+
   .termos-uso-content p {
     font-size: 1rem;
   }
@@ -95,11 +96,11 @@
   .termos-uso-main {
     padding: 1.5rem 1rem;
   }
-  
+
   .termos-uso-title {
     font-size: 1.5rem;
   }
-  
+
   .termos-uso-content {
     padding: 1.5rem 1rem;
   }

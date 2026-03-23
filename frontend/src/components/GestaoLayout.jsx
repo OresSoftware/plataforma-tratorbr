@@ -9,7 +9,6 @@ const GestaoLayout = ({ children }) => {
     <div className="gestao-layout">
       <GestaoSidebar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
       
-      {/* Main Content */}
       <main className="gestao-main">
         {children}
       </main>

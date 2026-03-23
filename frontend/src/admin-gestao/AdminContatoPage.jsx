@@ -26,26 +26,17 @@ export default function AdminContatoPage() {
 
   useNoindex();
 
-  // listagem e estado geral
   const [itens, setItens] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
-
-  // paginação simples (já preparado caso queira usar)
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20);
   const [total, setTotal] = useState(0);
-
-  // abas + contadores para badges
-  const [status, setStatus] = useState("pendente"); // 'pendente' | 'respondido'
+  const [status, setStatus] = useState("pendente");
   const [pendentesTotal, setPendentesTotal] = useState(0);
   const [respondidosTotal, setRespondidosTotal] = useState(0);
-
-  // modal de detalhes (o seu já existente)
   const [modalAberto, setModalAberto] = useState(false);
   const [contatoSelecionado, setContatoSelecionado] = useState(null);
-
-  // novo: modal para escolha do canal ao marcar respondido
   const [modalCanal, setModalCanal] = useState({ aberto: false, id: null, nome: "", canal: "whatsapp" });
 
   async function carregar() {
@@ -176,7 +167,6 @@ export default function AdminContatoPage() {
                     <th>Número</th>
                     <th>Mensagem</th>
                     <th>Canal</th>
-                    {/* <th>Respondido por</th> */}
                     <th>Data/Hora</th>
                     <th>Ações</th>
                   </tr>
@@ -215,16 +205,9 @@ export default function AdminContatoPage() {
                       <td className="canal-cell">
                         <CanalChip canal={c.response_channel} />
                       </td>
-                      {/* <td className="respby-cell">{c.responded_by ?? "-"}</td> */}
                       <td className="data-cell">{formatarDataHora(c.responded_at)}</td>
                       <td className="acoes-cell">
                         <div className="acoes" onClick={(e) => e.stopPropagation()}>
-                          {/* <a className="btn btn-whats" href={linkWhatsApp(c.nome, c.telefone)} target="_blank" rel="noreferrer">
-                            WhatsApp
-                          </a>
-                          <a className="btn btn-mail" href={linkEmail(c.email, c.nome)}>
-                            Email
-                          </a> */}
                           <button className="btn btn-danger" onClick={() => handleExcluir(c.id)}>Excluir</button>
                         </div>
                       </td>
@@ -246,8 +229,6 @@ export default function AdminContatoPage() {
                           <a className="btn btn-mail" href={linkEmail(c.email, c.nome)}>Email</a>
 
                           <button className="btn btn-ok" onClick={() => abrirModalCanal(c.id, c.nome)}>Respondido</button>
-
-                          {/* <button className="btn btn-danger"onClick={() => handleExcluir(c.id)}> Excluir </button> */}
                         </div>
                       </td>
                     </tr>
@@ -281,17 +262,6 @@ export default function AdminContatoPage() {
                     Data/Hora |  <strong>{formatarDataHora(c.responded_at)}</strong>
                   </div>
                   <div className="card-acoes" onClick={(e) => e.stopPropagation()}>
-                    {/* <a
-                      className="btn btn-whats"
-                      href={linkWhatsApp(c.nome, c.telefone)}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      WhatsApp
-                    </a>
-                    <a className="btn btn-mail" href={linkEmail(c.email, c.nome)}>
-                      Email
-                    </a> */}
                     <button className="btn btn-danger" onClick={() => handleExcluir(c.id)}>
                       Excluir
                     </button>
@@ -325,9 +295,6 @@ export default function AdminContatoPage() {
                     >
                       Respondido
                     </button>
-                    {/* <button className="btn btn-danger" onClick={() => handleExcluir(c.id)}>
-                      Excluir
-                    </button> */}
                   </div>
                 </div>
               ))

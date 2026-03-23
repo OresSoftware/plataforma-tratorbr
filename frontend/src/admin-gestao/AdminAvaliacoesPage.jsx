@@ -28,7 +28,6 @@ function renderStars(count) {
   ));
 }
 
-// Componente de Média de Estrelas
 function MediaEstrelas({ avaliacoes }) {
   if (!avaliacoes || avaliacoes.length === 0) {
     return (

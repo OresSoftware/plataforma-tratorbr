@@ -72,7 +72,7 @@ async function criarFuncionario(req, res) {
         username,
         role,
         qrCode: qrCodeDataURL,
-        secret: secret.base32, 
+        secret: secret.base32,
       },
     });
 
@@ -93,7 +93,7 @@ async function listarFuncionarios(req, res) {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
     const pageSize = Math.min(100, Math.max(5, parseInt(req.query.pageSize || "20", 10)));
     const offset = (page - 1) * pageSize;
-    
+
     const busca = (req.query.busca || "").trim();
     const funcao = (req.query.funcao || "").trim().toLowerCase();
 
@@ -176,7 +176,7 @@ async function obterFuncionario(req, res) {
       );
       funcionario.permissoes = permissoes;
     } else {
-      funcionario.permissoes = []; 
+      funcionario.permissoes = [];
     }
 
     return res.json({

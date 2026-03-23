@@ -9,11 +9,9 @@
 
 :root {
   --brand-dark: #15383E;
-  /* verde escuro do protótipo */
   --brand: #1b3f41;
   --btn: #2c5f5f;
   --bg: #e8f0f0;
-  /* fundo cinza claro do protótipo */
   --text: #1f2a2a;
   --muted: #667676;
   --radius: 12px;
@@ -292,7 +290,6 @@
   }
 }
 
-/* Seção ONDE ESTAMOS */
 .contato-onde {
   margin: 60px 70px;
   padding: 0 20px;
@@ -321,10 +318,7 @@
 }
 
 .onde-info {
-  /* background: var(--input-bg);
-  padding: 30px; */
   border-radius: var(--radius);
-  /* box-shadow: var(--shadow); */
   opacity: 0;
   transform: translateX(-20px);
   animation: slideInLeft 0.8s ease-out 0.3s forwards;

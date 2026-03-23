@@ -287,7 +287,6 @@
   .form-textarea {
     padding: 10px 12px;
     font-size: 16px;
-    /* Previne zoom em iOS */
   }
 
   .form-textarea {
@@ -323,7 +322,6 @@
   }
 
   .star {
-    /* font-size: 1.5rem; */
     padding: 3px;
   }
 
@@ -337,10 +335,6 @@
     padding: 12px;
   }
 }
-
-/* ========================================
-   ACESSIBILIDADE
-   ======================================== */
 
 @media (prefers-reduced-motion: reduce) {
 
