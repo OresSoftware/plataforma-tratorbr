@@ -11,7 +11,7 @@ import VoltarAoTopoBtn from '../components/VoltarAoTopoBtn';
 import './style/ContatoPage.css';
 
 
-const EMAIL_PUBLICO = import.meta.env.VITE_CONTATO_EMAIL || "contato@tratorbr.com.br";
+const EMAIL_PUBLICO = import.meta.env.VITE_CONTATO_EMAIL || "tratorbr@tratorbr.com";
 
 export default function ContatoPage() {
   const [form, setForm] = useState({
@@ -144,7 +144,7 @@ export default function ContatoPage() {
 
               <div className="contato-item">
                 <FaMapMarkerAlt className="nav-icon" size={22} color="#15383E" />
-                <span>Rua Drongo, 1540 - Sala 1002, Centro, Arapongas, PR, 86.700-145</span>
+                <span>Rua Drongo 1569, Sala 01 - Centro, Arapongas - PR, 86700-145, Brasil</span>
               </div>
 
               <div className="contato-item">
@@ -166,7 +166,7 @@ export default function ContatoPage() {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               src={`https://www.google.com/maps?q=${encodeURIComponent(
-                "Rua Drongo, 1540 - Sala 1002, Centro, Arapongas - PR"
+                "Rua Drongo 1569, Sala 01"
               )}&output=embed`}
             />
           </div>
