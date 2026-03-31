@@ -70,6 +70,10 @@ const LoginPage = () => {
                                 </span>
                             </div>
 
+                            <a href="/nova-senha" className="new-password">
+                                Esqueceu sua senha?
+                            </a>
+
                             <button className="submit-button" type="submit" disabled={loading}>
                                 {loading ? 'Entrando...' : 'Entrar'}
                             </button>

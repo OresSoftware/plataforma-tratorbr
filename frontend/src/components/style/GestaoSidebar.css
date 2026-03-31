@@ -222,6 +222,7 @@
   margin-top: 15px;
   flex-wrap: wrap;
   justify-content: flex-start;
+  margin-left: 25px;
 }
 
 .sidebar-logo {
