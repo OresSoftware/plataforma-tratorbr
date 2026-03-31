@@ -462,6 +462,13 @@
   font-size: 15px;
 }
 
+.new-password{
+  display: flex;
+  justify-content: center;
+  color: var(--primary);
+  font-size: 0.9rem;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

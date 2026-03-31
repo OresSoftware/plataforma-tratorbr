@@ -15,6 +15,7 @@ import SobreApp from './pages/SobreApp';
 import AdminFuncionariosPage from './admin-gestao/AdminFuncionariosPage';
 import Cadastro from './pages-auth/CadastroPage';
 import Entrar from './pages-auth/LoginPage';
+import NovaSenhaPage from './pages-auth/NovaSenhaPage';
 import Gestao from './pages-gestao/HomeGestaoPage';
 import GestaoPerfilPage from './pages-gestao/GestaoPerfilPage';
 
@@ -67,6 +68,7 @@ function AppRoutes() {
 
         {/* Páginas Auth */}
         <Route path="/entrar" element={<Entrar />} />
+        <Route path="/nova-senha" element={<NovaSenhaPage />} />
         <Route path="/cadastrar" element={<Cadastro />} />
 
         {/* Páginas de Gestão */}
