@@ -23,6 +23,10 @@ import Entrar from './pages-auth/LoginPage';
 import NovaSenhaPage from './pages-auth/NovaSenhaPage';
 import Gestao from './pages-gestao/HomeGestaoPage';
 import GestaoPerfilPage from './pages-gestao/GestaoPerfilPage';
+import UsuarioGestao from './pages-gestao/UsuariosGestaoPage';
+import AvaliacaoGestao from './pages-gestao/AvaliacaoGestaoPage';
+import EmpresasGestao from './pages-gestao/EmpresasGestaoPage';
+import FaturasGestao from './pages-gestao/FaturasGestaoPage';
 
 import TitleManager from "./TitleManager";
 import CookieConsent from "./components/CookieConsent";
@@ -83,6 +87,10 @@ function AppRoutes() {
         <Route path="/gestao" element={<ProtectedRouteUser> <Gestao /> </ProtectedRouteUser>} />
         <Route path="/gestao/dashboard" element={<ProtectedRouteUser> <Gestao /> </ProtectedRouteUser>} />
         <Route path="/gestao/perfil" element={<GestaoPerfilPage />} />
+        <Route path="/gestao/usuarios" element={<UsuarioGestao />} />
+        <Route path="/gestao/avaliacoes" element={<AvaliacaoGestao />} />
+        <Route path="/gestao/empresa" element={<EmpresasGestao />} />
+        <Route path="/gestao/faturas" element={<FaturasGestao />} />
 
         {/* Área Administrativa */}
         <Route path="/admin/login" element={<AdminLoginPage />} />

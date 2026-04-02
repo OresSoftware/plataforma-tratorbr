@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, LogOut, LayoutDashboard, User, Settings } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, User, Settings, Users, Star, FileText } from "lucide-react";
 import { logoutUsuario } from '../services/apiUserAuth';
 import './style/GestaoSidebar.css';
 
@@ -133,6 +133,48 @@ const GestaoSidebar = ({ menuOpen, setMenuOpen }) => {
           >
             <LayoutDashboard className="nav-icon" size={22} />
             Dashboard
+          </button>
+
+          <button
+            className={`nav-item ${isActive('/gestao/usuarios') ? 'active' : ''}`}
+            onClick={() => handleMenuItemClick('/gestao/usuarios')}
+          >
+            <Users className="nav-icon" size={22} />
+            Usuarios
+          </button>
+
+          <button
+            className={`nav-item ${isActive('/gestao/avaliacoes') ? 'active' : ''}`}
+            onClick={() => handleMenuItemClick('/gestao/avaliacoes')}
+          >
+            <Star className="nav-icon" size={22} />
+            Avaliações
+          </button>
+
+          <button
+            className={`nav-item ${isActive('/gestao/empresa') ? 'active' : ''}`}
+            onClick={() => handleMenuItemClick('/gestao/empresa')}
+          >
+            {logoEmpresa ? (
+              <img src={logoEmpresa} alt="Logo da Empresa" className="nav-icon"
+                style={{ width: '26px', height: 'auto', objectFit: 'contain', borderRadius: '6px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.5)' }}
+                onError={(e) => {
+                  console.error('Erro ao carregar logo no botão:', logoEmpresa);
+                  e.target.style.display = 'none';
+                }}
+              />
+            ) : (
+              <Star className="nav-icon" size={22} />
+            )}
+            Empresa
+          </button>
+
+          <button
+            className={`nav-item ${isActive('/gestao/faturas') ? 'active' : ''}`}
+            onClick={() => handleMenuItemClick('/gestao/faturas')}
+          >
+            <FileText className="nav-icon" size={22} />
+            Faturas
           </button>
         </nav>
 
