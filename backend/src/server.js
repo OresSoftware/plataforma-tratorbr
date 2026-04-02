@@ -1,5 +1,4 @@
 require("dotenv-flow").config();
-
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -14,6 +13,7 @@ const publicRoutes = require("./routes/publicRoutes");
 const adminEnterpriseRoutes = require("./routes/adminEnterpriseRoutes");
 
 const adminFuncionariosRoutes = require("./routes/adminFuncionariosRoutes");
+const gestaoUserRoutes = require("./routes/gestaoUserRoutes");
 
 const app = express();
 
@@ -45,7 +45,6 @@ app.use((req, res, next) => {
     const contentType = req.get("content-type");
     const contentLength = req.get("content-length");
 
-    // Se há corpo na requisição, validar Content-Type
     if (contentLength && contentLength !== "0") {
       if (!contentType || (!contentType.includes("application/json") && !contentType.includes("multipart/form-data"))) {
         return res.status(415).json({
@@ -83,7 +82,7 @@ app.post("/api/consent", (req, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: "Lax",
     maxAge: 1000 * 60 * 60 * 24 * 365,
-  });
+  } );
   res.json({ message: "Consentimento salvo" });
 });
 
@@ -101,6 +100,7 @@ app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/contatos", contatoRoutes);
 app.use("/api/admin/funcionarios", adminFuncionariosRoutes);
+app.use("/api/gestao", gestaoUserRoutes);
 
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
