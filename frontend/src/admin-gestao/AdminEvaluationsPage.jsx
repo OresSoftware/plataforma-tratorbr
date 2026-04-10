@@ -35,7 +35,7 @@ const INITIAL_FILTER_OPTIONS = {
 };
 
 function getEvaluationListCacheKey(moduleType) {
-  return `admin-evaluations-list:v3:${normalizeModuleType(moduleType)}`;
+  return `admin-evaluations-list:v5:${normalizeModuleType(moduleType)}`;
 }
 
 function normalizeFilters(source = {}) {
