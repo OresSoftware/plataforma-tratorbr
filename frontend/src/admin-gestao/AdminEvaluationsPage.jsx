@@ -35,7 +35,7 @@ const INITIAL_FILTER_OPTIONS = {
 };
 
 function getEvaluationListCacheKey(moduleType) {
-  return `admin-evaluations-list:v5:${normalizeModuleType(moduleType)}`;
+  return `admin-evaluations-list:v6:${normalizeModuleType(moduleType)}`;
 }
 
 function normalizeFilters(source = {}) {
@@ -60,6 +60,11 @@ function readEvaluationListCache(moduleType) {
     console.warn("Não foi possível restaurar o cache da listagem de avaliações:", error);
     return null;
   }
+}
+
+function hasUsableEvaluationListCache(cachedState) {
+  if (!cachedState || typeof cachedState !== "object") return false;
+  return !String(cachedState.error || "").trim();
 }
 
 function writeEvaluationListCache(moduleType, value) {
@@ -213,6 +218,7 @@ export default function AdminEvaluationsPage({ moduleType = "tabelabr" }) {
 
   useEffect(() => {
     const cachedState = readEvaluationListCache(normalizedModule);
+    const canReuseCachedState = hasUsableEvaluationListCache(cachedState);
 
     if (cachedState) {
       setFilters(normalizeFilters(cachedState.filters));
@@ -221,11 +227,11 @@ export default function AdminEvaluationsPage({ moduleType = "tabelabr" }) {
       setEvaluations(Array.isArray(cachedState.evaluations) ? cachedState.evaluations : []);
       setPage(Math.max(1, Number.parseInt(cachedState.page || "1", 10) || 1));
       setTotal(Number(cachedState.total || 0));
-      setError(cachedState.error || "");
-      setLoading(false);
-      setFiltersLoading(false);
-      skipInitialFiltersLoadRef.current = true;
-      skipInitialEvaluationsLoadRef.current = true;
+      setError(canReuseCachedState ? "" : "");
+      setLoading(!canReuseCachedState);
+      setFiltersLoading(!canReuseCachedState);
+      skipInitialFiltersLoadRef.current = canReuseCachedState;
+      skipInitialEvaluationsLoadRef.current = canReuseCachedState;
       setStateReady(true);
 
       if (Number.isFinite(Number(cachedState.scrollY))) {
