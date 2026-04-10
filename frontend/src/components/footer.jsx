@@ -1,5 +1,6 @@
 import React from 'react';
 import { HashLink as Link } from 'react-router-hash-link';
+import BuildSignature from './BuildSignature';
 import './style/footer.css';
 
 
@@ -72,6 +73,8 @@ const Footer = () => {
       {/* Bottom Section */}
       <div className="footer-bottom">
         <p>{`Copyright © ${currentYear}. Todos os direitos reservados ao TratorBR`}</p>
+        <span>•</span>
+        <BuildSignature className="footer-build-signature" />
         <span>•</span>
         <Link to="/politicasdeprivacidade.html" onClick={() => window.scrollTo(0, 0)}>Termos e Políticas</Link>
       </div>

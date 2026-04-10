@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import AdminSidebar from './AdminSidebar';
+import BuildSignature from './BuildSignature';
 import './style/AdminLayout.css';
 
 const AdminLayout = ({ children }) => {
@@ -16,7 +17,8 @@ const AdminLayout = ({ children }) => {
         </main>
 
         <footer className="admin-footer">
-          {`Copyright © ${currentYear}. Todos os direitos reservados ao TratorBR`}
+          <span>{`Copyright © ${currentYear}. Todos os direitos reservados ao TratorBR`}</span>
+          <BuildSignature className="admin-footer__build" />
         </footer>
       </div>
     </div>

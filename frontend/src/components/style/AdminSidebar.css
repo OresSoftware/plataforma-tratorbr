@@ -183,6 +183,11 @@
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.sidebar-build-meta {
+  width: 100%;
+  padding: 0 0.2rem;
+}
+
 .sidebar-entity-card {
   display: flex;
   align-items: flex-start;

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, LayoutDashboard, LogOut, MessageCircleQuestion, Building2, Users, User, FileText, BarChart3 } from "lucide-react";
 import { getAdminAllowedPages } from '../utils/adminNavigation';
+import BuildSignature from './BuildSignature';
 import './style/AdminSidebar.css';
 
 const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
@@ -224,6 +225,10 @@ const AdminSidebar = ({ menuOpen, setMenuOpen }) => {
               <span className="user-email">{displayEmail}</span>
               <span className="user-group">{displayGroup}</span>
             </div>
+          </div>
+
+          <div className="sidebar-build-meta">
+            <BuildSignature compact inverted />
           </div>
         </div>
 

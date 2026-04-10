@@ -185,6 +185,10 @@
   font-size: 13px;
 }
 
+.footer-build-signature {
+  margin: 0 10px;
+}
+
 @media (max-width: 1027px) {
   .footer-content {
     flex-direction: column;

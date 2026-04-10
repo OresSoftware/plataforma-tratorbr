@@ -1,0 +1,27 @@
+.build-signature {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: #486068;
+}
+
+.build-signature strong {
+  font-weight: 700;
+  color: inherit;
+}
+
+.build-signature__dot {
+  opacity: 0.55;
+}
+
+.build-signature--compact {
+  font-size: 0.68rem;
+}
+
+.build-signature--inverted {
+  color: rgba(255, 255, 255, 0.72);
+}
