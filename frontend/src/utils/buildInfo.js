@@ -30,6 +30,11 @@ function readBuildHashFromImportMeta() {
 }
 
 export function getBuildHashLabel() {
+  if (typeof __APP_BUILD_COMMIT__ !== "undefined") {
+    const commit = String(__APP_BUILD_COMMIT__ || "").trim();
+    if (commit) return commit;
+  }
+
   return readBuildHashFromScripts() || readBuildHashFromImportMeta() || "local";
 }
 

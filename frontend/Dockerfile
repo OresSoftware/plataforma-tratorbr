@@ -2,6 +2,11 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
+ARG VITE_APP_BUILD_COMMIT=""
+ARG VITE_APP_BUILD_TIME=""
+ENV VITE_APP_BUILD_COMMIT=$VITE_APP_BUILD_COMMIT
+ENV VITE_APP_BUILD_TIME=$VITE_APP_BUILD_TIME
+
 # 1) instala deps (inclui dev) com cache eficiente
 COPY package*.json ./
 RUN npm ci --no-audit --no-fund
