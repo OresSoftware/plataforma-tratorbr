@@ -325,9 +325,26 @@ const ModalAvisoReset = ({ nomeOuEmail, minutos, onClose }) => {
   );
 };
 
+const USER_GROUP_OPTIONS = [
+  { value: '1', label: 'Administradores' },
+  { value: '2', label: 'Funcionarios' },
+  { value: '3', label: 'Usuarios - Gerente' },
+  { value: '4', label: 'Usuarios - Padrão' },
+];
+
+const ACCESS_LEVEL_GROUP_MESSAGE =
+  'Usuários com Nível de Acesso menor que 2 devem ser cadastrados como Usuário Padrão.';
+const STANDARD_GROUP_ACCESS_LEVEL_MESSAGE =
+  'Usuários do grupo Padrão devem possuir Nível de Acesso menor que 2. Ajuste o grupo do usuário ou selecione um nível de acesso compatível.';
+
 export default function AdminUsersPage() {
   const token = localStorage.getItem("adminToken");
   if (!token) return <Navigate to="/admin/login" replace />;
+  const admin = JSON.parse(localStorage.getItem("adminData") || "{}");
+  const userGroupId = Number(admin?.user_group_id || 0);
+  const isGlobalGroup = userGroupId === 1 || userGroupId === 2;
+  const isManagerGroup = userGroupId === 3;
+  const isStandardGroup = userGroupId === 4;
 
   useNoindex();
 
@@ -374,8 +391,12 @@ export default function AdminUsersPage() {
     const loadOptions = async () => {
       try {
         const [empRes, carRes, cidRes] = await Promise.all([
-          api.get('/admin/enterprises', { params: { status: 'ativos', pageSize: 1000 } }),
-          api.get('/admin/cargos'),
+          isGlobalGroup || isManagerGroup
+            ? api.get('/admin/enterprises', { params: { status: 'ativos', pageSize: 1000 } })
+            : Promise.resolve({ data: { data: [] } }),
+          !isStandardGroup
+            ? api.get('/admin/cargos')
+            : Promise.resolve({ data: { data: [] } }),
           api.get('/admin/cities', { params: { pageSize: 1000 } }),
         ]);
         setEmpresas(empRes.data.data || []);
@@ -386,7 +407,7 @@ export default function AdminUsersPage() {
       }
     };
     loadOptions();
-  }, []);
+  }, [isGlobalGroup, isManagerGroup, isStandardGroup]);
 
   const carregarUsuarios = useCallback(async () => {
     setLoading(true);
@@ -449,10 +470,23 @@ export default function AdminUsersPage() {
     setModalContent('details');
     setModalAberto(true);
   };
-  const abrirModalForm = (usuario = null) => {
-    setUsuarioSelecionado(usuario);
-    setModalContent('form');
-    setModalAberto(true);
+  const abrirModalForm = async (usuario = null) => {
+    if (!usuario?.user_id) {
+      setUsuarioSelecionado(usuario);
+      setModalContent('form');
+      setModalAberto(true);
+      return;
+    }
+
+    try {
+      const result = await apiAdminUsers.buscarPorId(usuario.user_id);
+      setUsuarioSelecionado(result.data || usuario);
+      setModalContent('form');
+      setModalAberto(true);
+    } catch (error) {
+      console.error('Erro ao carregar dados completos do usuário', error);
+      alert('Falha ao carregar os dados do usuário para edição.');
+    }
   };
   const fecharModal = () => {
     setModalAberto(false);
@@ -474,6 +508,13 @@ export default function AdminUsersPage() {
       alert(mensagem);
     }
   };
+
+  const canEditRow = (usuario) =>
+    Number(usuario.user_id) === Number(admin?.user_id) || !isStandardGroup;
+  const canResetRow = (usuario) =>
+    isGlobalGroup || (isManagerGroup && Number(usuario.user_id) !== Number(admin?.user_id));
+  const canToggleStatusRow = (usuario) =>
+    isGlobalGroup || (isManagerGroup && Number(usuario.user_id) !== Number(admin?.user_id));
 
   const handleStatusToggle = async (usuario) => {
     const novoStatus = usuario.status ? 0 : 1;
@@ -528,7 +569,7 @@ export default function AdminUsersPage() {
     <AdminLayout>
       <div className="users-wrap">
         <header className="users-header">
-          <h1>Usuários do App</h1>
+          <h1>Usuarios</h1>
           <div className="users-actions">
             <div className="status-buttons">
               <button
@@ -572,27 +613,31 @@ export default function AdminUsersPage() {
               />
             </div>
 
-            <div className="filter-col">
-              <SearchableSelect
-                options={empresas}
-                value={enterpriseId}
-                onChange={(val) => { setEnterpriseId(val); setPage(1); }}
-                getLabel={(e) => e?.fantasia ?? ''}
-                getValue={(e) => String(e?.enterprise_id)}
-                placeholder="Empresa"
-                maxVisible={5}
-              />
-            </div>
+            {(isGlobalGroup || isManagerGroup) && (
+              <div className="filter-col">
+                <SearchableSelect
+                  options={empresas}
+                  value={enterpriseId}
+                  onChange={(val) => { setEnterpriseId(val); setPage(1); }}
+                  getLabel={(e) => e?.fantasia ?? ''}
+                  getValue={(e) => String(e?.enterprise_id)}
+                  placeholder="Empresa"
+                  maxVisible={5}
+                />
+              </div>
+            )}
 
-            <div className="filter-col">
-              <SimpleSelect
-                value={cargoId}
-                onChange={(val) => { setCargoId(val); setPage(1); }}
-                options={cargos.map(c => ({ value: String(c.cargo_id), label: c.name }))}
-                placeholder="Cargo"
-                maxVisible={6}
-              />
-            </div>
+            {!isStandardGroup && (
+              <div className="filter-col">
+                <SimpleSelect
+                  value={cargoId}
+                  onChange={(val) => { setCargoId(val); setPage(1); }}
+                  options={cargos.map(c => ({ value: String(c.cargo_id), label: c.name }))}
+                  placeholder="Cargo"
+                  maxVisible={6}
+                />
+              </div>
+            )}
           </div>
 
           {/* Linha 2: Busca | De | Até | Limpar data */}
@@ -672,19 +717,23 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="acoes-cell">
                         <div className="acoes" onClick={(ev) => ev.stopPropagation()}>
-                          <button className="btn-icon btn-edit" onClick={() => abrirModalForm(u)} title="Editar">
+                          <button className="btn-icon btn-edit" onClick={() => abrirModalForm(u)} title="Editar" disabled={!canEditRow(u)}>
                             <Edit size={16} />
                           </button>
-                          <button className="btn-icon btn-reset" onClick={() => handleResetSenha(u)} title="Enviar redefinição por e-mail">
-                            <Key size={16} />
-                          </button>
-                          <button
-                            className={`btn-icon ${u.status ? 'btn-deactivate' : 'btn-activate'}`}
-                            onClick={() => handleStatusToggle(u)}
-                            title={u.status ? 'Desativar' : 'Ativar'}
-                          >
-                            <Power size={16} />
-                          </button>
+                          {canResetRow(u) && (
+                            <button className="btn-icon btn-reset" onClick={() => handleResetSenha(u)} title="Enviar redefinição por e-mail">
+                              <Key size={16} />
+                            </button>
+                          )}
+                          {canToggleStatusRow(u) && (
+                            <button
+                              className={`btn-icon ${u.status ? 'btn-deactivate' : 'btn-activate'}`}
+                              onClick={() => handleStatusToggle(u)}
+                              title={u.status ? 'Desativar' : 'Ativar'}
+                            >
+                              <Power size={16} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -722,18 +771,22 @@ export default function AdminUsersPage() {
                     <p><strong>Cadastrado em:</strong> {formatarData(u.date_added)}</p>
                   </div>
                   <div className="card-acoes" onClick={(ev) => ev.stopPropagation()}>
-                    <button className="btn btn-edit" onClick={() => abrirModalForm(u)}>
+                    <button className="btn btn-edit" onClick={() => abrirModalForm(u)} disabled={!canEditRow(u)}>
                       <Edit size={16} /> Editar
                     </button>
-                    <button className="btn btn-reset" onClick={() => handleResetSenha(u)}>
-                      <Key size={16} /> Enviar Redefinição
-                    </button>
-                    <button
-                      className={`btn ${u.status ? 'btn-deactivate' : 'btn-activate'}`}
-                      onClick={() => handleStatusToggle(u)}
-                    >
-                      <Power size={16} /> {u.status ? 'Desativar' : 'Ativar'}
-                    </button>
+                    {canResetRow(u) && (
+                      <button className="btn btn-reset" onClick={() => handleResetSenha(u)}>
+                        <Key size={16} /> Enviar Redefinição
+                      </button>
+                    )}
+                    {canToggleStatusRow(u) && (
+                      <button
+                        className={`btn ${u.status ? 'btn-deactivate' : 'btn-activate'}`}
+                        onClick={() => handleStatusToggle(u)}
+                      >
+                        <Power size={16} /> {u.status ? 'Desativar' : 'Ativar'}
+                      </button>
+                    )}
                   </div>
                 </div>
               ))
@@ -758,7 +811,7 @@ export default function AdminUsersPage() {
       {modalAberto && (
         <Modal onClose={fecharModal}>
           {modalContent === 'details' && <DetalhesUsuario usuario={usuarioSelecionado} onClose={fecharModal} />}
-          {modalContent === 'form' && <FormUsuario usuario={usuarioSelecionado} onSave={handleSave} onClose={fecharModal} />}
+          {modalContent === 'form' && <FormUsuario usuario={usuarioSelecionado} onSave={handleSave} onClose={fecharModal} admin={admin} />}
           {modalContent === 'aviso' && avisoReset && (
             <ModalAvisoReset
               nomeOuEmail={avisoReset.nomeOuEmail}
@@ -773,12 +826,58 @@ export default function AdminUsersPage() {
 }
 
 // Form de edição
-const FormUsuario = ({ usuario, onSave, onClose }) => {
+const FormUsuario = ({ usuario, onSave, onClose, admin }) => {
   const [dados, setDados] = useState(usuario || {});
   const [empresas, setEmpresas] = useState([]);
   const [cargos, setCargos] = useState([]);
   const [ocupacoes, setOcupacoes] = useState([]);
   const [erroCPF, setErroCPF] = useState('');
+  const userGroupId = Number(admin?.user_group_id || 0);
+  const isGlobalGroup = userGroupId === 1 || userGroupId === 2;
+  const isManagerGroup = userGroupId === 3;
+  const isStandardGroup = userGroupId === 4;
+  const isSelf = Number(admin?.user_id) === Number(usuario?.user_id);
+  const canEditEnterpriseAndCargo = isGlobalGroup || (isManagerGroup && !isSelf);
+  const canEditOccupation = !isStandardGroup;
+  const cargoOptions = React.useMemo(() => {
+    const currentCargoId = String(dados.cargo_id || '');
+    const hasCurrentCargo = cargos.some((cargo) => String(cargo.cargo_id) === currentCargoId);
+
+    if (!currentCargoId || hasCurrentCargo) {
+      return cargos;
+    }
+
+    return [
+      ...cargos,
+      {
+        cargo_id: currentCargoId,
+        name: dados.cargo_nome || 'Nível atual',
+        cargo_poder: dados.cargo_poder,
+      },
+    ];
+  }, [cargos, dados.cargo_id, dados.cargo_nome, dados.cargo_poder]);
+  const selectedCargo = cargoOptions.find((cargo) => String(cargo.cargo_id) === String(dados.cargo_id || ''));
+  const selectedCargoPower = selectedCargo
+    ? Number(selectedCargo.cargo_poder)
+    : (typeof dados.cargo_poder !== 'undefined' ? Number(dados.cargo_poder) : null);
+  const selectedUserGroupId = Number(dados.user_group_id || usuario?.user_group_id || 0);
+  const invalidLowAccessNonStandard =
+    selectedCargoPower !== null &&
+    Number.isFinite(selectedCargoPower) &&
+    selectedCargoPower < 2 &&
+    selectedUserGroupId > 0 &&
+    selectedUserGroupId !== 4;
+  const invalidStandardHighAccess =
+    selectedCargoPower !== null &&
+    Number.isFinite(selectedCargoPower) &&
+    selectedUserGroupId === 4 &&
+    selectedCargoPower >= 2;
+  const invalidAccessLevelGroup = invalidLowAccessNonStandard || invalidStandardHighAccess;
+  const accessLevelGroupMessage = invalidStandardHighAccess
+    ? STANDARD_GROUP_ACCESS_LEVEL_MESSAGE
+    : invalidLowAccessNonStandard
+      ? ACCESS_LEVEL_GROUP_MESSAGE
+      : '';
 
   useEffect(() => {
     carregarDados();
@@ -788,8 +887,12 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
   const carregarDados = async () => {
     try {
       const [empRes, carRes, ocuRes] = await Promise.all([
-        api.get('/admin/enterprises', { params: { status: 'ativos', pageSize: 1000 } }),
-        api.get('/admin/cargos'),
+        canEditEnterpriseAndCargo
+          ? api.get('/admin/enterprises', { params: { status: 'ativos', pageSize: 1000 } })
+          : Promise.resolve({ data: { data: [] } }),
+        !isStandardGroup
+          ? api.get('/admin/cargos')
+          : Promise.resolve({ data: { data: [] } }),
         api.get('/admin/ocupacoes')
       ]);
       setEmpresas(empRes.data.data || []);
@@ -818,6 +921,10 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
       alert('CPF inválido. Por favor, corrija antes de salvar.');
       return;
     }
+    if (invalidAccessLevelGroup) {
+      alert(accessLevelGroupMessage);
+      return;
+    }
     onSave(dados);
   };
 
@@ -842,6 +949,20 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
             <label>Email *</label>
             <input type="email" name="email" value={dados.email || ''} onChange={handleChange} required />
           </div>
+          {isGlobalGroup && (
+          <div className="form-field full-width">
+            <label>Grupo de Usuário</label>
+            <select name="user_group_id" value={dados.user_group_id || ''} onChange={handleChange}>
+              <option value="">Selecione o grupo</option>
+              {USER_GROUP_OPTIONS.map((group) => (
+                <option key={group.value} value={group.value}>{group.label}</option>
+              ))}
+            </select>
+            {invalidAccessLevelGroup && (
+              <span className="error-message">{accessLevelGroupMessage}</span>
+            )}
+          </div>
+          )}
           <div className="form-field">
             <label>Telefone</label>
             <input name="fone" value={dados.fone || ''} onChange={handleChange} />
@@ -859,37 +980,62 @@ const FormUsuario = ({ usuario, onSave, onClose }) => {
           </div>
           <div className="form-field">
             <label>Empresa</label>
-            <select name="enterprise_id" value={dados.enterprise_id || ''} onChange={handleChange}>
-              <option value="">Sem empresa</option>
-              {empresas.map(e => (
-                <option key={e.enterprise_id} value={e.enterprise_id}>{e.fantasia}</option>
-              ))}
-            </select>
+            {canEditEnterpriseAndCargo ? (
+              <select name="enterprise_id" value={dados.enterprise_id || ''} onChange={handleChange}>
+                <option value="">Sem empresa</option>
+                {empresas.map(e => (
+                  <option key={e.enterprise_id} value={e.enterprise_id}>{e.fantasia}</option>
+                ))}
+              </select>
+            ) : (
+              <input value={dados.empresa_nome || 'Sem empresa'} disabled readOnly />
+            )}
           </div>
           <div className="form-field">
-            <label>Cargo</label>
-            <select name="cargo_id" value={dados.cargo_id || ''} onChange={handleChange}>
-              <option value="">Selecione o cargo</option>
-              {cargos.map(c => (
-                <option key={c.cargo_id} value={c.cargo_id}>{c.name}</option>
-              ))}
-            </select>
+            <label>Nível de Acesso</label>
+            {canEditEnterpriseAndCargo ? (
+              <select name="cargo_id" value={dados.cargo_id || ''} onChange={handleChange}>
+                <option value="">Selecione o nível de acesso</option>
+                {cargoOptions.map(c => (
+                  <option key={c.cargo_id} value={c.cargo_id}>
+                    {`${c.name} (${c.cargo_poder ?? 'N/A'})`}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                value={
+                  dados.cargo_nome
+                    ? `${dados.cargo_nome} (${dados.cargo_poder ?? 'N/A'})`
+                    : 'Sem nível de acesso'
+                }
+                disabled
+                readOnly
+              />
+            )}
+            {invalidAccessLevelGroup && (
+              <span className="error-message">{accessLevelGroupMessage}</span>
+            )}
           </div>
           <div className="form-field full-width">
             <label>Ramo de Atividade</label>
-            <select name="ocupacao_id" value={dados.ocupacao_id || ''} onChange={handleChange}>
-              <option value="">Selecione o ramo de atividade</option>
-              {ocupacoes.map(o => (
-                <option key={o.ocupacao_id} value={o.ocupacao_id}>{o.name}</option>
-              ))}
-            </select>
+            {canEditOccupation ? (
+              <select name="ocupacao_id" value={dados.ocupacao_id || ''} onChange={handleChange}>
+                <option value="">Selecione o ramo de atividade</option>
+                {ocupacoes.map(o => (
+                  <option key={o.ocupacao_id} value={o.ocupacao_id}>{o.name}</option>
+                ))}
+              </select>
+            ) : (
+              <input value={dados.ocupacao_nome || 'Não informado'} disabled readOnly />
+            )}
           </div>
         </div>
       </div>
 
       <div className="modal-actions">
         <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-        <button type="submit" className="btn btn-primary" disabled={!!erroCPF}>Salvar</button>
+        <button type="submit" className="btn btn-primary" disabled={!!erroCPF || invalidAccessLevelGroup}>Salvar</button>
       </div>
     </form>
   );

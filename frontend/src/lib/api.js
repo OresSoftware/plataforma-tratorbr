@@ -23,7 +23,8 @@ api.interceptors.response.use(
 
     if (status === 401 && !isLoginCall) {
       try {
-        localStorage.removeItem("adminToken"); // limpa token
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminData");
       } catch { }
 
       const next = encodeURIComponent(window.location.pathname + window.location.search);

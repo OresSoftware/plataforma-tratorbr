@@ -1,4 +1,10 @@
 const pool = require("../config/db");
+const {
+  isGlobalGroup,
+  isManagerGroup,
+  isStandardGroup,
+  normalizeCargoPower,
+} = require("../services/panelAuthService");
 
 // GET /api/admin/cities?busca=termo
 async function listarCidades(req, res) {
@@ -35,11 +41,29 @@ async function listarCidades(req, res) {
 // GET /api/admin/cargos
 async function listarCargos(req, res) {
   try {
+    const params = [];
+    let whereSql = "status = 1 AND cargo_id > 0";
+
+    if (isManagerGroup(req.admin)) {
+      const cargoPower = normalizeCargoPower(req.admin?.cargo_poder, -1);
+      if (cargoPower < 0) {
+        return res.status(403).json({ ok: false, error: "Seu usuário não possui cargo válido para consultar a hierarquia." });
+      }
+
+      whereSql += " AND cargo_poder < ?";
+      params.push(cargoPower);
+    } else if (isStandardGroup(req.admin)) {
+      return res.json({ ok: true, data: [] });
+    } else if (!isGlobalGroup(req.admin)) {
+      return res.status(403).json({ ok: false, error: "Grupo sem acesso à hierarquia de cargos." });
+    }
+
     const [rows] = await pool.query(
-      `SELECT cargo_id, name
+      `SELECT cargo_id, name, cargo_poder
          FROM ocbr_cargo
-        WHERE status = 1 AND cargo_id > 0
-        ORDER BY name ASC`
+        WHERE ${whereSql}
+        ORDER BY name ASC`,
+      params
     );
 
     res.json({ ok: true, data: rows });

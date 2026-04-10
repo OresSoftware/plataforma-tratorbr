@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import { getAdminFirstAllowedRoute, getAdminHomeRoute, getAdminAllowedPages } from "../utils/adminNavigation";
 
 export default function ProtectedRoute({ children, requireMaster = false, requiredPermission = null }) {
   const location = useLocation();
@@ -19,64 +20,32 @@ export default function ProtectedRoute({ children, requireMaster = false, requir
         }
 
         const admin = JSON.parse(localStorage.getItem("adminData") || "{}");
+        const allowedPages = getAdminAllowedPages(admin);
 
-        // Se requer master, verifica o role
         if (requireMaster) {
-          if (admin?.role !== "master") {
-            setRedirectPath("/admin/dashboard");
-            setIsLoading(false);
-            return;
-          }
+          setRedirectPath(getAdminHomeRoute(admin));
+          setIsLoading(false);
+          return;
+        }
+
+        if (!requiredPermission) {
           setIsAuthorized(true);
           setIsLoading(false);
           return;
         }
 
-        // Se é master, tem acesso a tudo
-        if (admin?.role === "master") {
+        const hasPermission = allowedPages.some(
+          (p) => p === requiredPermission || p?.page_key === requiredPermission
+        );
+
+        if (hasPermission) {
           setIsAuthorized(true);
           setIsLoading(false);
           return;
         }
 
-        // Se é funcionário, verificar permissões
-        if (admin?.role === "funcionario") {
-          // Se não há permissão requerida, permitir acesso
-          if (!requiredPermission) {
-            setIsAuthorized(true);
-            setIsLoading(false);
-            return;
-          }
-
-          // Verificar se tem a permissão específica
-          const hasPermission = admin.permissoes?.some(
-            p => p === requiredPermission || p.page_key === requiredPermission
-          );
-
-          if (hasPermission) {
-            setIsAuthorized(true);
-            setIsLoading(false);
-            return;
-          }
-
-          // Não tem permissão para esta página
-          // Procurar a primeira página que ele tem acesso
-          const firstAllowedPage = getFirstAllowedPage(admin.permissoes);
-          
-          if (firstAllowedPage) {
-            // Redirecionar para primeira página permitida
-            setRedirectPath(firstAllowedPage);
-          } else {
-            // Não tem acesso a nenhuma página
-            setRedirectPath("/admin/acesso-negado");
-          }
-
-          setIsLoading(false);
-          return;
-        }
-
-        // Se chegou aqui, não tem role válido
-        setRedirectPath("/admin/login");
+        const firstAllowedPage = getFirstAllowedPage(admin, allowedPages);
+        setRedirectPath(firstAllowedPage || "/admin/acesso-negado");
         setIsLoading(false);
       } catch (error) {
         console.error("Erro ao verificar permissão:", error);
@@ -89,29 +58,11 @@ export default function ProtectedRoute({ children, requireMaster = false, requir
   }, [token, requireMaster, requiredPermission]);
 
   // Função para mapear permissões para rotas
-  const getFirstAllowedPage = (permissoes) => {
+  const getFirstAllowedPage = (admin, permissoes) => {
     if (!permissoes || permissoes.length === 0) {
       return null;
     }
-
-    // Mapa de page_key para rotas
-    const pageKeyToRoute = {
-      "dashboard": "/admin/dashboard",
-      "usuarios": "/admin/usuarios",
-      "empresas": "/admin/empresas",
-      "contatos": "/admin/contato",
-      "ips": "/admin/ips"
-    };
-
-    // Procurar a primeira permissão que tem uma rota correspondente
-    for (const perm of permissoes) {
-      const pageKey = typeof perm === "string" ? perm : perm.page_key;
-      if (pageKeyToRoute[pageKey]) {
-        return pageKeyToRoute[pageKey];
-      }
-    }
-
-    return null;
+    return getAdminFirstAllowedRoute(admin);
   };
 
   // Se está carregando, mostrar loading

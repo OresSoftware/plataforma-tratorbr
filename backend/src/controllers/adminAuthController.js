@@ -1,135 +1,138 @@
-const db = require('../config/db');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const speakeasy = require('speakeasy');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const {
+  buildPanelSession,
+  getPanelJwtSecret,
+  getPanelUserById,
+  getPanelUserByIdentifier,
+  verifyTurnstileToken,
+} = require("../services/panelAuthService");
+
+function getTurnstileFailureMessage(turnstile = {}) {
+  switch (turnstile.reason) {
+    case "missing_token":
+    case "invalid_token":
+    case "siteverify_failed":
+      return "Validação de segurança inválida.";
+    case "timeout_or_duplicate":
+      return "Token expirado, tente novamente.";
+    case "not_configured":
+    case "invalid_secret":
+      return "Falha ao validar segurança do login.";
+    case "request_failed":
+      return "Falha ao validar segurança do login.";
+    default:
+      return "Validação de segurança inválida.";
+  }
+}
 
 exports.loginAdmin = async (req, res) => {
   try {
-    const { username, password, otp } = req.body;
+    const identifier = String(
+      req.body?.identifier || req.body?.username || req.body?.email || ""
+    ).trim();
+    const password = req.body?.password || req.body?.senha || "";
+    const turnstileToken = String(req.body?.turnstileToken || "").trim();
+    const remoteip =
+      req.headers["cf-connecting-ip"] ||
+      req.headers["x-forwarded-for"] ||
+      req.ip;
 
-    if (!username || !password || !otp) {
-      return res.status(400).json({ message: 'Todos os campos são obrigatórios' });
+    if (!identifier || !password) {
+      return res.status(400).json({ message: "Identificação e senha são obrigatórios." });
     }
 
-    const [admins] = await db.query(
-      `SELECT id, username, nome, sobrenome,password_hash AS senha_hash, role, ativo, twofa_secret
-       FROM admins
-       WHERE username = ? AND ativo = 1`,
-      [username]
-    );
+    console.info("[Painel Login] Recebida tentativa de login", {
+      identifier,
+      hasTurnstileToken: Boolean(turnstileToken),
+      remoteip,
+    });
 
-    if (!admins.length) {
-      console.log(`Usuário não encontrado: ${username}`);
-      return res.status(401).json({ message: 'Usuário ou senha incorretos' });
-    }
+    const turnstile = await verifyTurnstileToken(turnstileToken, remoteip);
+    if (turnstile.enabled && !turnstile.success) {
+      const turnstileMessage = getTurnstileFailureMessage(turnstile);
 
-    const admin = admins[0];
+      console.warn("[Painel Login] Validacao Turnstile rejeitada", {
+        identifier,
+        reason: turnstile.reason,
+        httpStatus: turnstile.httpStatus || null,
+        errors: turnstile.errors || [],
+        body: turnstile.body || null,
+      });
 
-    if (admin.ativo === 0) {
-      console.log(`Tentativa de login com conta inativa: ${username}`);
-      return res.status(403).json({
-        code: 'ACCOUNT_NOT_ACTIVATED',
-        message: 'Sua conta ainda não foi ativada. Verifique seu email para o link de ativação.',
-        requiresActivation: true
+      return res.status(400).json({
+        message: turnstileMessage,
       });
     }
 
-    const ok = await bcrypt.compare(password, admin.senha_hash);
-    if (!ok) {
-      console.log(`Senha incorreta para usuário: ${username}`);
-      return res.status(401).json({ message: 'Usuário ou senha incorretos' });
+    const user = await getPanelUserByIdentifier(identifier);
+    if (!user) {
+      return res.status(401).json({ message: "Falha na autenticação." });
     }
 
-    const validOtp = speakeasy.totp.verify({
-      secret: admin.twofa_secret,
-      encoding: 'base32',
-      token: otp,
-      step: 30,
-      window: 1
-    });
+    const senhaPrincipalOk = user.password
+      ? await bcrypt.compare(password, user.password)
+      : false;
 
-    if (!validOtp) {
-      console.log(`Código 2FA inválido para usuário: ${username}`);
-      return res.status(401).json({ message: 'Código 2FA inválido' });
+    let senhaTemporariaOk = false;
+    const limite = user.tmp_limite ? new Date(user.tmp_limite) : null;
+    if (!senhaPrincipalOk && user.tmp_password && limite && limite > new Date()) {
+      senhaTemporariaOk = await bcrypt.compare(password, user.tmp_password);
     }
 
-    await db.query(
-      `UPDATE admins SET ultimo_login = NOW() WHERE id = ?`,
-      [admin.id]
-    );
+    if (!senhaPrincipalOk && !senhaTemporariaOk) {
+      return res.status(401).json({ message: "Falha na autenticação." });
+    }
 
-    console.log(`Login bem-sucedido: ${username}`);
+    if (Number(user.status) !== 1) {
+      return res.status(401).json({ message: "Usuário inativo." });
+    }
 
-    let permissoes = [];
-    if (admin.role === 'funcionario') {
-      const [perms] = await db.query(
-        `SELECT sp.page_key 
-         FROM user_permissions up
-         JOIN system_pages sp ON up.page_id = sp.id
-         WHERE up.user_id = ?`,
-        [admin.id]
-      );
-      permissoes = perms.map(p => p.page_key);
+    const jwtSecret = getPanelJwtSecret();
+    if (!jwtSecret) {
+      return res.status(500).json({ message: "JWT não configurado para o painel." });
     }
 
     const token = jwt.sign(
-      { id: admin.id, username: admin.username, role: admin.role, tipo: 'admin' },
-      process.env.JWT_SECRET,
-      { expiresIn: '2h' }
+      { user_id: user.user_id, email: user.email, tipo: "panel" },
+      jwtSecret,
+      { expiresIn: "1h" }
     );
 
     res.json({
       token,
-      admin: {
-        id: admin.id,
-        username: admin.username,
-        nome: admin.nome,
-        sobrenome: admin.sobrenome,
-        role: admin.role,
-        permissoes
-      }
+      admin: buildPanelSession(user),
     });
-
   } catch (e) {
-    console.error('Erro no login admin:', e);
-    res.status(500).json({ message: 'Erro interno do servidor' });
+    console.error("Erro no login do painel:", e);
+    res.status(500).json({ message: "Erro interno do servidor." });
   }
 };
 
 exports.verificarToken = async (req, res) => {
   try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
+    const token = req.headers.authorization?.replace("Bearer ", "");
 
     if (!token) {
-      return res.status(401).json({ message: 'Token não fornecido' });
+      return res.status(401).json({ message: "Token não fornecido." });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, getPanelJwtSecret());
 
-    if (decoded.tipo !== 'admin') {
-      return res.status(403).json({ message: 'Acesso negado' });
+    if (decoded.tipo !== "panel") {
+      return res.status(403).json({ message: "Acesso negado." });
     }
 
-    let permissoes = [];
-    if (decoded.role === 'funcionario') {
-      const [perms] = await db.query(
-        `SELECT sp.page_key FROM user_permissions up JOIN system_pages sp ON up.page_id = sp.id WHERE up.user_id = ?`,
-        [decoded.id]
-      );
-      permissoes = perms.map(p => p.page_key);
+    const user = await getPanelUserById(decoded.user_id);
+    if (!user || Number(user.status) !== 1) {
+      return res.status(401).json({ message: "Sessão inválida." });
     }
 
     res.json({
       valid: true,
-      admin: {
-        id: decoded.id,
-        username: decoded.username,
-        role: decoded.role,
-        permissoes
-      }
+      admin: buildPanelSession(user),
     });
-
   } catch (error) {
-    res.status(401).json({ message: 'Token inválido' });
+    res.status(401).json({ message: "Token inválido." });
   }
 };

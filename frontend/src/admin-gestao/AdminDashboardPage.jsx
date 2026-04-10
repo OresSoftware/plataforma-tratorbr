@@ -12,7 +12,7 @@ import {
   LineChart, Line, CartesianGrid, XAxis, YAxis
 } from "recharts";
 
-const PALETTE = ["#1E3A8A", "#2563EB", "#3B82F6", "#60A5FA", "#93C5FD", "#0EA5E9", "#0284C7", "#7DD3FC", "#38BDF8", "#A5F3FC"];
+const PALETTE = ["#0f766e", "#2563eb", "#f59e0b", "#22c55e", "#7c3aed", "#ef4444", "#14b8a6", "#60a5fa", "#0f172a", "#f97316"];
 const PAGE_SIZE = 100;
 
 const FILTROS_TEMPO = [
@@ -224,8 +224,23 @@ function AdminDashboardPage() {
 
   return (
     <AdminLayout>
-      <div className="dashboard-container">
-        <h1>Dashboard</h1>
+      <div className="dashboard-container growth-page">
+        <section className="growth-hero">
+          <div>
+            <span className="growth-kicker">Painel interno da plataforma</span>
+            <h1>Growth TratorBR</h1>
+            <p>
+              Acompanhe a evolução da base da TratorBR com foco em usuários,
+              empresas e contatos do ecossistema.
+            </p>
+          </div>
+
+          <div className="growth-period-card">
+            <span>Recorte principal</span>
+            <strong>{filtroTempo.label}</strong>
+          </div>
+        </section>
+
         {erro && <div className="error-banner">{erro} <button onClick={carregarTudo}>Tentar novamente</button></div>}
 
         <div className="metricas-layout-custom">
@@ -328,7 +343,7 @@ function AdminDashboardPage() {
                     <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#6b7280' }} axisLine={false} tickLine={false} />
                     <ReTooltip
                       labelFormatter={formatarLabelX} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} />
-                    <Line type="monotone" dataKey="valor" name="Cadastros" stroke="#409535" strokeWidth={3} dot={filtroTempo.unidade === 'mes' || filtroTempo.qtd <= 30 ? { r: 4, strokeWidth: 2, fill: '#fff' } : false} activeDot={{ r: 6, strokeWidth: 0, fill: '#409535' }} animationDuration={1000} />
+                    <Line type="monotone" dataKey="valor" name="Cadastros" stroke="#0f766e" strokeWidth={3} dot={filtroTempo.unidade === 'mes' || filtroTempo.qtd <= 30 ? { r: 4, strokeWidth: 2, fill: '#fff' } : false} activeDot={{ r: 6, strokeWidth: 0, fill: '#0f766e' }} animationDuration={1000} />
                   </LineChart>
                 </ResponsiveContainer>
               )}

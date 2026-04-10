@@ -4,6 +4,12 @@ import './style/footer.css';
 
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+  const adminAreaUrl =
+    window.location.hostname === 'tratorbr.com'
+      ? 'https://tratorbr.com/admin'
+      : 'https://tratorbradmin.oressoftware.com/admin';
+
   return (
     <footer className="footer-container">
       <div className="footer-content">
@@ -18,6 +24,9 @@ const Footer = () => {
               {/* <li><Link to="/excluir-conta" onClick={() => window.scrollTo(0, 0)}>Excluir Conta</Link></li> */}
               {/* <li><Link to="#" onClick={() => window.scrollTo(0, 0)}>Área do Gestor</Link></li> */}
               <li><Link to="/ajuda" onClick={() => window.scrollTo(0, 0)}>Central de ajuda</Link></li>
+              <li>
+                <a href={adminAreaUrl} target="_blank" rel="noopener noreferrer">Painel Administrativo</a>
+              </li>
             </ul>
           </div>
 
@@ -62,7 +71,7 @@ const Footer = () => {
 
       {/* Bottom Section */}
       <div className="footer-bottom">
-        <p>Copyright © 2025. Todos os direitos reservados para TratorBR</p>
+        <p>{`Copyright © ${currentYear}. Todos os direitos reservados ao TratorBR`}</p>
         <span>•</span>
         <Link to="/politicasdeprivacidade.html" onClick={() => window.scrollTo(0, 0)}>Termos e Políticas</Link>
       </div>

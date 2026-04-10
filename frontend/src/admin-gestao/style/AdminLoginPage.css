@@ -126,6 +126,16 @@
   font-weight: 500;
 }
 
+.turnstile-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 0.25rem 0 1rem;
+}
+
+.turnstile-widget {
+  min-height: 65px;
+}
+
 .admin-login-btn {
   background-color: #15383E;
   color: white;
@@ -137,7 +147,7 @@
   font-family: 'Inter', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 0.5rem;
+  margin-top: 0;
 }
 
 .admin-login-btn:hover:not(:disabled) {
@@ -234,4 +244,3 @@
     padding: 0.875rem 1rem;
   }
 }
-

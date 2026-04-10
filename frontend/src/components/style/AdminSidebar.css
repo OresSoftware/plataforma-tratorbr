@@ -80,17 +80,19 @@
 }
 
 .sidebar-header {
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.5rem 1.75rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-header h1 {
-  font-size: 1.3rem;
-  font-weight: 300;
-  margin: 0 0 0.25rem 0;
-  letter-spacing: 0.5px;
+  font-size: 1.36rem;
+  font-weight: 400;
+  margin: 0 0 0.35rem 0;
+  letter-spacing: 0.04em;
+  line-height: 1;
   font-family: 'Ethnocentric', sans-serif;
   font-style: normal !important;
+  white-space: nowrap;
 }
 
 .sidebar-header p {
@@ -171,29 +173,115 @@
 
 .sidebar-user-info {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 1rem 1.25rem 1.15rem;
   margin-top: auto;
   color: white;
+  background: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.sidebar-user-info svg {
+.sidebar-entity-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-user-row {
+  align-items: center;
+}
+
+.sidebar-company-card {
+  align-items: center;
+}
+
+.sidebar-company-fallback {
+  display: flex;
+  flex-direction: column;
+  gap: 0.16rem;
+  width: 100%;
+  padding: 0 0.15rem;
+}
+
+.sidebar-enterprise-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.28rem;
+}
+
+.sidebar-enterprise-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.sidebar-user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  overflow: hidden;
   flex-shrink: 0;
-  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sidebar-user-avatar svg {
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.entity-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.16rem;
+  min-width: 0;
+  flex: 1;
+  justify-content: center;
 }
 
 .user-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
+  gap: 0.18rem;
 }
 
-.user-username {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+.user-enterprise {
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.98);
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-matrix {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.7);
   font-family: 'Montserrat', sans-serif;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -201,8 +289,36 @@
 }
 
 .user-name {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.96);
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-email {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.74);
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-group {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.16rem 0.5rem;
+  margin-top: 0.2rem;
+  border-radius: 999px;
+  background: rgba(64, 149, 53, 0.22);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.7rem;
+  font-weight: 700;
   font-family: 'Montserrat', sans-serif;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -236,6 +352,13 @@
 
   .hamburger-btn.menu-open {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-enterprise-logo {
+    width: 48px;
+    height: 48px;
   }
 }
 

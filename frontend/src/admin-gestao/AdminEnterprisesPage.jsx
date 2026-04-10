@@ -397,6 +397,9 @@ const FilterDropdown = ({ label, value, options, onChange, placeholder = "Seleci
 export default function AdminEnterprisesPage() {
   const token = localStorage.getItem("adminToken");
   if (!token) return <Navigate to="/admin/login" replace />;
+  const admin = JSON.parse(localStorage.getItem("adminData") || "{}");
+  const userGroupId = Number(admin?.user_group_id || 0);
+  const canManageEnterprises = userGroupId === 1 || userGroupId === 2 || userGroupId === 3;
 
   useNoindex();
 
@@ -599,10 +602,12 @@ export default function AdminEnterprisesPage() {
                 <span className="count">{contadorInativos}</span>
               </button>
             </div>
-            <button className="btn-primary" onClick={() => abrirModalForm()}>
-              <PlusCircle size={18} />
-              Nova Empresa
-            </button>
+            {canManageEnterprises && (
+              <button className="btn-primary" onClick={() => abrirModalForm()}>
+                <PlusCircle size={18} />
+                Nova Empresa
+              </button>
+            )}
           </div>
 
         </header>
@@ -717,22 +722,26 @@ export default function AdminEnterprisesPage() {
                         </span>
                       </td>
                       <td className="acoes-cell">
-                        <div className="acoes">
-                          <button
-                            className="btn-icon btn-edit"
-                            onClick={(ev) => { ev.stopPropagation(); abrirModalForm(e); }}
-                            title="Editar"
-                          >
-                            <Edit size={16} />
-                          </button>
-                          <button
-                            className={`btn-icon ${e.ativo ? 'btn-deactivate' : 'btn-activate'}`}
-                            onClick={(ev) => { ev.stopPropagation(); handleStatusToggle(e); }}
-                            title={e.ativo ? 'Desativar' : 'Ativar'}
-                          >
-                            <Power size={16} />
-                          </button>
-                        </div>
+                        {canManageEnterprises ? (
+                          <div className="acoes">
+                            <button
+                              className="btn-icon btn-edit"
+                              onClick={(ev) => { ev.stopPropagation(); abrirModalForm(e); }}
+                              title="Editar"
+                            >
+                              <Edit size={16} />
+                            </button>
+                            <button
+                              className={`btn-icon ${e.ativo ? 'btn-deactivate' : 'btn-activate'}`}
+                              onClick={(ev) => { ev.stopPropagation(); handleStatusToggle(e); }}
+                              title={e.ativo ? 'Desativar' : 'Ativar'}
+                            >
+                              <Power size={16} />
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="center">Visualizar</span>
+                        )}
                       </td>
                     </tr>
                   ))
@@ -773,18 +782,24 @@ export default function AdminEnterprisesPage() {
                     <p><strong>Cidade:</strong> {e.cidade_nome ? `${e.cidade_nome} - ${e.cidade_uf}` : 'N/A'}</p>
                   </div>
                   <div className="card-acoes">
-                    <button
-                      className="btn btn-edit"
-                      onClick={(ev) => { ev.stopPropagation(); abrirModalForm(e); }}
-                    >
-                      <Edit size={16} /> Editar
-                    </button>
-                    <button
-                      className={`btn ${e.ativo ? 'btn-deactivate' : 'btn-activate'}`}
-                      onClick={(ev) => { ev.stopPropagation(); handleStatusToggle(e); }}
-                    >
-                      <Power size={16} /> {e.ativo ? 'Desativar' : 'Ativar'}
-                    </button>
+                    {canManageEnterprises ? (
+                      <>
+                        <button
+                          className="btn btn-edit"
+                          onClick={(ev) => { ev.stopPropagation(); abrirModalForm(e); }}
+                        >
+                          <Edit size={16} /> Editar
+                        </button>
+                        <button
+                          className={`btn ${e.ativo ? 'btn-deactivate' : 'btn-activate'}`}
+                          onClick={(ev) => { ev.stopPropagation(); handleStatusToggle(e); }}
+                        >
+                          <Power size={16} /> {e.ativo ? 'Desativar' : 'Ativar'}
+                        </button>
+                      </>
+                    ) : (
+                      <span className="center">Visualização disponível</span>
+                    )}
                   </div>
                 </div>
               ))
@@ -1045,7 +1060,11 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
   const handleTipoChange = (e) => {
     const tipo = e.target.value;
     if (tipo === 'Matriz') {
-      setDados(prev => ({ ...prev, matriz_filial: 'Matriz', matriz_id: null }));
+      setDados(prev => ({
+        ...prev,
+        matriz_filial: 'Matriz',
+        matriz_id: prev.enterprise_id ?? null,
+      }));
       setMatrizLabel('');
     } else {
       setDados(prev => ({ ...prev, matriz_filial: 'Filial' }));
@@ -1064,7 +1083,10 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
       const payload = {
         ...dados,
         cnpj: cnpjDigits,
-        matriz_id: dados.matriz_filial === 'Matriz' ? null : dados.matriz_id ?? null,
+        matriz_id:
+          dados.matriz_filial === 'Matriz'
+            ? dados.enterprise_id ?? null
+            : dados.matriz_id ?? null,
         __cobrancaDraft: cobrancaDraft || undefined,
       };
       await onSave(payload);
@@ -1119,6 +1141,9 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
                 <span>Filial</span>
               </label>
             </div>
+            <small className="hint">
+              Empresas matriz usam o próprio ID como <code>matriz_id</code>; filiais apontam para a matriz vinculada.
+            </small>
           </div>
 
           {dados.matriz_filial === 'Filial' && (
@@ -1138,6 +1163,15 @@ const FormEmpresa = ({ empresa, onSave, onClose }) => {
         {/* ============================================================= */}
 
         <div className="form-grid">
+          <div className="form-field">
+            <label>ID</label>
+            <input
+              value={dados.enterprise_id || ''}
+              readOnly
+              disabled
+              placeholder="Será gerado automaticamente após o cadastro"
+            />
+          </div>
           <div className="form-field">
             <label>Razão Social *</label>
             <input name="razao" value={dados.razao || ''} onChange={handleChange} required />
@@ -1351,6 +1385,10 @@ const DetalhesEmpresa = ({ empresa, onClose }) => {
 
 
         <div className="details-grid">
+          <div className="detail-item">
+            <label>ID:</label>
+            <span>{empresa.enterprise_id || 'N/A'}</span>
+          </div>
           <div className="detail-item">
             <label>Nome Fantasia:</label>
             <span>{empresa.fantasia || 'N/A'}</span>

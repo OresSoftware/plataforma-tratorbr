@@ -1,13 +1,221 @@
 const { getValidatedOrderBy } = require("../config/sortAllowLists");
 const pool = require("../config/db");
 const bcrypt = require('bcrypt');
+const {
+  buildEnterpriseScopeFilter,
+  canAccessEnterpriseId,
+  canManageTargetUser,
+  canViewTargetUser,
+  isGlobalGroup,
+  isManagerGroup,
+  isStandardGroup,
+  normalizeCargoPower,
+  resolveAccessScope,
+} = require("../services/panelAuthService");
 
 const soNumeros = (str) => String(str || '').replace(/\D/g, '');
 const isISODate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s || '').trim());
 
+async function getTargetUserContext(userId) {
+  const [[user]] = await pool.query(
+    `
+      SELECT
+        u.user_id,
+        u.enterprise_id,
+        COALESCE(NULLIF(ent.matriz_id, 0), ent.enterprise_id) AS enterprise_matriz_id,
+        u.cargo_id,
+        u.user_group_id,
+        COALESCE(c.cargo_poder, -1) AS cargo_poder
+      FROM ocbr_user u
+      LEFT JOIN ocbr_cargo c ON c.cargo_id = u.cargo_id
+      LEFT JOIN ocbr_enterprise ent ON ent.enterprise_id = u.enterprise_id
+      WHERE u.user_id = ?
+      LIMIT 1
+    `,
+    [userId]
+  );
+
+  return user || null;
+}
+
+async function getCargoContext(cargoId) {
+  if (!cargoId) return null;
+
+  const [[cargo]] = await pool.query(
+    `
+      SELECT cargo_id, name, COALESCE(cargo_poder, -1) AS cargo_poder
+      FROM ocbr_cargo
+      WHERE cargo_id = ?
+      LIMIT 1
+    `,
+    [cargoId]
+  );
+
+  return cargo || null;
+}
+
+async function getUserGroupContext(userGroupId) {
+  if (!userGroupId) return null;
+
+  const [[userGroup]] = await pool.query(
+    `
+      SELECT user_group_id, name
+      FROM ocbr_user_group
+      WHERE user_group_id = ?
+      LIMIT 1
+    `,
+    [userGroupId]
+  );
+
+  return userGroup || null;
+}
+
+async function validateUserAccessLevelCombination({ cargoId, userGroupId }) {
+  const normalizedUserGroupId = Number(userGroupId || 0);
+  const normalizedCargoId = Number(cargoId || 0);
+
+  if (!normalizedUserGroupId || !normalizedCargoId) {
+    return null;
+  }
+
+  const cargo = await getCargoContext(normalizedCargoId);
+  if (!cargo) {
+    return { ok: false, error: 'Nível de Acesso inválido.' };
+  }
+
+  if (normalizeCargoPower(cargo.cargo_poder, -1) < 2 && normalizedUserGroupId !== 4) {
+    return {
+      ok: false,
+      error:
+        'Usuários com Nível de Acesso menor que 2 devem ser cadastrados como Usuário Padrão.',
+    };
+  }
+
+  if (normalizedUserGroupId === 4 && normalizeCargoPower(cargo.cargo_poder, -1) >= 2) {
+    return {
+      ok: false,
+      error:
+        'Usuários do grupo Padrão devem possuir Nível de Acesso menor que 2. Ajuste o grupo do usuário ou selecione um nível de acesso compatível.',
+    };
+  }
+
+  return { ok: true, cargo };
+}
+
+function ensureManagerScope(req, res) {
+  const scope = resolveAccessScope(req.admin);
+
+  if (!req.admin?.user_id || !scope) {
+    res.status(403).json({ ok: false, error: "Sessão inválida para gerenciar usuários." });
+    return null;
+  }
+
+  if (scope.mode === "global") {
+    return scope;
+  }
+
+  if (scope.mode === "manager") {
+    if (!scope.scopeValue || scope.cargoPower < 0) {
+      res.status(403).json({ ok: false, error: "Seu usuário não possui escopo válido para gerenciar usuários." });
+      return null;
+    }
+
+    return scope;
+  }
+
+  if (scope.mode === "self") {
+    return scope;
+  }
+
+  res.status(403).json({ ok: false, error: "Grupo de usuário sem acesso ao gerenciamento do painel." });
+  return null;
+}
+
+function buildUserVisibilityScope(scope) {
+  if (scope.mode === "global") {
+    return {
+      where: ["1=1"],
+      params: [],
+    };
+  }
+
+  if (scope.mode === "manager") {
+    const enterpriseScope = buildEnterpriseScopeFilter(scope, {
+      enterpriseIdColumn: "u.enterprise_id",
+      enterpriseTableAlias: "e",
+    });
+
+    return {
+      where: [
+        `(u.user_id = ? OR (${enterpriseScope.where} AND COALESCE(c.cargo_poder, -1) < ?))`,
+      ],
+      params: [scope.selfUserId, ...enterpriseScope.params, scope.cargoPower],
+    };
+  }
+
+  return {
+    where: ["u.user_id = ?"],
+    params: [scope.selfUserId],
+  };
+}
+
+function stripImmutableFields(payload) {
+  delete payload.user_id;
+  delete payload.password;
+  delete payload.salt;
+  delete payload.tmp_password;
+  delete payload.empresa_nome;
+  delete payload.cargo_nome;
+  delete payload.cargo_poder;
+  delete payload.ocupacao_nome;
+  delete payload.cidade_nome;
+  delete payload.cidade_uf;
+  delete payload.date_added;
+  delete payload.plano_valido;
+  delete payload.device_id;
+  delete payload.api_token;
+  delete payload.code;
+  delete payload.ip;
+  delete payload.tmp_limite;
+  delete payload.tmp_device;
+  delete payload.username;
+  delete payload.image;
+  delete payload.plano_id;
+  delete payload.sequencial;
+}
+
+function stripRestrictedSelfFields(payload) {
+  delete payload.enterprise_id;
+  delete payload.cargo_id;
+  delete payload.user_group_id;
+  delete payload.status;
+}
+
+function stripRestrictedManagedFields(payload) {
+  delete payload.user_group_id;
+}
+
+function stripRestrictedStandardFields(payload) {
+  delete payload.enterprise_id;
+  delete payload.cargo_id;
+  delete payload.ocupacao_id;
+  delete payload.user_group_id;
+}
+
+function canChangeSensitiveUserState(currentUser, targetUser) {
+  if (!currentUser?.user_id || !targetUser?.user_id) return false;
+  if (isGlobalGroup(currentUser)) return true;
+  if (Number(currentUser.user_id) === Number(targetUser.user_id)) return false;
+  if (isStandardGroup(currentUser)) return false;
+  return isManagerGroup(currentUser) && canManageTargetUser(currentUser, targetUser);
+}
+
 /* GET /api/admin/users */
 async function listarUsuarios(req, res) {
   try {
+    const scope = ensureManagerScope(req, res);
+    if (!scope) return;
+
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
     const pageSize = Math.min(100, Math.max(5, parseInt(req.query.pageSize || "20", 10)));
     const offset = (page - 1) * pageSize;
@@ -28,17 +236,45 @@ async function listarUsuarios(req, res) {
     const rawSort = String(req.query.sort || 'name_asc').toLowerCase();
     const orderSql = getValidatedOrderBy(rawSort, 'users', 'name_asc');
 
-    const where = ["1=1"];
-    const params = [];
+    const visibility = buildUserVisibilityScope(scope);
+    const where = [...visibility.where];
+    const params = [...visibility.params];
 
     // status
     if (status === 'ativos') where.push('u.status = 1');
     if (status === 'inativos') where.push('u.status = 0');
 
     // empresa/cargo/cidade
-    if (!Number.isNaN(enterpriseId)) { where.push('u.enterprise_id = ?'); params.push(enterpriseId); }
-    if (!Number.isNaN(cargoId)) { where.push('u.cargo_id = ?'); params.push(cargoId); }
-    if (!Number.isNaN(cityId)) { where.push('u.city_id = ?'); params.push(cityId); }
+    if (!Number.isNaN(enterpriseId)) {
+      if (scope.mode === "manager") {
+        const canAccessEnterprise = await canAccessEnterpriseId(req.admin, enterpriseId);
+        if (!canAccessEnterprise) {
+          return res.status(403).json({
+            ok: false,
+            error: "Você só pode visualizar usuários dentro do seu escopo permitido.",
+          });
+        }
+      }
+      if (scope.mode === "self") {
+        return res.status(403).json({ ok: false, error: "Seu usuário só pode visualizar o próprio cadastro." });
+      }
+      where.push('u.enterprise_id = ?');
+      params.push(enterpriseId);
+    }
+    if (!Number.isNaN(cargoId)) {
+      if (scope.mode === "self") {
+        return res.status(403).json({ ok: false, error: "Seu usuário só pode visualizar o próprio cadastro." });
+      }
+      where.push('u.cargo_id = ?');
+      params.push(cargoId);
+    }
+    if (!Number.isNaN(cityId)) {
+      if (scope.mode === "self") {
+        return res.status(403).json({ ok: false, error: "Seu usuário só pode visualizar o próprio cadastro." });
+      }
+      where.push('u.city_id = ?');
+      params.push(cityId);
+    }
 
     // busca
     if (busca) {
@@ -84,6 +320,7 @@ async function listarUsuarios(req, res) {
          u.*,
          e.fantasia AS empresa_nome,
          c.name     AS cargo_nome,
+         COALESCE(c.cargo_poder, -1) AS cargo_poder,
          o.name     AS ocupacao_nome,
          ci.name    AS cidade_nome,
          ci.code    AS cidade_uf
@@ -120,13 +357,26 @@ async function listarUsuarios(req, res) {
 /* GET /api/admin/users/:id */
 async function buscarUsuarioPorId(req, res) {
   try {
+    const scope = ensureManagerScope(req, res);
+    if (!scope) return;
+
     const { id } = req.params;
+    const target = await getTargetUserContext(id);
+
+    if (!target) {
+      return res.status(404).json({ ok: false, error: 'Usuário não encontrado.' });
+    }
+
+    if (!canViewTargetUser(req.admin, target)) {
+      return res.status(403).json({ ok: false, error: 'Você não pode visualizar este usuário.' });
+    }
 
     const [[user]] = await pool.query(
       `SELECT 
          u.*,
          e.fantasia AS empresa_nome,
          c.name     AS cargo_nome,
+         COALESCE(c.cargo_poder, -1) AS cargo_poder,
          o.name     AS ocupacao_nome,
          ci.name    AS cidade_nome,
          ci.code    AS cidade_uf
@@ -138,10 +388,6 @@ async function buscarUsuarioPorId(req, res) {
        WHERE u.user_id = ?`,
       [id]
     );
-
-    if (!user) {
-      return res.status(404).json({ ok: false, error: 'Usuário não encontrado.' });
-    }
 
     // Remover campos sensíveis
     delete user.password;
@@ -158,31 +404,106 @@ async function buscarUsuarioPorId(req, res) {
 /* PUT /api/admin/users/:id */
 async function atualizarUsuario(req, res) {
   try {
+    const scope = ensureManagerScope(req, res);
+    if (!scope) return;
+
     const { id } = req.params;
     const payload = { ...req.body };
+    const target = await getTargetUserContext(id);
+    const isSelf = Number(req.admin?.user_id) === Number(id);
 
-    delete payload.user_id;
-    delete payload.password;
-    delete payload.salt;
-    delete payload.tmp_password;
-    delete payload.empresa_nome;
-    delete payload.cargo_nome;
-    delete payload.ocupacao_nome;
-    delete payload.cidade_nome;
-    delete payload.cidade_uf;
-    delete payload.date_added;
-    delete payload.plano_valido;
-    delete payload.device_id;
-    delete payload.api_token;
-    delete payload.code;
-    delete payload.ip;
-    delete payload.tmp_limite;
-    delete payload.tmp_device;
-    delete payload.user_group_id;
-    delete payload.username;
-    delete payload.image;
-    delete payload.plano_id;
-    delete payload.sequencial;
+    if (!target) {
+      return res.status(404).json({ ok: false, error: 'Usuário não encontrado.' });
+    }
+
+    if (!canManageTargetUser(req.admin, target)) {
+      return res.status(403).json({ ok: false, error: 'Você não pode editar este usuário.' });
+    }
+
+    stripImmutableFields(payload);
+
+    if (isGlobalGroup(req.admin)) {
+      if ("user_group_id" in payload) {
+        const nextUserGroupId = Number(payload.user_group_id || 0);
+        if (!nextUserGroupId) {
+          return res.status(400).json({ ok: false, error: 'Grupo de usuário inválido.' });
+        }
+
+        const userGroup = await getUserGroupContext(nextUserGroupId);
+        if (!userGroup) {
+          return res.status(400).json({ ok: false, error: 'Grupo de usuário inválido.' });
+        }
+
+        payload.user_group_id = nextUserGroupId;
+      }
+    } else {
+      if (isStandardGroup(req.admin) && isSelf) {
+        stripRestrictedStandardFields(payload);
+        delete payload.status;
+      } else if (isSelf) {
+        stripRestrictedSelfFields(payload);
+      } else {
+        stripRestrictedManagedFields(payload);
+      }
+    }
+
+    if (scope.mode === "manager" && !isSelf) {
+      if ("enterprise_id" in payload) {
+        const nextEnterpriseId = Number(payload.enterprise_id || target.enterprise_id || 0);
+        const canAccessEnterprise = await canAccessEnterpriseId(req.admin, nextEnterpriseId);
+        if (!canAccessEnterprise) {
+          return res.status(403).json({
+            ok: false,
+            error: 'Você só pode manter o usuário dentro do seu escopo permitido.',
+          });
+        }
+        payload.enterprise_id = nextEnterpriseId;
+      }
+
+      if ("cargo_id" in payload) {
+        const nextCargoId = Number(payload.cargo_id || 0);
+        if (!nextCargoId) {
+          payload.cargo_id = null;
+        } else {
+          const cargo = await getCargoContext(nextCargoId);
+          if (!cargo) {
+            return res.status(400).json({ ok: false, error: 'Nível de Acesso inválido.' });
+          }
+          if (normalizeCargoPower(cargo.cargo_poder, -1) >= scope.cargoPower) {
+            return res.status(403).json({
+              ok: false,
+              error: 'Você não pode atribuir um Nível de Acesso igual ou maior que o seu.',
+            });
+          }
+        }
+      }
+    }
+
+    const effectiveCargoId =
+      "cargo_id" in payload
+        ? Number(payload.cargo_id || 0)
+        : Number(target.cargo_id || 0);
+    const effectiveUserGroupId =
+      "user_group_id" in payload
+        ? Number(payload.user_group_id || 0)
+        : Number(target.user_group_id || 0);
+
+    const accessLevelValidation = await validateUserAccessLevelCombination({
+      cargoId: effectiveCargoId,
+      userGroupId: effectiveUserGroupId,
+    });
+
+    if (accessLevelValidation && accessLevelValidation.ok === false) {
+      return res.status(400).json({ ok: false, error: accessLevelValidation.error });
+    }
+
+    if ("city_id" in payload && (payload.city_id === "" || payload.city_id === null)) {
+      payload.city_id = null;
+    }
+
+    if ("ocupacao_id" in payload && (payload.ocupacao_id === "" || payload.ocupacao_id === null)) {
+      payload.ocupacao_id = null;
+    }
 
     payload.date_modified = new Date();
 
@@ -209,6 +530,9 @@ async function atualizarUsuario(req, res) {
 /* PATCH /api/admin/users/:id/status */
 async function ativarDesativarUsuario(req, res) {
   try {
+    const scope = ensureManagerScope(req, res);
+    if (!scope) return;
+
     const { id } = req.params;
     const { status } = req.body;
 
@@ -217,12 +541,29 @@ async function ativarDesativarUsuario(req, res) {
     }
 
     const [[user]] = await pool.query(
-      'SELECT user_id, firstname, lastname FROM ocbr_user WHERE user_id = ?',
+      `
+        SELECT
+          u.user_id,
+          u.firstname,
+          u.lastname,
+          u.enterprise_id,
+          COALESCE(NULLIF(ent.matriz_id, 0), ent.enterprise_id) AS enterprise_matriz_id,
+          COALESCE(c.cargo_poder, -1) AS cargo_poder
+        FROM ocbr_user u
+        LEFT JOIN ocbr_cargo c ON c.cargo_id = u.cargo_id
+        LEFT JOIN ocbr_enterprise ent ON ent.enterprise_id = u.enterprise_id
+        WHERE u.user_id = ?
+        LIMIT 1
+      `,
       [id]
     );
 
     if (!user) {
       return res.status(404).json({ ok: false, error: 'Usuário não encontrado.' });
+    }
+
+    if (!canChangeSensitiveUserState(req.admin, user)) {
+      return res.status(403).json({ ok: false, error: 'Você não pode alterar o status deste usuário.' });
     }
 
     await pool.query(
@@ -244,15 +585,36 @@ async function ativarDesativarUsuario(req, res) {
 /* POST /api/admin/users/:id/reset-password */
 async function resetarSenha(req, res) {
   try {
+    const scope = ensureManagerScope(req, res);
+    if (!scope) return;
+
     const { id } = req.params;
 
     const [[user]] = await pool.query(
-      'SELECT user_id, firstname, lastname, email FROM ocbr_user WHERE user_id = ?',
+      `
+        SELECT
+          u.user_id,
+          u.firstname,
+          u.lastname,
+          u.email,
+          u.enterprise_id,
+          COALESCE(NULLIF(ent.matriz_id, 0), ent.enterprise_id) AS enterprise_matriz_id,
+          COALESCE(c.cargo_poder, -1) AS cargo_poder
+        FROM ocbr_user u
+        LEFT JOIN ocbr_cargo c ON c.cargo_id = u.cargo_id
+        LEFT JOIN ocbr_enterprise ent ON ent.enterprise_id = u.enterprise_id
+        WHERE u.user_id = ?
+        LIMIT 1
+      `,
       [id]
     );
 
     if (!user) {
       return res.status(404).json({ ok: false, error: 'Usuário não encontrado.' });
+    }
+
+    if (!canChangeSensitiveUserState(req.admin, user)) {
+      return res.status(403).json({ ok: false, error: 'Você não pode resetar a senha deste usuário.' });
     }
 
     // Gerar senha temporária (6 dígitos)
@@ -261,9 +623,9 @@ async function resetarSenha(req, res) {
     // Hash da senha
     const hashedPassword = await bcrypt.hash(novaSenha, 10);
 
-    // Definir limite de 24 horas para usar a senha temporária
+    // Segue o padrão do app: senha temporária curta
     const tmpLimite = new Date();
-    tmpLimite.setHours(tmpLimite.getHours() + 24);
+    tmpLimite.setMinutes(tmpLimite.getMinutes() + 15);
 
     await pool.query(
       'UPDATE ocbr_user SET tmp_password = ?, tmp_limite = ?, date_modified = ? WHERE user_id = ?',
@@ -284,8 +646,19 @@ async function resetarSenha(req, res) {
 /* GET /api/admin/users/contador/ativos */
 async function contadorAtivos(req, res) {
   try {
+    const scope = ensureManagerScope(req, res);
+    if (!scope) return;
+
+    const visibility = buildUserVisibilityScope(scope);
     const [[{ total }]] = await pool.query(
-      `SELECT COUNT(*) AS total FROM ocbr_user WHERE status = 1`
+      `
+        SELECT COUNT(*) AS total
+        FROM ocbr_user u
+        LEFT JOIN ocbr_cargo c ON c.cargo_id = u.cargo_id
+        WHERE ${visibility.where.join(" AND ")}
+          AND u.status = 1
+      `,
+      visibility.params
     );
     res.json({ ok: true, total });
   } catch (e) {

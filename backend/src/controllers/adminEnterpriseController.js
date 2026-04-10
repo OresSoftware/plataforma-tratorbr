@@ -1,5 +1,10 @@
 const { getValidatedOrderBy } = require("../config/sortAllowLists");
 const pool = require("../config/db");
+const {
+  buildEnterpriseScopeFilter,
+  resolveAccessScope,
+  normalizeCargoPower,
+} = require("../services/panelAuthService");
 
 // Helpers gerais 
 const soNumeros = (str) => String(str || '').replace(/\D/g, '');
@@ -95,16 +100,38 @@ async function countFiliaisByMatriz(matrizId) {
   const [[row]] = await pool.query(
     `SELECT COUNT(*) AS qt
        FROM ocbr_enterprise
-      WHERE matriz_id = ?`,
+      WHERE matriz_filial = 'Filial'
+        AND matriz_id = ?`,
     [matrizId]
   );
   return row?.qt ?? 0;
+}
+
+function normalizeMatrizId(value) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function getEnterpriseScope(req) {
+  return resolveAccessScope(req.admin);
+}
+
+function buildScopedEnterpriseWhere(scope, alias = "e") {
+  if (!scope || scope.mode === "global") {
+    return { where: "1=1", params: [] };
+  }
+
+  return buildEnterpriseScopeFilter(scope, {
+    enterpriseIdColumn: `${alias}.enterprise_id`,
+    enterpriseTableAlias: alias,
+  });
 }
 
 // LISTAR EMPRESAS (com filtros) 
 // GET /api/admin/enterprises
 async function listarEmpresas(req, res) {
   try {
+    const scope = getEnterpriseScope(req);
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
     const pageSize = Math.min(100, Math.max(5, parseInt(req.query.pageSize || "20", 10)));
     const offset = (page - 1) * pageSize;
@@ -122,6 +149,9 @@ async function listarEmpresas(req, res) {
 
     const where = ['1=1'];
     const paramsWhere = [];
+    const scopeFilter = buildScopedEnterpriseWhere(scope, "e");
+    where.push(scopeFilter.where);
+    paramsWhere.push(...scopeFilter.params);
 
     if (status === 'ativos') where.push('e.ativo = 1');
     if (status === 'inativos') where.push('e.ativo = 0');
@@ -280,11 +310,15 @@ async function buscarEmpresaPorId(req, res) {
 // GET /api/admin/enterprises/matrizes
 async function listarMatrizesAtivas(req, res) {
   try {
+    const scope = getEnterpriseScope(req);
     const { search } = req.query;
     const like = `%${(search || '').trim()}%`;
 
     const params = [];
     let where = `matriz_filial = 'Matriz' AND ativo = 1`;
+    const scopeFilter = buildScopedEnterpriseWhere(scope, "ocbr_enterprise");
+    where += ` AND ${scopeFilter.where}`;
+    params.push(...scopeFilter.params);
 
     if (search && search.trim() !== '') {
       where += ` AND (fantasia LIKE ? OR razao LIKE ? OR cnpj LIKE ?)`;
@@ -378,14 +412,12 @@ async function criarEmpresa(req, res) {
     }
 
     if (tipo === 'Matriz') {
-      dados.matriz_id = null; // sempre nulo para Matriz
+      dados.matriz_id = null;
     } else {
       // Filial
+      dados.matriz_id = normalizeMatrizId(dados.matriz_id);
       if (dados.matriz_id == null) {
         return res.status(400).json({ ok: false, error: 'Selecione a Matriz para cadastrar uma Filial.' });
-      }
-      if (Number(dados.matriz_id) === Number(dados.enterprise_id)) {
-        return res.status(400).json({ ok: false, error: 'Uma empresa não pode ser Matriz de si mesma.' });
       }
       const okMatriz = await isMatrizAtiva(dados.matriz_id);
       if (!okMatriz) {
@@ -397,6 +429,13 @@ async function criarEmpresa(req, res) {
       'INSERT INTO ocbr_enterprise SET ?',
       [dados]
     );
+
+    if (tipo === 'Matriz') {
+      await pool.query(
+        'UPDATE ocbr_enterprise SET matriz_id = ? WHERE enterprise_id = ?',
+        [result.insertId, result.insertId]
+      );
+    }
 
     res.status(201).json({
       ok: true,
@@ -512,13 +551,13 @@ async function atualizarEmpresa(req, res) {
     }
 
     // Autorreferência
-    if (payload.matriz_id != null && Number(payload.matriz_id) === Number(id)) {
-      return res.status(400).json({ ok: false, error: 'Uma empresa não pode ser Matriz de si mesma.' });
+    if (payload.matriz_id != null) {
+      payload.matriz_id = normalizeMatrizId(payload.matriz_id);
     }
 
-    // Filial -> Matriz: limpar vínculo
+    // Filial -> Matriz: normalizar para o próprio enterprise_id
     if (tipoAtual === 'Filial' && tipoNovo === 'Matriz') {
-      payload.matriz_id = null;
+      payload.matriz_id = Number(id);
     }
 
     // Matriz -> Filial
@@ -530,7 +569,7 @@ async function atualizarEmpresa(req, res) {
           error: 'Não é possível transformar esta Matriz em Filial pois existem Filiais vinculadas.'
         });
       }
-      if (payload.matriz_id == null) {
+      if (payload.matriz_id == null || Number(payload.matriz_id) === Number(id)) {
         return res.status(400).json({ ok: false, error: 'Selecione a Matriz ao transformar em Filial.' });
       }
       const okMatriz = await isMatrizAtiva(payload.matriz_id);
@@ -541,19 +580,22 @@ async function atualizarEmpresa(req, res) {
 
     // Permanece/virando Filial: garantir vínculo
     if (tipoNovo === 'Filial') {
-      const matrizId = payload.matriz_id != null ? payload.matriz_id : empAtual.matriz_id;
-      if (matrizId == null) {
+      const matrizId = normalizeMatrizId(
+        payload.matriz_id != null ? payload.matriz_id : empAtual.matriz_id
+      );
+      if (matrizId == null || Number(matrizId) === Number(id)) {
         return res.status(400).json({ ok: false, error: 'Selecione a Matriz para uma Filial.' });
       }
       const okMatriz = await isMatrizAtiva(matrizId);
       if (!okMatriz) {
         return res.status(400).json({ ok: false, error: 'A empresa informada não é uma Matriz ativa.' });
       }
+      payload.matriz_id = matrizId;
     }
 
-    // Permanece/virando Matriz: limpar vínculo
+    // Permanece/virando Matriz: normalizar para o próprio enterprise_id
     if (tipoNovo === 'Matriz') {
-      payload.matriz_id = null;
+      payload.matriz_id = Number(id);
     }
 
     await pool.query('UPDATE ocbr_enterprise SET ? WHERE enterprise_id = ?', [payload, id]);
@@ -605,8 +647,14 @@ async function ativarDesativarEmpresa(req, res) {
 // GET /api/admin/enterprises/contador/ativos
 async function contadorAtivos(req, res) {
   try {
+    const scope = getEnterpriseScope(req);
+    const scopeFilter = buildScopedEnterpriseWhere(scope, "ocbr_enterprise");
+    const params = [...scopeFilter.params];
+    const whereSql = `ativo = 1 AND ${scopeFilter.where}`;
+
     const [[{ total }]] = await pool.query(
-      `SELECT COUNT(*) AS total FROM ocbr_enterprise WHERE ativo = 1`
+      `SELECT COUNT(*) AS total FROM ocbr_enterprise WHERE ${whereSql}`,
+      params
     );
     res.json({ ok: true, total });
   } catch (e) {
@@ -619,7 +667,18 @@ async function contadorAtivos(req, res) {
 // GET /api/admin/enterprises/:id/users
 async function listarUsuariosDaEmpresa(req, res) {
   try {
+    const scope = getEnterpriseScope(req);
     const { id } = req.params;
+    const params = [id];
+    let extraWhere = "";
+
+    if (scope?.mode === "manager") {
+      extraWhere = " AND (u.user_id = ? OR COALESCE(c.cargo_poder, -1) < ?)";
+      params.push(Number(req.admin.user_id), normalizeCargoPower(req.admin.cargo_poder, -1));
+    } else if (scope?.mode === "self") {
+      extraWhere = " AND u.user_id = ?";
+      params.push(Number(req.admin.user_id));
+    }
 
     const [rows] = await pool.query(
       `SELECT 
@@ -633,8 +692,9 @@ async function listarUsuariosDaEmpresa(req, res) {
        FROM ocbr_user u
        LEFT JOIN ocbr_cargo c ON u.cargo_id = c.cargo_id
        WHERE u.enterprise_id = ?
+         ${extraWhere}
        ORDER BY u.firstname ASC`,
-      [id]
+      params
     );
 
     res.json({ ok: true, data: rows });
@@ -648,7 +708,15 @@ async function listarUsuariosDaEmpresa(req, res) {
 // GET /api/admin/enterprises/:id/filiais
 async function listarFiliaisDaMatriz(req, res) {
   try {
+    const scope = getEnterpriseScope(req);
     const { id } = req.params;
+
+    if (scope?.mode !== "global" && scope?.scopeType !== "matriz") {
+      return res.status(403).json({
+        ok: false,
+        error: "Seu usuário só pode visualizar a empresa vinculada.",
+      });
+    }
 
     const [rows] = await pool.query(
       `SELECT 

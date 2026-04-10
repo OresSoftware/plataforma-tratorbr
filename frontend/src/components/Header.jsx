@@ -9,6 +9,10 @@ const Header = () => {
   const [open, setOpen] = useState(false); // Estado para o dropdown móvel
   const location = useLocation();
   const navigate = useNavigate();
+  const adminAreaUrl =
+    window.location.hostname === 'tratorbr.com'
+      ? 'https://tratorbr.com/admin'
+      : 'https://tratorbradmin.oressoftware.com/admin';
 
   const isActive = (path) => {
     return location.pathname === path ? 'active' : '';
@@ -72,6 +76,14 @@ const Header = () => {
               <Link to="/ajuda" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Ajuda</Link>
               <Link to="/sobre-app" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Sobre App</Link>
               <Link to="/quem-somos" className="dropdown-item" onClick={() => window.scrollTo(0, 0)}>Quem Somos</Link>
+              <a
+                href={adminAreaUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-item"
+              >
+                Painel Administrativo
+              </a>
             </div>
           </div>
 
@@ -129,6 +141,15 @@ const Header = () => {
               <Link to="/ajuda" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Ajuda</Link>
               <Link to="/sobre-app" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Sobre App</Link>
               <Link to="/quem-somos" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Quem Somos</Link>
+              <a
+                href={adminAreaUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mobile-nav-link"
+                onClick={toggleMobileMenu}
+              >
+                Painel Administrativo
+              </a>
             </div>
             <Link to="/contato" className="mobile-nav-link" onClick={() => { toggleMobileMenu(); window.scrollTo(0, 0); }}>Contato</Link>
 
@@ -163,4 +184,3 @@ const Header = () => {
 };
 
 export default Header;
-

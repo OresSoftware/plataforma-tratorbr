@@ -11,9 +11,6 @@ const multer = require("multer");
 const adminRoutes = require("./routes/adminRoutes");
 const contatoRoutes = require("./routes/contatoRoutes");
 const publicRoutes = require("./routes/publicRoutes");
-const adminEnterpriseRoutes = require("./routes/adminEnterpriseRoutes");
-
-const adminFuncionariosRoutes = require("./routes/adminFuncionariosRoutes");
 
 const app = express();
 
@@ -47,7 +44,7 @@ app.use((req, res, next) => {
 
     // Se há corpo na requisição, validar Content-Type
     if (contentLength && contentLength !== "0") {
-      if (!contentType || !contentType.includes("application/json")) {
+      if (!contentType || (!contentType.includes("application/json") && !contentType.includes("multipart/form-data"))) {
         return res.status(415).json({
           error: "Unsupported Media Type",
           message: "A API espera Content-Type: application/json"
@@ -96,11 +93,9 @@ app.post("/api/consent/clear", (req, res) => {
   res.json({ message: "Consentimento removido" });
 });
 
-app.use("/api/admin/enterprises", adminEnterpriseRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/contatos", contatoRoutes);
-app.use("/api/admin/funcionarios", adminFuncionariosRoutes);
 
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
