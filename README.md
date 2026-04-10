@@ -44,6 +44,15 @@ sistema-trator-simplificado/
 └── .env.example          # Exemplo de configuração
 ```
 
+## Infraestrutura versionada
+
+Para reduzir divergencia entre `DEV` e `PROD`, a configuracao operacional de producao agora tambem possui uma referencia versionada no proprio repositorio:
+
+- [infra/prod/docker-compose.yml](/home/tratorbr/landingpage-dev/src/plataforma-tratorbr/infra/prod/docker-compose.yml)
+- [infra/prod/conf.d/default.conf](/home/tratorbr/landingpage-dev/src/plataforma-tratorbr/infra/prod/conf.d/default.conf)
+
+Esses arquivos representam a base atual usada em `PROD` e devem ser atualizados sempre que houver mudanca de infraestrutura que precise continuar previsivel no fluxo `DEV -> Git -> PROD`.
+
 ### Estruturas das Branches
 
 - **main** - Principal e em produção 
@@ -128,4 +137,3 @@ npm run preview     # Preview do build
 ## Suporte
 
 Este é um sistema simplificado baseado no sistema original TratorBR. Para dúvidas ou suporte, consulte a documentação original ou entre em contato através do formulário de contato do sistema.
-

@@ -1,0 +1,69 @@
+# docker-compose.yml (producao)
+services:
+  landing:
+    build:
+      context: ./src/plataforma-tratorbr/frontend
+      dockerfile: Dockerfile
+    image: tratorbr-landing:latest
+    container_name: tratorbr-landing
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8081:80"
+    environment:
+      TZ: America/Sao_Paulo
+    volumes:
+      - /home/tratorbr/api/src/images:/images:ro
+      - ./conf.d-user:/etc/nginx/conf.d:ro
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - app_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/healthz || exit 1"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  api:
+    build:
+      context: ./src/plataforma-tratorbr/backend
+      dockerfile: Dockerfile
+    image: tratorbr-plataforma-api:latest
+    container_name: tratorbr-plataforma-api
+    restart: unless-stopped
+    environment:
+      TZ: America/Sao_Paulo
+      NODE_ENV: production
+      PORT: "3069"
+      MANUFACTURER_DIR: /images/manufacturer
+    command: ["sh", "-lc", "umask 0002 && node src/server.js"]
+    user: "1000:1000"
+    volumes:
+      - ./src/plataforma-tratorbr/backend/.env.production:/app/.env.production:ro
+      - /home/tratorbr/api/src/images/manufacturer:/images/manufacturer:rw
+    networks:
+      - app_net
+      - mysql_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${PORT:-3069}/healthz || exit 1"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  app_net:
+    driver: bridge
+  mysql_net:
+    external: true
+    name: mysql_net
